@@ -5,16 +5,11 @@ import { Document } from '@/lib/faker/documents/schema';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { ItemDialog } from '../report-generator/item-dialog';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { format, parseISO } from 'date-fns';
 import { FolderIcon } from 'lucide-react';
 import { getStatusVariant } from '@/lib/controls';
+import { DocumentDialog } from '../common/document-dialog';
 
 interface RecentDocumentsProps {
     documents: Document[];
@@ -82,7 +77,7 @@ const RecentDocuments: React.FC<RecentDocumentsProps> = ({ documents }) => {
                 ))}
             </div>
 
-            <ItemDialog
+            <DocumentDialog
                 item={selectedItem}
                 open={!!selectedItem}
                 onClose={() => setSelectedItem(null)}

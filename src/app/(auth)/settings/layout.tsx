@@ -5,8 +5,8 @@ import { DashboardHeader } from "@/components/custom/dashboard/header"
 
 
 export const metadata: Metadata = {
-  title: "Forms",
-  description: "Advanced form example using react-hook-form and Zod.",
+  title: "Sidebar",
+  description: "",
 }
 
 const sidebarNavItems = [

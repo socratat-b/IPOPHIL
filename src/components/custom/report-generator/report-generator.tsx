@@ -11,7 +11,7 @@ import { FilterValues, ReportGeneratorProps } from '@/lib/types';
 import { FileType, downloadFile, generatePDF } from '@/lib/controls';
 
 import { DataPreview } from './data-preview';
-import { ItemDialog } from './item-dialog';
+import { DocumentDialog } from '../common/document-dialog';
 import FilterForm from './filter-form';
 
 const defaultFilters = {
@@ -142,7 +142,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ data }) => {
                 </div>
             </div>
 
-            <ItemDialog
+            <DocumentDialog
                 item={selectedItem}
                 open={!!selectedItem}
                 onClose={() => setSelectedItem(null)}

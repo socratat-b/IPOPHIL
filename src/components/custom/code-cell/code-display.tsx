@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
 import { QRCodeSVG } from "qrcode.react";
-import Barcode from "react-barcode";
 import { CodeConfig, CodeDisplayProps } from "@/lib/types";
 import { CODE_CONFIG } from "@/lib/controls/code";
+import Barcode from "react-barcode";
 
 export const CodeDisplay: React.FC<CodeDisplayProps> = ({
     code,

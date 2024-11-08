@@ -22,7 +22,7 @@ import {
 import { documentsSchema, Document } from "@/lib/faker/documents/schema"
 import { statuses } from "@/lib/faker/documents/data"
 import { toast } from "sonner"
-import { ItemDialog } from "../report-generator/item-dialog"
+import { DocumentDialog } from "../common/document-dialog"
 
 interface DataTableRowActionsProps<TData> {
     row: Row<TData>
@@ -143,7 +143,7 @@ export function DataTableRowActions<TData>({
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <ItemDialog
+            <DocumentDialog
                 item={selectedItem}
                 open={!!selectedItem}
                 onClose={() => setSelectedItem(null)}
