@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.doc_classification = exports.doc_type = exports.doc_status = exports.intransit_status = exports.log_action = exports.user_role = void 0;
-// src\lib\faker\management\data.ts
-exports.user_role = [
+// src/lib/faker/management/data.ts
+
+export const user_role = [
     {
         value: "admin",
         label: "Admin",
@@ -12,7 +10,8 @@ exports.user_role = [
         label: "User",
     }
 ];
-exports.log_action = [
+
+export const log_action = [
     {
         value: "created",
         label: "Created",
@@ -34,7 +33,8 @@ exports.log_action = [
         label: "Returned",
     }
 ];
-exports.intransit_status = [
+
+export const intransit_status = [
     {
         value: "incoming",
         label: "Incoming",
@@ -44,7 +44,8 @@ exports.intransit_status = [
         label: "Outgoing",
     }
 ];
-exports.doc_status = [
+
+export const doc_status = [
     {
         value: "dispatch",
         label: "Dispatch",
@@ -70,7 +71,8 @@ exports.doc_status = [
         label: "Archived",
     }
 ];
-exports.doc_type = [
+
+export const doc_type = [
     {
         value: "memo",
         label: "Memo",
@@ -100,7 +102,8 @@ exports.doc_type = [
         label: "Proposal",
     }
 ];
-exports.doc_classification = [
+
+export const doc_classification = [
     {
         value: "simple",
         label: "Simple",
