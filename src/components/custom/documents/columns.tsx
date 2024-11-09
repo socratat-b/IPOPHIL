@@ -15,6 +15,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { DataTableColumnHeader } from "../table/data-table-column-header"
+import { formatBadgeText, formatBadgeTextAllCaps } from "@/lib/controls"
 
 export const columns: ColumnDef<Document>[] = [
     {
@@ -134,11 +135,11 @@ export const columns: ColumnDef<Document>[] = [
                             <TooltipTrigger className="flex items-center gap-1.5">
                                 <Icons.building className="w-3 h-3 text-emerald-500" />
                                 <span className="text-sm text-muted-foreground truncate max-w-[150px]">
-                                    {data.origin_office}
+                                    {formatBadgeText(data.origin_office)}
                                 </span>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>{data.origin_office}</p>
+                                <p>{formatBadgeText(data.origin_office)}</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
@@ -155,7 +156,7 @@ export const columns: ColumnDef<Document>[] = [
             const type = row.original.type;
             return (
                 <span className="text-sm text-muted-foreground">
-                    {type}
+                    {formatBadgeText(type)}
                 </span>
             );
         },
@@ -181,7 +182,7 @@ export const columns: ColumnDef<Document>[] = [
                     variant={classificationType?.value === "confidential" ? "destructive" : "secondary"}
                     className="font-medium"
                 >
-                    {classificationType?.label || row.original.classification}
+                    {formatBadgeTextAllCaps(formatBadgeText(classificationType?.label || row.original.classification))}
                 </Badge>
             );
         },

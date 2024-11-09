@@ -77,7 +77,7 @@ const FilterForm: React.FC<FilterFormProps> = ({
                     <div className="flex justify-between items-center">
                         <div>
                             <CardTitle>Generate Reports</CardTitle>
-                            <CardDescription>
+                            <CardDescription className="mt-2">
                                 Create a custom report by selecting filters and date range
                             </CardDescription>
                         </div>
