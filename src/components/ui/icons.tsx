@@ -133,6 +133,7 @@ export const Icons = {
     send: Send,
     user2: User2,
     building: Building,
+    helpCircle: HelpCircle,
 
     /**
      * Custom Icons below  
