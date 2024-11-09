@@ -5,6 +5,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { UserHeaderNav } from '@/components/custom/dashboard/user-header-nav';
+import { ThemeChange } from '../theme/theme-change';
 
 interface DashboardHeaderProps {
     breadcrumbs?: {
@@ -65,7 +66,8 @@ export function DashboardHeader({ breadcrumbs = [] }: DashboardHeaderProps) {
                     mar-note: to fix the theme change button
                     <ThemeChange /> 
                 */}
-                <UserHeaderNav />
+                {/* <UserHeaderNav /> */}
+                <ThemeChange/>
             </div>
         </header>
     );

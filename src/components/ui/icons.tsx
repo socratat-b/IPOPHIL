@@ -51,6 +51,7 @@ import {
     LifeBuoy,
     PieChart,
     Send,
+    Search,
     User2,
     Building,
 
@@ -131,6 +132,7 @@ export const Icons = {
     map: Map,
     pieChart: PieChart,
     send: Send,
+    search: Search,
     user2: User2,
     building: Building,
 

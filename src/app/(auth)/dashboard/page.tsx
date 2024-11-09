@@ -16,6 +16,7 @@ import { useMemo } from "react"
 import { Stats, StatusCounts } from "@/lib/types"
 import { AddDocumentButton } from "@/components/custom/common/add-document-button"
 import { Line, LineChart} from "recharts"
+import { Calendar } from "@/components/ui/calendar"
 
 // Sample data for the sparkline charts
 const incomingData = [
@@ -136,141 +137,152 @@ export default function Page() {
                     { label: "Dashboard", href: "/dashboard", active: true },
                 ]}
             />
-            <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                <div className="hidden flex-col md:flex">
-                    <div className="flex-1 space-y-4">  
-                        <div className="flex items-center justify-between space-y-2">
-                            <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
-                            <div className="flex items-center space-x-2">
-                                <AddDocumentButton title={"Receive"} actionType={"Receive"} />
-                                <AddDocumentButton title={"Release"} actionType={"Release"} />
-                                <AddDocumentButton title={"Add Document"} actionType={"Create"} />
-                            </div>
-                        </div>
-                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        Total Incoming
-                                    </CardTitle>
-                                    <Icons.incoming className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">{stats.current.incoming}</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {formatPercentage(stats.percentageChanges.incoming)} from last month
-                                    </p>
-                                    <div className="h-[40px] mt-3">
-                                        <LineChart data={incomingData} width={200} height={40}>
-                                            <Line
-                                                type="monotone"
-                                                dataKey="value"
-                                                stroke="hsl(var(--primary))"
-                                                strokeWidth={2}
-                                                dot={{ r: 2, fill: "#fff" }}
-                                            />
-                                        </LineChart>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        Total Received
-                                    </CardTitle>
-                                    <Icons.recieved className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">{stats.current.recieved}</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {formatPercentage(stats.percentageChanges.recieved)} from last month
-                                    </p>
-                                    <div className="h-[40px] mt-3">
-                                        <LineChart data={receivedData} width={200} height={40}>
-                                            <Line
-                                                type="monotone"
-                                                dataKey="value"
-                                                stroke="hsl(var(--primary))"
-                                                strokeWidth={2}
-                                                dot={{ r: 2, fill: "#fff" }}
-                                            />
-                                        </LineChart>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">Total Outgoing</CardTitle>
-                                    <Icons.outgoing className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">{stats.current.outgoing}</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {formatPercentage(stats.percentageChanges.outgoing)} from last month
-                                    </p>
-                                    <div className="h-[40px] mt-3">
-                                        <LineChart data={outgoingData} width={200} height={40}>
-                                            <Line
-                                                type="monotone"
-                                                dataKey="value"
-                                                stroke="hsl(var(--primary))"
-                                                strokeWidth={2}
-                                                dot={{ r: 2, fill: "#fff" }}
-                                            />
-                                        </LineChart>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        Total Completed
-                                    </CardTitle>
-                                    <Icons.completed className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">{stats.current.completed}</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {formatPercentage(stats.percentageChanges.completed)} from last month
-                                    </p>
-                                    <div className="h-[40px] mt-3">
-                                        <LineChart data={completedData} width={200} height={40}>
-                                            <Line
-                                                type="monotone"
-                                                dataKey="value"
-                                                stroke="hsl(var(--primary))"
-                                                strokeWidth={2}
-                                                dot={{ r: 2, fill: "#fff" }}
-                                            />
-                                        </LineChart>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                            <Card className="col-span-4">
-                                <CardHeader>
-                                    <CardTitle>Document Status</CardTitle>
-                                </CardHeader>
-                                <CardContent className="pl-2">
-                                    <Overview documents={documents} />
-                                </CardContent>
-                            </Card>
-                            <Card className="col-span-3">
-                                <CardHeader>
-                                    <CardTitle>My Recent Documents</CardTitle>
-                                    <CardDescription>
-                                        You have {documents.length} documents total.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <RecentDocuments documents={recentDocs} />
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </div>
+            <div className="flex items-center justify-between p-4">
+                <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
+                <div className="flex items-center space-x-2">
+                    <AddDocumentButton title={"Receive"} actionType={"Receive"} />
+                    <AddDocumentButton title={"Release"} actionType={"Release"} />
+                    <AddDocumentButton title={"Add Document"} actionType={"Create"} />
                 </div>
             </div>
+            
+                
+            <div className="flex flex-row w-full h-screen gap-5 p-4">  
+                <div className="w-2/3 flex flex-col gap-5">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">
+                                    Total Incoming
+                                </CardTitle>
+                                <Icons.incoming className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent className="">
+                                <div className="text-3xl font-bold">{stats.current.incoming}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {formatPercentage(stats.percentageChanges.incoming)} from last month
+                                </p>
+                                <div className="h-[30px] mt-3 flex justify-center">
+                                    <LineChart data={incomingData} width={150} height={50}>
+                                        <Line
+                                            type="monotone"
+                                            dataKey="value"
+                                            stroke="hsl(var(--primary))"
+                                            strokeWidth={2}
+                                            dot={{ r: 2, fill: "#fff" }}
+                                        />
+                                    </LineChart>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">
+                                    Total Received
+                                </CardTitle>
+                                <Icons.recieved className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold">{stats.current.recieved}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {formatPercentage(stats.percentageChanges.recieved)} from last month
+                                </p>
+                                <div className="h-[30px] mt-3 flex justify-center">
+                                    <LineChart data={receivedData} width={150} height={50}>
+                                        <Line
+                                            type="monotone"
+                                            dataKey="value"
+                                            stroke="hsl(var(--primary))"
+                                            strokeWidth={2}
+                                            dot={{ r: 2, fill: "#fff" }}
+                                        />
+                                    </LineChart>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">Total Outgoing</CardTitle>
+                                <Icons.outgoing className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold">{stats.current.outgoing}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {formatPercentage(stats.percentageChanges.outgoing)} from last month
+                                </p>
+                                <div className="h-[30px] mt-3 flex justify-center">
+                                    <LineChart data={outgoingData} width={150} height={50}>
+                                        <Line
+                                            type="monotone"
+                                            dataKey="value"
+                                            stroke="hsl(var(--primary))"
+                                            strokeWidth={2}
+                                            dot={{ r: 2, fill: "#fff" }}
+                                        />
+                                    </LineChart>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium">
+                                    Total Completed
+                                </CardTitle>
+                                <Icons.completed className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-3xl font-bold">{stats.current.completed}</div>
+                                <p className="text-xs text-muted-foreground">
+                                    {formatPercentage(stats.percentageChanges.completed)} from last month
+                                </p>
+                                <div className="h-[30px] mt-3 flex justify-center">
+                                    <LineChart data={completedData} width={150} height={50}>
+                                        <Line
+                                            type="monotone"
+                                            dataKey="value"
+                                            stroke="hsl(var(--primary))"
+                                            strokeWidth={2}
+                                            dot={{ r: 2, fill: "#fff" }}
+                                        />
+                                    </LineChart>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                    <Card className="col-span-4 h-2/3">
+                        <CardHeader>
+                            <CardTitle>Document Status</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pl-2">
+                            <Overview documents={documents} />
+                        </CardContent>
+                    </Card>
+                </div>
+                
+                <div className="flex flex-col w-1/3 h-screen gap-5">
+                    
+                    <Card className="col-span-3 h-[50%] overflow-y-auto">
+                        <CardHeader>
+                            <CardTitle>My Recent Documents</CardTitle>
+                            <CardDescription>
+                                You have {documents.length} documents total.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {/* Display all documents, but hide overflow */}
+                            <RecentDocuments documents={recentDocs} />
+                        </CardContent>
+                    </Card>
+
+                    <Card className="flex flex-1 justify-center items-center mb-12">
+                        <Calendar></Calendar>
+                    </Card>
+                    
+                </div>
+
+            </div>
+                
+            
         </>
     )
 }
