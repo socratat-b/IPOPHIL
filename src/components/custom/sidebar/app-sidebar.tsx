@@ -76,7 +76,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
       {
         title: "Documents",
         url: "/documents",
-        icon: Icons.file,
+        icon: Icons.building,
         isActive: false,
         notViewedCount: documentCounts.total - documentCounts.completed,
         items: [
@@ -86,9 +86,9 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
             notViewedCount: documentCounts.forDispatch,
           },
           {
-            title: "Incoming",
-            url: "/documents/incoming",
-            notViewedCount: documentCounts.incoming,
+            title: "Intransit",
+            url: "/documents/intransit",
+            notViewedCount: documentCounts.received,
           },
           {
             title: "Received",
@@ -96,27 +96,33 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
             notViewedCount: documentCounts.received,
           },
           {
-            title: "Outgoing",
-            url: "/documents/outgoing",
-            notViewedCount: documentCounts.outgoing,
+            title: "Completed",
+            url: "/completed",
+            icon: Icons.leafyGreen,
+            notViewedCount: documentCounts.completed,
           },
         ],
       },
       {
-        title: "Completed",
-        url: "/completed",
-        icon: Icons.leafyGreen,
-        notViewedCount: documentCounts.completed,
+        title: "Management",
+        url: "/users",
+        icon: Icons.settings,
+        items: [
+          {
+            title: "Users",
+            url: "/users",
+            icon: Icons.user2,
+          },
+          {
+            title: "Type",
+            url: "/documents/intransit",
+          },
+        ],
       },
       {
         title: "Reports",
         url: "/reports",
-        icon: Icons.files,
-      },
-      {
-        title: "Users",
-        url: "/users",
-        icon: Icons.user2,
+        icon: Icons.printer,
       },
     ],
     navSecondary: [
@@ -131,6 +137,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
         icon: Icons.send,
       },
     ],
+
   }
 
   return (

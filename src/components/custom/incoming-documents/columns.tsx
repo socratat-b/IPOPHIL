@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/custom/table/data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";

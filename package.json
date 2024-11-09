@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "cy:open": "cypress open"
+    "cy:open": "cypress open",
+    "generate:seed": "tsc src/lib/faker/management/seed.ts",
+    "seed": "node src/lib/faker/management/seed.js"
   },
   "dependencies": {
     "@faker-js/faker": "^9.1.0",

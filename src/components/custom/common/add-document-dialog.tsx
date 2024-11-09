@@ -1,6 +1,5 @@
 "use client"
 
-import React from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -65,10 +64,6 @@ const CreateDocumentForm = ({ onSubmit, onClose }: {
                     </SelectContent>
                 </Select>
                 {errors.type && <p className="text-red-500 text-sm">{errors.type.message}</p>}
-            </div>
-            <div>
-                <label htmlFor="attachments" className="block mb-1">Attachments</label>
-                <Input type="file" {...register("attachments")} />
             </div>
 
             <Card>

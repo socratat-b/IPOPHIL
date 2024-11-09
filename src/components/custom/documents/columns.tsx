@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTableRowActions } from "./data-table-row-actions"
 import { Badge } from "@/components/ui/badge"
