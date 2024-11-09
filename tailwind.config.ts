@@ -13,6 +13,11 @@ const config: Config = {
 	],
 	theme: {
 		extend: {
+			fontFamily: {
+				'facile-sans': ['Facile Sans Regular', 'sans-serif'],
+				'neue-haas-grotesk': ['Neue Haas Grotesk Display Pro', 'sans-serif'],
+				'helvetica': ['Helvetica', 'sans-serif'],
+			  },
 			colors: {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',

@@ -15,7 +15,45 @@ import { useDocuments } from "@/lib/context/document-context"
 import { useMemo } from "react"
 import { Stats, StatusCounts } from "@/lib/types"
 import { AddDocumentButton } from "@/components/custom/common/add-document-button"
+import { Line, LineChart} from "recharts"
 
+// Sample data for the sparkline charts
+const incomingData = [
+    { value: 10 },
+    { value: 15 },
+    { value: 12 },
+    { value: 18 },
+    { value: 15 },
+    { value: 21 },
+    { value: 25 },
+]
+
+const receivedData = [
+    { value: 8 },
+    { value: 12 },
+    { value: 15 },
+    { value: 18 },
+    { value: 20 },
+    { value: 21 },
+]
+
+const outgoingData = [
+    { value: 5 },
+    { value: 8 },
+    { value: 6 },
+    { value: 9 },
+    { value: 7 },
+    { value: 8 },
+]
+
+const completedData = [
+    { value: 4 },
+    { value: 6 },
+    { value: 8 },
+    { value: 7 },
+    { value: 9 },
+    { value: 9 },
+]
 export default function Page() {
     const { documents } = useDocuments()
 
@@ -100,7 +138,7 @@ export default function Page() {
             />
             <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                 <div className="hidden flex-col md:flex">
-                    <div className="flex-1 space-y-4">
+                    <div className="flex-1 space-y-4">  
                         <div className="flex items-center justify-between space-y-2">
                             <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
                             <div className="flex items-center space-x-2">
@@ -122,6 +160,17 @@ export default function Page() {
                                     <p className="text-xs text-muted-foreground">
                                         {formatPercentage(stats.percentageChanges.incoming)} from last month
                                     </p>
+                                    <div className="h-[40px] mt-3">
+                                        <LineChart data={incomingData} width={200} height={40}>
+                                            <Line
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="hsl(var(--primary))"
+                                                strokeWidth={2}
+                                                dot={{ r: 2, fill: "#fff" }}
+                                            />
+                                        </LineChart>
+                                    </div>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -136,6 +185,17 @@ export default function Page() {
                                     <p className="text-xs text-muted-foreground">
                                         {formatPercentage(stats.percentageChanges.recieved)} from last month
                                     </p>
+                                    <div className="h-[40px] mt-3">
+                                        <LineChart data={receivedData} width={200} height={40}>
+                                            <Line
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="hsl(var(--primary))"
+                                                strokeWidth={2}
+                                                dot={{ r: 2, fill: "#fff" }}
+                                            />
+                                        </LineChart>
+                                    </div>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -148,6 +208,17 @@ export default function Page() {
                                     <p className="text-xs text-muted-foreground">
                                         {formatPercentage(stats.percentageChanges.outgoing)} from last month
                                     </p>
+                                    <div className="h-[40px] mt-3">
+                                        <LineChart data={outgoingData} width={200} height={40}>
+                                            <Line
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="hsl(var(--primary))"
+                                                strokeWidth={2}
+                                                dot={{ r: 2, fill: "#fff" }}
+                                            />
+                                        </LineChart>
+                                    </div>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -162,6 +233,17 @@ export default function Page() {
                                     <p className="text-xs text-muted-foreground">
                                         {formatPercentage(stats.percentageChanges.completed)} from last month
                                     </p>
+                                    <div className="h-[40px] mt-3">
+                                        <LineChart data={completedData} width={200} height={40}>
+                                            <Line
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="hsl(var(--primary))"
+                                                strokeWidth={2}
+                                                dot={{ r: 2, fill: "#fff" }}
+                                            />
+                                        </LineChart>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </div>
