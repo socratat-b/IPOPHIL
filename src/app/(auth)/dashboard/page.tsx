@@ -1,18 +1,21 @@
 "use client"
 
-import RecentDocuments from "@/components/custom/dashboard/recent-documents"
-
-import { useMemo } from "react"
-import { Icons } from "@/components/ui/icons"
-import { formatPercentage } from "@/lib/controls"
-import { Stats, StatusCounts } from "@/lib/types"
-import { useDocuments } from "@/lib/context/document-context"
-import { Overview } from "@/components/custom/dashboard/overview"
 import { DashboardHeader } from "@/components/custom/dashboard/header"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import { Overview } from "@/components/custom/dashboard/overview"
+import { Icons } from "@/components/ui/icons"
+import RecentDocuments from "@/components/custom/dashboard/recent-documents"
+import { useDocuments } from "@/lib/context/document-context"
+import { useMemo } from "react"
+import { Stats, StatusCounts } from "@/lib/types"
 import { AddDocumentButton } from "@/components/custom/common/add-document-button"
-import { Line, LineChart} from "recharts"
-import { Calendar } from "@/components/ui/calendar"
+import { Line, LineChart } from "recharts"
 
 // Sample data for the sparkline charts
 const incomingData = [
@@ -122,7 +125,9 @@ export default function Page() {
             .slice(0, 4)
     }, [documents])
 
-
+    const formatPercentage = (value: number) => {
+        return `${value > 0 ? '+' : ''}${value}%`
+    }
 
     return (
         <>
@@ -137,7 +142,7 @@ export default function Page() {
                         <div className="flex items-center justify-between space-y-2">
                             <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
                             <div className="flex items-center space-x-2">
-                                <AddDocumentButton title={"Receive"} actionType={"Receive"} variant={"secondary"} />
+                                <AddDocumentButton title={"Receive"} actionType={"Receive"} variant={"outline"} />
                                 <AddDocumentButton title={"Release"} actionType={"Release"} variant={"destructive"} />
                                 <AddDocumentButton title={"Add Document"} actionType={"Create"} variant={"default"} />
                             </div>
@@ -155,6 +160,17 @@ export default function Page() {
                                     <p className="text-xs text-muted-foreground">
                                         {formatPercentage(stats.percentageChanges.incoming)} from last month
                                     </p>
+                                    <div className="h-[40px] mt-3">
+                                        <LineChart data={incomingData} width={200} height={40}>
+                                            <Line
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="hsl(var(--primary))"
+                                                strokeWidth={2}
+                                                dot={{ r: 2, fill: "#fff" }}
+                                            />
+                                        </LineChart>
+                                    </div>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -169,6 +185,17 @@ export default function Page() {
                                     <p className="text-xs text-muted-foreground">
                                         {formatPercentage(stats.percentageChanges.recieved)} from last month
                                     </p>
+                                    <div className="h-[40px] mt-3">
+                                        <LineChart data={receivedData} width={200} height={40}>
+                                            <Line
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="hsl(var(--primary))"
+                                                strokeWidth={2}
+                                                dot={{ r: 2, fill: "#fff" }}
+                                            />
+                                        </LineChart>
+                                    </div>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -181,6 +208,17 @@ export default function Page() {
                                     <p className="text-xs text-muted-foreground">
                                         {formatPercentage(stats.percentageChanges.outgoing)} from last month
                                     </p>
+                                    <div className="h-[40px] mt-3">
+                                        <LineChart data={outgoingData} width={200} height={40}>
+                                            <Line
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="hsl(var(--primary))"
+                                                strokeWidth={2}
+                                                dot={{ r: 2, fill: "#fff" }}
+                                            />
+                                        </LineChart>
+                                    </div>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -195,6 +233,17 @@ export default function Page() {
                                     <p className="text-xs text-muted-foreground">
                                         {formatPercentage(stats.percentageChanges.completed)} from last month
                                     </p>
+                                    <div className="h-[40px] mt-3">
+                                        <LineChart data={completedData} width={200} height={40}>
+                                            <Line
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="hsl(var(--primary))"
+                                                strokeWidth={2}
+                                                dot={{ r: 2, fill: "#fff" }}
+                                            />
+                                        </LineChart>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </div>
@@ -220,40 +269,8 @@ export default function Page() {
                             </Card>
                         </div>
                     </div>
-                    <Card className="col-span-4 h-2/3">
-                        <CardHeader>
-                            <CardTitle>Document Status</CardTitle>
-                        </CardHeader>
-                        <CardContent className="pl-2">
-                            <Overview documents={documents} />
-                        </CardContent>
-                    </Card>
                 </div>
-                
-                <div className="flex flex-col w-1/3 h-screen gap-5">
-                    
-                    <Card className="col-span-3 h-[50%] overflow-y-auto">
-                        <CardHeader>
-                            <CardTitle>My Recent Documents</CardTitle>
-                            <CardDescription>
-                                You have {documents.length} documents total.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            {/* Display all documents, but hide overflow */}
-                            <RecentDocuments documents={recentDocs} />
-                        </CardContent>
-                    </Card>
-
-                    <Card className="flex flex-1 justify-center items-center mb-12">
-                        <Calendar></Calendar>
-                    </Card>
-                    
-                </div>
-
             </div>
-                
-            
         </>
     )
 }
