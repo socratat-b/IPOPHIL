@@ -7,6 +7,7 @@ import { types, statuses, classifications } from "@/lib/faker/documents/data"
 import { DataTableFacetedFilter } from "@/components/custom/table/data-table-faceted-filter"
 import { ExportAllDocument } from "./control/export-document"
 import { AddDocumentButton } from "../common/add-document-button"
+import { Icons } from "@/components/ui/icons"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -36,12 +37,16 @@ export function DataTableToolbar<TData>({
     return (
         <div className="flex items-center justify-between">
             <div className="flex flex-1 items-center space-x-2">
-                <Input
-                    placeholder="Search documents..."
-                    value={(table.getColumn("document")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) => handleFilter("document", event.target.value)}
-                    className="h-8 w-[150px] lg:w-[250px]"
-                />
+                <div className="relative">
+                    <Icons.search className="absolute h-5 w-5 left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <Input
+                        placeholder="Search documents..."
+                        value={(table.getColumn("document")?.getFilterValue() as string) ?? ""}
+                        onChange={(event) => handleFilter("document", event.target.value)}
+                        className="h-8 w-[150px] lg:w-[250px] pl-10"  // add padding for the icon
+                    />
+                </div>
+
                 {table.getColumn("status") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("status")}

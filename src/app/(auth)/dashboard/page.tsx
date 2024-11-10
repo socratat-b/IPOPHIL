@@ -11,7 +11,46 @@ import { Overview } from "@/components/custom/dashboard/overview"
 import { DashboardHeader } from "@/components/custom/dashboard/header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AddDocumentButton } from "@/components/custom/common/add-document-button"
+import { Line, LineChart} from "recharts"
+import { Calendar } from "@/components/ui/calendar"
 
+// Sample data for the sparkline charts
+const incomingData = [
+    { value: 10 },
+    { value: 15 },
+    { value: 12 },
+    { value: 18 },
+    { value: 15 },
+    { value: 21 },
+    { value: 25 },
+]
+
+const receivedData = [
+    { value: 8 },
+    { value: 12 },
+    { value: 15 },
+    { value: 18 },
+    { value: 20 },
+    { value: 21 },
+]
+
+const outgoingData = [
+    { value: 5 },
+    { value: 8 },
+    { value: 6 },
+    { value: 9 },
+    { value: 7 },
+    { value: 8 },
+]
+
+const completedData = [
+    { value: 4 },
+    { value: 6 },
+    { value: 8 },
+    { value: 7 },
+    { value: 9 },
+    { value: 9 },
+]
 export default function Page() {
     const { documents } = useDocuments()
 
@@ -181,8 +220,40 @@ export default function Page() {
                             </Card>
                         </div>
                     </div>
+                    <Card className="col-span-4 h-2/3">
+                        <CardHeader>
+                            <CardTitle>Document Status</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pl-2">
+                            <Overview documents={documents} />
+                        </CardContent>
+                    </Card>
                 </div>
+                
+                <div className="flex flex-col w-1/3 h-screen gap-5">
+                    
+                    <Card className="col-span-3 h-[50%] overflow-y-auto">
+                        <CardHeader>
+                            <CardTitle>My Recent Documents</CardTitle>
+                            <CardDescription>
+                                You have {documents.length} documents total.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {/* Display all documents, but hide overflow */}
+                            <RecentDocuments documents={recentDocs} />
+                        </CardContent>
+                    </Card>
+
+                    <Card className="flex flex-1 justify-center items-center mb-12">
+                        <Calendar></Calendar>
+                    </Card>
+                    
+                </div>
+
             </div>
+                
+            
         </>
     )
 }
