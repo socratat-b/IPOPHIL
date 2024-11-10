@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { PieChart, Pie, Cell } from "recharts";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { Document } from "@/lib/faker/documents/schema";
 
 interface OverviewProps {
@@ -11,6 +11,7 @@ interface OverviewProps {
 export function Overview({ documents }: OverviewProps) {
     const [chartWidth, setChartWidth] = useState(0);
     const [chartHeight, setChartHeight] = useState(0);
+    const [isClickedOutside, setIsClickedOutside] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -18,6 +19,19 @@ export function Overview({ documents }: OverviewProps) {
             setChartWidth(containerRef.current.offsetWidth);
             setChartHeight(containerRef.current.offsetHeight);
         }
+
+        const handleClickOutside = (event: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                setIsClickedOutside(true);
+                setTimeout(() => setIsClickedOutside(false), 300); // Reset after animation
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
     }, []);
 
     const data = documents.reduce((acc, doc) => {
@@ -46,13 +60,24 @@ export function Overview({ documents }: OverviewProps) {
 
     function getStatusColor(status: string) {
         const colors = {
-            Incoming: '#E879F9',    // Pink
-            Received: '#93C5FD',    // Light Blue
-            Outgoing: '#FB923C',    // Orange
-            Completed: '#4ADE80',   // Green
-            For_dispatch: '#A78BFA' // Purple
+            Incoming: '#E879F9',
+            Received: '#93C5FD',
+            Outgoing: '#FB923C',
+            Completed: '#4ADE80',
+            For_dispatch: '#A78BFA'
         };
         return colors[status as keyof typeof colors] || '#CBD5E1';
+    }
+
+    function getStatusIcon(status: string) {
+        const icons = {
+            Incoming: "📥",
+            Received: "📬",
+            Outgoing: "📤",
+            Completed: "✅",
+            For_dispatch: "📦"
+        };
+        return icons[status as keyof typeof icons] || "📄";
     }
 
     return (
@@ -70,19 +95,34 @@ export function Overview({ documents }: OverviewProps) {
                             data={data}
                             cx={chartWidth / 2}
                             cy={chartHeight / 2}
-                            innerRadius={90}  // Adjusted for thicker appearance
+                            innerRadius={90}
                             outerRadius={120}
-                            paddingAngle={5}  // Increased padding for a modern look
+                            paddingAngle={5}
                             dataKey="value"
+                            animationDuration={800}
+                            isAnimationActive={true}
                         >
                             {data.map((entry, index) => (
-                                <Cell 
-                                    key={`cell-${index}`} 
+                                <Cell
+                                    key={`cell-${index}`}
                                     fill={entry.color}
                                     strokeWidth={0}
+                                    style={{
+                                        transform: isClickedOutside ? "scale(1.05)" : "scale(1)",
+                                        transition: "transform 0.3s ease-in-out",
+                                        cursor: "pointer"
+                                    }}
                                 />
                             ))}
                         </Pie>
+                        <Tooltip
+                            formatter={(value, name, props) => [
+                                `${value} documents`,
+                                `${name} - ${(props.payload as any).percentage}%`
+                            ]}
+                            contentStyle={{ borderRadius: '8px', padding: '10px', fontSize: '0.9rem' }}
+                            labelStyle={{ fontWeight: 'bold' }}
+                        />
                     </PieChart>
                 )}
             </div>
@@ -90,7 +130,10 @@ export function Overview({ documents }: OverviewProps) {
             <div className="flex flex-wrap justify-center gap-4 mt-6 text-gray-600">
                 {data.map((entry, index) => (
                     <div key={index} className="flex items-center gap-2 text-sm">
-                        <div className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
+                        <div className="flex items-center gap-1">
+                            <span className="text-lg">{getStatusIcon(entry.name)}</span>
+                            <span className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
+                        </div>
                         <span className="text-gray-800 font-semibold">{entry.percentage}%</span>
                         <span>{entry.name.replace(/_/g, ' ')}</span>
                     </div>
