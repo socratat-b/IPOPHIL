@@ -18,6 +18,17 @@ export const formatPercentage = (value: number) => {
     return `${value > 0 ? '+' : ''}${value}%`
 }
 
+export const formatTime = (timestamp: string) => {
+    try {
+        const date = new Date(timestamp);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    } catch (error) {
+        return '';
+    }
+};
+
 // Function to get status variant
 export const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (status.toLowerCase()) {
