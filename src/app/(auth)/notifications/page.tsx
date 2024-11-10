@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { DashboardHeader } from '@/components/custom/dashboard/header';
+import { formatTime } from '@/lib/controls';
 
 type NotificationType = 'document' | 'system' | 'reminder' | 'action';
 type NotificationStatus = 'read' | 'unread';
@@ -36,8 +37,7 @@ const notifications: Notification[] = [
         status: 'unread',
         priority: 'high',
         icon: 'fileText'
-    },
-    {
+    }, {
         id: 2,
         type: 'system',
         title: 'System Maintenance',
@@ -77,6 +77,7 @@ const notifications: Notification[] = [
         priority: 'low',
         icon: 'badgeCheck'
     }
+
 ];
 
 const NotificationItem = ({ notification }: { notification: Notification }) => {
@@ -91,22 +92,32 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
         }
     };
 
-    const renderIcon = () => {
-        const Icon = Icons[notification.icon];
-        return Icon ? <Icons.bell className="h-4 w-4" /> : <Icons.bell className="h-4 w-4" />;
+    const getNotificationIcon = () => {
+        switch (notification.type) {
+            case 'document':
+                return <Icons.fileText className="h-4 w-4" />;
+            case 'system':
+                return <Icons.settings className="h-4 w-4" />;
+            case 'reminder':
+                return <Icons.calendarClock className="h-4 w-4" />;
+            case 'action':
+                return <Icons.bell className="h-4 w-4" />;
+            default:
+                return <Icons.bell className="h-4 w-4" />;
+        }
     };
 
     return (
         <div className={`p-4 border-b last:border-b-0 ${notification.status === 'unread' ? 'bg-muted/50' : ''}`}>
             <div className="flex items-start gap-4">
                 <div className="p-2 rounded-full bg-muted">
-                    {renderIcon()}
+                    {getNotificationIcon()}
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-1">
                         <p className="text-sm font-medium truncate">{notification.title}</p>
                         <span className="text-xs text-muted-foreground whitespace-nowrap">
-                            {new Date(notification.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {formatTime(notification.timestamp)}
                         </span>
                     </div>
                     <p className="text-sm text-muted-foreground mb-2">{notification.message}</p>
@@ -126,12 +137,12 @@ const NotificationItem = ({ notification }: { notification: Notification }) => {
 
 function NotificationList({ notifications }: { notifications: Notification[] }) {
     return (
-        <Card className="mt-4">
+        <Card>
             <CardHeader className="pb-3">
                 <CardTitle>Recent Notifications</CardTitle>
             </CardHeader>
             <CardContent>
-                <ScrollArea className="h-[calc(100vh-300px)] pr-4">
+                <ScrollArea className="pr-4">
                     <div className="space-y-1">
                         {notifications.map((notification) => (
                             <NotificationItem key={notification.id} notification={notification} />
@@ -174,19 +185,19 @@ export default function NotificationsPage() {
                         </Button>
                     </div>
 
-                    <TabsContent value="all" className="space-y-4">
+                    <TabsContent value="all">
                         <NotificationList notifications={filterNotifications('all')} />
                     </TabsContent>
-                    <TabsContent value="unread" className="space-y-4">
+                    <TabsContent value="unread">
                         <NotificationList notifications={filterNotifications('unread')} />
                     </TabsContent>
-                    <TabsContent value="document" className="space-y-4">
+                    <TabsContent value="document">
                         <NotificationList notifications={filterNotifications('document')} />
                     </TabsContent>
-                    <TabsContent value="system" className="space-y-4">
+                    <TabsContent value="system">
                         <NotificationList notifications={filterNotifications('system')} />
                     </TabsContent>
-                    <TabsContent value="reminder" className="space-y-4">
+                    <TabsContent value="reminder">
                         <NotificationList notifications={filterNotifications('reminder')} />
                     </TabsContent>
                 </Tabs>

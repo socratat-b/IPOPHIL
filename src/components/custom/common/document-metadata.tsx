@@ -1,7 +1,7 @@
 import { format, parseISO } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Icons } from "@/components/ui/icons";
-import { formatBadgeTextAllCaps, getStatusVariant } from "@/lib/controls";
+import { formatBadgeText, formatBadgeTextAllCaps, getStatusVariant } from "@/lib/controls";
 import { Separator } from "@/components/ui/separator";
 import { Document } from "@/lib/faker/documents/schema";
 import { Card, CardContent } from "@/components/ui/card";
@@ -117,7 +117,7 @@ const DocumentMetadata = ({ item }: { item: Document }) => (
                         value={item.created_by}
                         subValue={{
                             label: "Office",
-                            value: item.origin_office,
+                            value: formatBadgeText(item.origin_office),
                             variant: "secondary",
                         }}
                         tooltip="Document creator and their office of origin"
