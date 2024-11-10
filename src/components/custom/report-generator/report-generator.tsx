@@ -3,7 +3,6 @@
 import React from 'react';
 import { format, startOfDay, endOfDay, parseISO } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import { Document } from '@/lib/faker/documents/schema';
@@ -27,7 +26,6 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ data }) => {
     const [selectedItem, setSelectedItem] = React.useState<Document | null>(null);
     const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false);
     const [filters, setFilters] = React.useState<FilterValues>(defaultFilters);
-    const printRef = React.useRef<HTMLDivElement>(null);
 
     const filteredData = React.useMemo(() => {
         if (!data || !Array.isArray(data)) return [];

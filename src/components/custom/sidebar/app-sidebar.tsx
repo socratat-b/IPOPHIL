@@ -1,7 +1,13 @@
 "use client"
 
-import { NavMain } from "@/components/custom/sidebar/nav-main"
-import { NavUser } from "@/components/custom/sidebar/nav-user"
+import { ComponentProps, useMemo } from "react"
+import Image from "next/image"
+import { useNavigationStore } from "@/lib/stores/navigation"
+import { navigationConfig, transformToMainNavItem, transformToSecondaryNavItem } from "@/lib/config/navigation"
+import { useDocuments } from "@/lib/context/document-context"
+import { NavMainItem, NavSecondaryItem } from "@/lib/types/navigation"
+import { NavMain } from "./nav-main"
+import { NavSecondary } from "./nav-secondary"
 import {
   Sidebar,
   SidebarContent,
@@ -11,134 +17,125 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import Image from "next/image"
-import { NavSecondary } from "./nav-secondary"
-import { Icons } from "@/components/ui/icons"
-import { useMemo } from "react"
-import { useDocuments } from "@/lib/context/document-context"
-import { ComponentProps } from "react"
+import { NavUser } from "./nav-user"
 
-export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
+type DocumentStatus = 'incoming' | 'recieved' | 'outgoing' | 'for_dispatch' | 'completed'
+
+interface DocumentCounts {
+  incoming: number
+  received: number
+  outgoing: number
+  forDispatch: number
+  completed: number
+  total: number
+}
+
+interface Document {
+  status: string
+  date_viewed?: string | null
+}
+
+type AppSidebarProps = ComponentProps<typeof Sidebar>
+
+export function AppSidebar({ ...props }: AppSidebarProps) {
   const { documents } = useDocuments()
+  const {
+    visibleMainItems,
+    visibleSecondaryItems,
+    visibleSubItems,
+    showUserSection
+  } = useNavigationStore()
 
   const documentCounts = useMemo(() => {
-    const counts = {
+    const counts: DocumentCounts = {
       incoming: 0,
       received: 0,
       outgoing: 0,
       forDispatch: 0,
       completed: 0,
       total: 0
-    };
+    }
 
-    documents.forEach(doc => {
+    documents.forEach((doc: Document) => {
       if (!doc.date_viewed) {
-        switch (doc.status.toLowerCase()) {
+        const status = doc.status.toLowerCase() as DocumentStatus
+        switch (status) {
           case 'incoming':
-            counts.incoming++;
-            counts.total++;
-            break;
+            counts.incoming++
+            counts.total++
+            break
           case 'recieved':
-            counts.received++;
-            counts.total++;
-            break;
+            counts.received++
+            counts.total++
+            break
           case 'outgoing':
-            counts.outgoing++;
-            counts.total++;
-            break;
+            counts.outgoing++
+            counts.total++
+            break
           case 'for_dispatch':
-            counts.forDispatch++;
-            counts.total++;
-            break;
+            counts.forDispatch++
+            counts.total++
+            break
           case 'completed':
-            counts.completed++;
-            counts.total++;
-            break;
+            counts.completed++
+            counts.total++
+            break
         }
       }
-    });
+    })
 
-    return counts;
-  }, [documents]);
+    return counts
+  }, [documents])
 
-  const data = {
-    user: {
-      name: "user",
-      email: "user@gmail.com",
-      avatar: "/images/user-random-1.jpg",
-    },
-    navMain: [
-      {
-        title: "Dashboard",
-        url: "/dashboard",
-        icon: Icons.layoutDashboard,
-      },
-      {
-        title: "Documents",
-        url: "/documents",
-        icon: Icons.building,
-        isActive: false,
-        notViewedCount: documentCounts.total - documentCounts.completed,
-        items: [
-          {
-            title: "For Dispatch",
-            url: "/documents/dispatch",
-            notViewedCount: documentCounts.forDispatch,
-          },
-          {
-            title: "Intransit",
-            url: "/documents/intransit",
-            notViewedCount: documentCounts.received,
-          },
-          {
-            title: "Received",
-            url: "/documents/recieved",
-            notViewedCount: documentCounts.received,
-          },
-          {
-            title: "Completed",
-            url: "/completed",
-            icon: Icons.leafyGreen,
-            notViewedCount: documentCounts.completed,
-          },
-        ],
-      },
-      {
-        title: "Management",
-        url: "/users",
-        icon: Icons.settings,
-        items: [
-          {
-            title: "Users",
-            url: "/users",
-            icon: Icons.user2,
-          },
-          {
-            title: "Type",
-            url: "/documents/intransit",
-          },
-        ],
-      },
-      {
-        title: "Reports",
-        url: "/reports",
-        icon: Icons.printer,
-      },
-    ],
-    navSecondary: [
-      {
-        title: "Customer Support",
-        url: "#",
-        icon: Icons.lifeBuoy,
-      },
-      {
-        title: "Send Feedback",
-        url: "#",
-        icon: Icons.send,
-      },
-    ],
+  // Transform and filter main navigation items
+  const visibleMainNav = useMemo<NavMainItem[]>(() => {
+    return navigationConfig.mainNav
+      .filter(item => visibleMainItems.includes(item.id))
+      .map(item => {
+        const transformed = transformToMainNavItem(item)
 
-  }
+        if (item.id === 'documents') {
+          transformed.notViewedCount = documentCounts.total - documentCounts.completed
+
+          if (transformed.items) {
+            transformed.items = transformed.items.map(subItem => {
+              const updatedSubItem = { ...subItem }
+              const subItemId = subItem.title.toLowerCase().replace(/\s+/g, '_')
+
+              switch (subItemId) {
+                case 'for_dispatch':
+                  updatedSubItem.notViewedCount = documentCounts.forDispatch
+                  break
+                case 'intransit':
+                  updatedSubItem.notViewedCount = documentCounts.outgoing
+                  break
+                case 'received':
+                  updatedSubItem.notViewedCount = documentCounts.received
+                  break
+                case 'completed':
+                  updatedSubItem.notViewedCount = documentCounts.completed
+                  break
+              }
+
+              return updatedSubItem
+            }).filter(subItem =>
+              visibleSubItems[item.id]?.includes(
+                subItem.title.toLowerCase().replace(/\s+/g, '_')
+              )
+            )
+          }
+        }
+
+        return transformed
+      })
+  }, [visibleMainItems, visibleSubItems, documentCounts])
+
+  // Transform and filter secondary navigation items
+  const visibleSecondaryNav = useMemo<NavSecondaryItem[]>(() => {
+    return navigationConfig.secondaryNav
+      .filter(item => visibleSecondaryItems.includes(item.id))
+      .map(transformToSecondaryNavItem)
+  }, [visibleSecondaryItems])
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -147,8 +144,14 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
-                  <Image src="/logo.svg" alt="Logo" width={32} height={32} />
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
+                  <Image
+                    src="/logo.svg"
+                    alt="Logo"
+                    width={32}
+                    height={32}
+                    priority
+                  />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">IPHOPHIL</span>
@@ -159,13 +162,23 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavMain items={visibleMainNav} />
+        <NavSecondary items={visibleSecondaryNav} className="mt-auto" />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
+
+      {showUserSection && (
+        <SidebarFooter>
+          <NavUser
+            user={{
+              name: "user",
+              email: "user@gmail.com",
+              avatar: "/images/user-random-1.jpg",
+            }}
+          />
+        </SidebarFooter>
+      )}
     </Sidebar>
   )
 }

@@ -1,5 +1,5 @@
+// DocumentDialog.tsx
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Document } from "@/lib/faker/documents/schema"
 import { Icons } from "@/components/ui/icons"
@@ -12,54 +12,6 @@ interface DocumentDialogProps {
     open: boolean
     onClose: () => void
 }
-
-interface MetadataItemProps {
-    icon: React.ElementType
-    label: string
-    value: string
-    subValue?: {
-        label: string
-        value: string
-        variant?: "default" | "secondary" | "destructive" | "outline"
-    }
-    variant?: "default" | "secondary" | "destructive" | "outline"
-}
-
-const MetadataItem = ({
-    icon: Icon,
-    label,
-    value,
-    subValue,
-    variant
-}: MetadataItemProps) => (
-    <div className="space-y-1.5">
-        <div className="flex items-center gap-2">
-            <Icon className="h-4 w-4" />
-            <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">{label}:</span>
-                {variant ? (
-                    <Badge variant={variant}>
-                        {value}
-                    </Badge>
-                ) : (
-                    <span className="text-sm font-medium">{value}</span>
-                )}
-            </div>
-        </div>
-        {subValue && (
-            <div className="ml-6 flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">{subValue.label}:</span>
-                {subValue.variant ? (
-                    <Badge variant={subValue.variant}>
-                        {subValue.value}
-                    </Badge>
-                ) : (
-                    <span className="text-sm font-medium">{subValue.value}</span>
-                )}
-            </div>
-        )}
-    </div>
-);
 
 export const DocumentDialog: React.FC<DocumentDialogProps> = ({ item, open, onClose }) => {
     if (!item) return null;

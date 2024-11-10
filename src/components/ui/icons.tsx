@@ -51,7 +51,6 @@ import {
     LifeBuoy,
     PieChart,
     Send,
-    Search,
     User2,
     Building,
     LucideSend,
@@ -60,6 +59,7 @@ import {
     UserCheck,
     MessageSquare,
     CalendarClock,
+    SearchIcon,
 
     // mar-note: this commented is not to be used, but please do not remove
     // type Icon as LucideIcon,
@@ -138,7 +138,6 @@ export const Icons = {
     map: Map,
     pieChart: PieChart,
     send: Send,
-    search: Search,
     user2: User2,
     building: Building,
     helpCircle: HelpCircle,
@@ -148,6 +147,7 @@ export const Icons = {
     userCheck: UserCheck,
     messageSquare: MessageSquare,
     calendarClock: CalendarClock,
+    search: SearchIcon,
 
     /**
      * Custom Icons below  
@@ -285,4 +285,6 @@ export const Icons = {
             <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
         </svg>
     ),
-};
+} as const
+
+export type IconsType = typeof Icons

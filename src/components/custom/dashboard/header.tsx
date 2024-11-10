@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { UserHeaderNav } from '@/components/custom/dashboard/user-header-nav';
 import { ThemeChange } from '../theme/theme-change';
 
 interface DashboardHeaderProps {
@@ -67,7 +66,7 @@ export function DashboardHeader({ breadcrumbs = [] }: DashboardHeaderProps) {
                     <ThemeChange /> 
                 */}
                 {/* <UserHeaderNav /> */}
-                <ThemeChange/>
+                <ThemeChange />
             </div>
         </header>
     );
