@@ -16,7 +16,7 @@ import {
 
 import { documentTypesSchema, DocumentType } from "@/lib/dms/schema"
 import { toast } from "sonner"
-
+import { EditDocumentTypeDialog } from "./control/edit-document-type-dialog"
 
 interface DataTableRowActionsProps<TData> {
     row: Row<TData>
@@ -26,6 +26,7 @@ export function DataTableRowActions<TData>({
     row,
 }: DataTableRowActionsProps<TData>) {
     const [selectedItem, setSelectedItem] = useState<DocumentType | null>(null);
+    const [isEditOpen, setIsEditOpen] = useState(false); // State to manage edit dialog visibility
     const documentType = documentTypesSchema.parse(row.original)
 
     const handleAction = (e: React.MouseEvent, action: () => void) => {
@@ -38,9 +39,10 @@ export function DataTableRowActions<TData>({
         setSelectedItem(documentType);
     };
 
-    // Function to edit document type
+    // Function to open edit dialog
     const handleEdit = () => {
-        toast.info("Edit functionality coming soon");
+        setSelectedItem(documentType);
+        setIsEditOpen(true);
     };
 
     // Function to toggle active status
@@ -52,6 +54,13 @@ export function DataTableRowActions<TData>({
     // Function to delete document type
     const handleDelete = () => {
         toast.info("Delete functionality coming soon");
+    };
+
+    // Function to handle form submission in edit dialog
+    const handleEditSubmit = (updatedData: DocumentType) => {
+        console.log("Updated data:", updatedData);
+        toast.success("Document type updated successfully!");
+        setIsEditOpen(false);
     };
 
     return (
@@ -98,7 +107,15 @@ export function DataTableRowActions<TData>({
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            
+
+            {/* Edit Document Type Dialog */}
+            {isEditOpen && (
+                <EditDocumentTypeDialog
+                    documentType={selectedItem}
+                    onClose={() => setIsEditOpen(false)}
+                    onSubmit={handleEditSubmit}
+                />
+            )}
         </>
     )
 }

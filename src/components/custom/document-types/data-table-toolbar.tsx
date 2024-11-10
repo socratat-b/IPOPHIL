@@ -5,7 +5,7 @@ import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/custom/table/data-table-view-options";
-import { AddDocumentButton } from "../common/add-document-button";
+import { AddDocumentTypeButton } from "./control/add-document-type-button";
 import { useState, useCallback } from "react";
 
 interface DataTableToolbarProps<TData> {
@@ -72,9 +72,10 @@ export function DataTableToolbar<TData>({ table, onAdd }: DataTableToolbarProps<
                 )}
             </div>
             <div className="flex items-center space-x-2">
-                <AddDocumentButton onAdd={onAdd} title="Receive" actionType="Receive" />
+                <AddDocumentTypeButton onAdd={onAdd} title="Add Type" actionType="Create" />
                 <DataTableViewOptions table={table} />
             </div>
+
         </div>
     );
 }

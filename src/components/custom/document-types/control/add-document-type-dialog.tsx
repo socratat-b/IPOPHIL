@@ -1,69 +1,63 @@
-"use client"
+// src/components/custom/document-types/control/add-document-type-dialog.tsx
+"use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { toast } from "sonner"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { createDocumentSchema } from "@/lib/validations/documents/create_documents"
-import { scanDocumentSchema } from "@/lib/validations/documents/scan_documents"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { HelpScanCard } from "@/components/custom/common/help-scan-card"
-import { z } from "zod"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { HelpScanCard } from "@/components/custom/common/help-scan-card";
+import { z } from "zod";
+
+// Schema
+const createDocumentTypeSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    description: z.string().min(1, "Description is required"),
+});
+
+const scanDocumentTypeSchema = z.object({
+    code: z.string().min(1, "Code is required"),
+    description: z.string().min(1, "Description is required"),
+});
 
 // Separate components for each form type
-const CreateDocumentForm = ({ onSubmit, onClose }: {
-    onSubmit: (data: CreateDocumentData) => void;
+const CreateDocumentTypeForm = ({ onSubmit, onClose }: {
+    onSubmit: (data: CreateDocumentTypeData) => void;
     onClose: () => void;
 }) => {
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm<CreateDocumentData>({
-        resolver: zodResolver(createDocumentSchema),
+    const { register, handleSubmit, formState: { errors } } = useForm<CreateDocumentTypeData>({
+        resolver: zodResolver(createDocumentTypeSchema),
     });
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
             <div>
-                <label htmlFor="title" className="block mb-1">Subject/Title *</label>
+                <label htmlFor="name" className="block mb-1">Type Name *</label>
                 <Input
-                    id="title"
-                    placeholder="Enter document title"
-                    {...register("title")}
+                    id="name"
+                    placeholder="Enter document type name"
+                    {...register("name")}
                     className="w-full"
                 />
-                {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
+                {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
             </div>
             <div>
-                <label htmlFor="classification" className="block mb-1">Classification *</label>
-                <Select onValueChange={(value) => setValue("classification", value)}>
-                    <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a classification" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="confidential">Confidential</SelectItem>
-                        <SelectItem value="marketing">Marketing</SelectItem>
-                        <SelectItem value="legal">Legal</SelectItem>
-                        <SelectItem value="hr">HR</SelectItem>
-                        <SelectItem value="financial">Financial</SelectItem>
-                    </SelectContent>
-                </Select>
-                {errors.classification && <p className="text-red-500 text-sm">{errors.classification.message}</p>}
-            </div>
-            <div>
-                <label htmlFor="type" className="block mb-1">Type *</label>
-                <Select onValueChange={(value) => setValue("type", value)}>
-                    <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="report">Report</SelectItem>
-                        <SelectItem value="meeting">Meeting</SelectItem>
-                        <SelectItem value="document">Document</SelectItem>
-                        <SelectItem value="email">Email</SelectItem>
-                    </SelectContent>
-                </Select>
-                {errors.type && <p className="text-red-500 text-sm">{errors.type.message}</p>}
+                <label htmlFor="description" className="block mb-1">Description *</label>
+                <Input
+                    id="description"
+                    placeholder="Enter description"
+                    {...register("description")}
+                    className="w-full"
+                />
+                {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
             </div>
 
             <Card>
@@ -76,11 +70,9 @@ const CreateDocumentForm = ({ onSubmit, onClose }: {
                 </CardHeader>
                 <CardContent>
                     <ul className="text-sm text-gray-500 list-disc list-inside">
-                        <li>Document Code</li>
-                        <li>Origin Office</li>
+                        <li>Type Code</li>
                         <li>Created By</li>
                         <li>Date Created</li>
-                        <li>Empty Logbook</li>
                     </ul>
                 </CardContent>
             </Card>
@@ -94,29 +86,39 @@ const CreateDocumentForm = ({ onSubmit, onClose }: {
                 </DialogClose>
             </div>
         </form>
-    )
+    );
 }
 
-const ScanDocumentForm = ({ onSubmit, onClose }: {
-    onSubmit: (data: ScanDocumentData) => void;
+const ScanDocumentTypeForm = ({ onSubmit, onClose }: {
+    onSubmit: (data: ScanDocumentTypeData) => void;
     onClose: () => void;
     actionType: string;
 }) => {
-    const { register, handleSubmit, formState: { errors } } = useForm<ScanDocumentData>({
-        resolver: zodResolver(scanDocumentSchema),
+    const { register, handleSubmit, formState: { errors } } = useForm<ScanDocumentTypeData>({
+        resolver: zodResolver(scanDocumentTypeSchema),
     });
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
             <div>
-                <label htmlFor="code" className="block mb-1">Document Code</label>
+                <label htmlFor="code" className="block mb-1">Type Code</label>
                 <Input
                     id="code"
-                    placeholder="Scan or Manually enter document code"
+                    placeholder="Scan or manually enter type code"
                     {...register("code")}
                     className="w-full"
                 />
                 {errors.code && <p className="text-red-500 text-sm">{errors.code.message}</p>}
+            </div>
+            <div>
+                <label htmlFor="description" className="block mb-1">Description *</label>
+                <Input
+                    id="description"
+                    placeholder="Enter description"
+                    {...register("description")}
+                    className="w-full"
+                />
+                {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
             </div>
 
             <HelpScanCard />
@@ -130,25 +132,25 @@ const ScanDocumentForm = ({ onSubmit, onClose }: {
                 </DialogClose>
             </div>
         </form>
-    )
+    );
 }
 
 // Types
-type CreateDocumentData = z.infer<typeof createDocumentSchema>;
-type ScanDocumentData = z.infer<typeof scanDocumentSchema>;
+type CreateDocumentTypeData = z.infer<typeof createDocumentTypeSchema>;
+type ScanDocumentTypeData = z.infer<typeof scanDocumentTypeSchema>;
 type ActionType = "Receive" | "Release" | "Create";
 
-interface AddDocumentDialogProps {
+interface AddDocumentTypeDialogProps {
     onCloseAction: () => void;
     actionType: ActionType;
 }
 
 // Main Dialog Component
-export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAction, actionType }) => {
-    const handleCreateSubmit = (data: CreateDocumentData) => {
-        console.log('Create document:', data);
-        toast.success("Document Created", {
-            description: "Your document has been successfully created.",
+export const AddDocumentTypeDialog: React.FC<AddDocumentTypeDialogProps> = ({ onCloseAction, actionType }) => {
+    const handleCreateSubmit = (data: CreateDocumentTypeData) => {
+        console.log('Create document type:', data);
+        toast.success("Document Type Created", {
+            description: "Your document type has been successfully created.",
             action: {
                 label: "Undo",
                 onClick: () => console.log("Undo"),
@@ -157,10 +159,10 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAct
         onCloseAction();
     };
 
-    const handleScanSubmit = (data: ScanDocumentData) => {
-        console.log('Scan document:', data);
-        toast.success(`Document ${actionType}d`, {
-            description: `Your document has been successfully ${actionType.toLowerCase()}d.`,
+    const handleScanSubmit = (data: ScanDocumentTypeData) => {
+        console.log('Scan document type:', data);
+        toast.success(`Document Type ${actionType}d`, {
+            description: `Your document type has been successfully ${actionType.toLowerCase()}d.`,
         });
         onCloseAction();
     };
@@ -169,13 +171,13 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAct
         <Dialog open onOpenChange={(isOpen) => !isOpen && onCloseAction()}>
             <DialogContent className="max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{`${actionType} Document`}</DialogTitle>
+                    <DialogTitle>{`${actionType} Document Type`}</DialogTitle>
                 </DialogHeader>
 
                 {actionType === "Create" ? (
-                    <CreateDocumentForm onSubmit={handleCreateSubmit} onClose={onCloseAction} />
+                    <CreateDocumentTypeForm onSubmit={handleCreateSubmit} onClose={onCloseAction} />
                 ) : (
-                    <ScanDocumentForm
+                    <ScanDocumentTypeForm
                         onSubmit={handleScanSubmit}
                         onClose={onCloseAction}
                         actionType={actionType}
