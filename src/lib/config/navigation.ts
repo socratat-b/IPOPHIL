@@ -95,7 +95,7 @@ export const navigationConfig: NavigationConfiguration = {
                 {
                     id: "users",
                     title: "Users",
-                    url: "/management/users",
+                    url: "/users",
                 },
                 {
                     id: "types",

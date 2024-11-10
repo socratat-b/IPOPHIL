@@ -1,24 +1,12 @@
 "use client"
 
+import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { navigationConfig } from "@/lib/config/navigation"
 import { useNavigationStore } from "@/lib/stores/navigation"
 import { NavConfig, hasSubItems } from "@/lib/types/navigation"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-
-// Define the form schema
-const displayFormSchema = z.object({
-    mainItems: z.array(z.string()),
-    secondaryItems: z.array(z.string()),
-    subItems: z.record(z.array(z.string())),
-    showUserSection: z.boolean(),
-})
-
-type DisplayFormValues = z.infer<typeof displayFormSchema>
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form"
 
 export function SidebarDisplayForm() {
     const {
@@ -33,9 +21,7 @@ export function SidebarDisplayForm() {
         resetToDefault,
     } = useNavigationStore()
 
-    // Initialize form with current values
-    const form = useForm<DisplayFormValues>({
-        resolver: zodResolver(displayFormSchema),
+    const form = useForm({
         defaultValues: {
             mainItems: visibleMainItems,
             secondaryItems: visibleSecondaryItems,
@@ -44,9 +30,8 @@ export function SidebarDisplayForm() {
         },
     })
 
-    // Helper function to render sub-items if they exist
     const renderSubItems = (item: NavConfig) => {
-        if (!hasSubItems(item) || !visibleMainItems.includes(item.id)) {
+        if (!hasSubItems(item)) {
             return null
         }
 
@@ -61,12 +46,15 @@ export function SidebarDisplayForm() {
                             <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                                 <FormControl>
                                     <Checkbox
-                                        checked={visibleSubItems[item.id]?.includes(subItem.id)}
+                                        checked={(visibleSubItems[item.id] || []).includes(subItem.id)}
                                         onCheckedChange={() => toggleSubItem(item.id, subItem.id)}
+                                        disabled={!visibleMainItems.includes(item.id)}
                                     />
                                 </FormControl>
                                 <div className="space-y-1 leading-none">
-                                    <FormLabel>{subItem.title}</FormLabel>
+                                    <FormLabel className={!visibleMainItems.includes(item.id) ? "text-muted-foreground" : ""}>
+                                        {subItem.title}
+                                    </FormLabel>
                                 </div>
                             </FormItem>
                         )}
@@ -106,8 +94,6 @@ export function SidebarDisplayForm() {
                                     </FormItem>
                                 )}
                             />
-
-                            {/* Sub-items */}
                             {renderSubItems(item)}
                         </div>
                     ))}
