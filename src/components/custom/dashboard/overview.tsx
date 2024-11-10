@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ResponsiveContainer } from "recharts";
 import { Document } from "@/lib/faker/documents/schema";
 
 interface OverviewProps {
@@ -9,6 +9,7 @@ interface OverviewProps {
 }
 
 export function Overview({ documents }: OverviewProps) {
+    const [chartType, setChartType] = useState("Pie Chart");
     const [chartWidth, setChartWidth] = useState(0);
     const [chartHeight, setChartHeight] = useState(0);
     const [isClickedOutside, setIsClickedOutside] = useState(false);
@@ -23,7 +24,7 @@ export function Overview({ documents }: OverviewProps) {
         const handleClickOutside = (event: MouseEvent) => {
             if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
                 setIsClickedOutside(true);
-                setTimeout(() => setIsClickedOutside(false), 300); // Reset after animation
+                setTimeout(() => setIsClickedOutside(false), 300);
             }
         };
 
@@ -81,49 +82,82 @@ export function Overview({ documents }: OverviewProps) {
     }
 
     return (
-        <div className="w-full bg-white p-6 rounded-lg">
-            <div className="flex justify-between items-center mb-4">
-                <span className="text-lg font-semibold text-gray-700">
-                    Total Documents: <span className="font-extrabold text-black">{total}</span>
-                </span>
+        <div className="w-full bg-white rounded-lg relative" style={{ padding: '0px' }}>
+            <div className="absolute top-2 right-2 z-10">
+                <select
+                    value={chartType}
+                    onChange={(e) => setChartType(e.target.value)}
+                    className="px-3 py-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
+                    style={{ zIndex: 10 }}
+                >
+                    <option value="Pie Chart">Pie Chart</option>
+                    <option value="Bar Chart">Bar Chart</option>
+                    <option value="Line Chart">Line Chart</option>
+                </select>
             </div>
 
             <div ref={containerRef} className="relative h-[350px] flex justify-center items-center">
                 {chartWidth > 0 && chartHeight > 0 && (
-                    <PieChart width={chartWidth} height={chartHeight}>
-                        <Pie
-                            data={data}
-                            cx={chartWidth / 2}
-                            cy={chartHeight / 2}
-                            innerRadius={90}
-                            outerRadius={120}
-                            paddingAngle={5}
-                            dataKey="value"
-                            animationDuration={800}
-                            isAnimationActive={true}
-                        >
-                            {data.map((entry, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={entry.color}
-                                    strokeWidth={0}
-                                    style={{
-                                        transform: isClickedOutside ? "scale(1.05)" : "scale(1)",
-                                        transition: "transform 0.3s ease-in-out",
-                                        cursor: "pointer"
-                                    }}
+                    <>
+                        {chartType === "Pie Chart" && (
+                            <PieChart width={chartWidth} height={chartHeight}>
+                                <Pie
+                                    data={data}
+                                    cx={chartWidth / 2}
+                                    cy={chartHeight / 2}
+                                    innerRadius={90}
+                                    outerRadius={120}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                    animationDuration={800}
+                                    isAnimationActive={true}
+                                >
+                                    {data.map((entry, index) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={entry.color}
+                                            strokeWidth={0}
+                                            style={{
+                                                transform: isClickedOutside ? "scale(1.05)" : "scale(1)",
+                                                transition: "transform 0.3s ease-in-out",
+                                                cursor: "pointer"
+                                            }}
+                                        />
+                                    ))}
+                                </Pie>
+                                <Tooltip
+                                    formatter={(value, name, props) => [
+                                        `${value} documents`,
+                                        `${name} - ${(props.payload as any).percentage}%`
+                                    ]}
+                                    contentStyle={{ borderRadius: '8px', padding: '10px', fontSize: '0.9rem' }}
+                                    labelStyle={{ fontWeight: 'bold' }}
                                 />
-                            ))}
-                        </Pie>
-                        <Tooltip
-                            formatter={(value, name, props) => [
-                                `${value} documents`,
-                                `${name} - ${(props.payload as any).percentage}%`
-                            ]}
-                            contentStyle={{ borderRadius: '8px', padding: '10px', fontSize: '0.9rem' }}
-                            labelStyle={{ fontWeight: 'bold' }}
-                        />
-                    </PieChart>
+                            </PieChart>
+                        )}
+                        {chartType === "Bar Chart" && (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Bar dataKey="value" fill="#8884d8" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
+                        {chartType === "Line Chart" && (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Line type="monotone" dataKey="value" stroke="#8884d8" />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        )}
+                    </>
                 )}
             </div>
 
