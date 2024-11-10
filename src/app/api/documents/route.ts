@@ -14,6 +14,8 @@ export async function GET() {
         // Parse the data using the documentsSchema
         const documents = documentsSchema.array().parse(JSON.parse(data.toString()));
 
+        // mar-note: only fetch the documents that has status and not null, it means it is not archived (for now)
+
         // Sort the documents by date, latest to oldest
         const sortedDocuments = documents.sort((a, b) => {
             return compareDesc(new Date(a.date_created), new Date(b.date_created));

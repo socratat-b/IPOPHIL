@@ -9,7 +9,7 @@
     "lint": "next lint",
     "cy:open": "cypress open",
     "generate:seed": "tsc --project tsconfig.seed.json",
-    "seed": "node dist/lib/faker/management/seed.js",
+    "seed": "node dist/lib/dms/seed.js",
     "seed:all": "pnpm generate:seed && pnpm seed"
   },
   "dependencies": {

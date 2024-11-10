@@ -1,5 +1,3 @@
-// src/lib/faker/management/data.ts
-
 export const user_role = [
     {
         value: "admin",
@@ -72,37 +70,6 @@ export const doc_status = [
     }
 ];
 
-export const doc_type = [
-    {
-        value: "memo",
-        label: "Memo",
-    },
-    {
-        value: "letter",
-        label: "Letter",
-    },
-    {
-        value: "report",
-        label: "Report",
-    },
-    {
-        value: "resolution",
-        label: "Resolution",
-    },
-    {
-        value: "contract",
-        label: "Contract",
-    },
-    {
-        value: "request",
-        label: "Request",
-    },
-    {
-        value: "proposal",
-        label: "Proposal",
-    }
-];
-
 export const doc_classification = [
     {
         value: "simple",
@@ -115,5 +82,49 @@ export const doc_classification = [
     {
         value: "highly_technical",
         label: "Highly Technical",
+    }
+];
+
+// mar-note: For Test ONLY
+export const doc_type_samples = [
+    {
+        value: "memorandum",
+        label: "Memorandum",
+    },
+    {
+        value: "letter",
+        label: "Letter",
+    },
+    {
+        value: "resolution",
+        label: "Resolution",
+    },
+    {
+        value: "executive_order",
+        label: "Executive Order",
+    },
+    {
+        value: "circular",
+        label: "Circular",
+    },
+    {
+        value: "administrative_order",
+        label: "Administrative Order",
+    },
+    {
+        value: "department_order",
+        label: "Department Order",
+    },
+    {
+        value: "special_order",
+        label: "Special Order",
+    },
+    {
+        value: "office_order",
+        label: "Office Order",
+    },
+    {
+        value: "travel_order",
+        label: "Travel Order",
     }
 ];
