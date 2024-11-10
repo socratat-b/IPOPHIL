@@ -52,11 +52,11 @@ export function EditDocumentTypeDialog({
                     </div>
                     <div>
                         <label htmlFor="description" className="block mb-1">Description</label>
-                        <Input
+                        <textarea
                             id="description"
                             placeholder="Enter description"
                             {...register("description")}
-                            className="w-full"
+                            className="w-full p-2 border rounded-md resize-y overflow-auto"
                         />
                         {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
                     </div>
