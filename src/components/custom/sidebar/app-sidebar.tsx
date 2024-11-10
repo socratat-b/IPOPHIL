@@ -98,32 +98,43 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
           transformed.notViewedCount = documentCounts.total - documentCounts.completed
 
           if (transformed.items) {
-            transformed.items = transformed.items.map(subItem => {
-              const updatedSubItem = { ...subItem }
-              const subItemId = subItem.title.toLowerCase().replace(/\s+/g, '_')
+            transformed.items = item.items
+              ?.filter(subItem => visibleSubItems[item.id]?.includes(subItem.id))
+              .map(subItem => {
+                const updatedSubItem = {
+                  title: subItem.title,
+                  url: subItem.url,
+                  notViewedCount: 0
+                }
 
-              switch (subItemId) {
-                case 'for_dispatch':
-                  updatedSubItem.notViewedCount = documentCounts.forDispatch
-                  break
-                case 'intransit':
-                  updatedSubItem.notViewedCount = documentCounts.outgoing
-                  break
-                case 'received':
-                  updatedSubItem.notViewedCount = documentCounts.received
-                  break
-                case 'completed':
-                  updatedSubItem.notViewedCount = documentCounts.completed
-                  break
-              }
+                // Map counts based on the original subItem.id
+                switch (subItem.id) {
+                  case 'dispatch':
+                    updatedSubItem.notViewedCount = documentCounts.forDispatch
+                    break
+                  case 'intransit':
+                    updatedSubItem.notViewedCount = documentCounts.outgoing
+                    break
+                  case 'received':
+                    updatedSubItem.notViewedCount = documentCounts.received
+                    break
+                  case 'completed':
+                    updatedSubItem.notViewedCount = documentCounts.completed
+                    break
+                }
 
-              return updatedSubItem
-            }).filter(subItem =>
-              visibleSubItems[item.id]?.includes(
-                subItem.title.toLowerCase().replace(/\s+/g, '_')
-              )
-            )
+                return updatedSubItem
+              })
           }
+        }
+
+        if (item.id === 'management' && transformed.items) {
+          transformed.items = item.items
+            ?.filter(subItem => visibleSubItems[item.id]?.includes(subItem.id))
+            .map(subItem => ({
+              title: subItem.title,
+              url: subItem.url
+            }))
         }
 
         return transformed

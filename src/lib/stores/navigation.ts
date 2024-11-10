@@ -1,16 +1,8 @@
 // src/lib/stores/navigation.ts
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import {
-    hasSubItems,
-    type NavMainItem,
-    type NavSecondaryItem
-} from '@/lib/types/navigation'
-import {
-    navigationConfig,
-    transformToMainNavItem,
-    transformToSecondaryNavItem
-} from '@/lib/config/navigation'
+import { hasSubItems } from '@/lib/types/navigation'
+import { navigationConfig } from '@/lib/config/navigation'
 
 interface NavigationState {
     visibleMainItems: string[]
@@ -31,6 +23,7 @@ const getDefaultSubItems = () => {
     const subItems: Record<string, string[]> = {}
     navigationConfig.mainNav.forEach(item => {
         if (hasSubItems(item)) {
+            // Initialize with all sub-items visible by default
             subItems[item.id] = item.items.map(subItem => subItem.id)
         }
     })
@@ -39,18 +32,36 @@ const getDefaultSubItems = () => {
 
 export const useNavigationStore = create<NavigationState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             visibleMainItems: getDefaultMainItems(),
             visibleSecondaryItems: getDefaultSecondaryItems(),
             visibleSubItems: getDefaultSubItems(),
             showUserSection: true,
 
             toggleMainItem: (id) =>
-                set((state) => ({
-                    visibleMainItems: state.visibleMainItems.includes(id)
+                set((state) => {
+                    const isVisible = state.visibleMainItems.includes(id)
+                    const newMainItems = isVisible
                         ? state.visibleMainItems.filter((item) => item !== id)
-                        : [...state.visibleMainItems, id],
-                })),
+                        : [...state.visibleMainItems, id]
+
+                    // If hiding a parent, also hide all its sub-items
+                    const newSubItems = { ...state.visibleSubItems }
+                    if (isVisible) {
+                        delete newSubItems[id]
+                    } else {
+                        // When showing a parent, show all its sub-items by default
+                        const mainItem = navigationConfig.mainNav.find(item => item.id === id)
+                        if (mainItem && hasSubItems(mainItem)) {
+                            newSubItems[id] = mainItem.items.map(subItem => subItem.id)
+                        }
+                    }
+
+                    return {
+                        visibleMainItems: newMainItems,
+                        visibleSubItems: newSubItems,
+                    }
+                }),
 
             toggleSecondaryItem: (id) =>
                 set((state) => ({
@@ -60,14 +71,20 @@ export const useNavigationStore = create<NavigationState>()(
                 })),
 
             toggleSubItem: (parentId, itemId) =>
-                set((state) => ({
-                    visibleSubItems: {
-                        ...state.visibleSubItems,
-                        [parentId]: state.visibleSubItems[parentId]?.includes(itemId)
-                            ? state.visibleSubItems[parentId].filter((item) => item !== itemId)
-                            : [...(state.visibleSubItems[parentId] || []), itemId],
-                    },
-                })),
+                set((state) => {
+                    // Ensure parent array exists
+                    const currentSubItems = state.visibleSubItems[parentId] || []
+                    const newSubItems = currentSubItems.includes(itemId)
+                        ? currentSubItems.filter((item) => item !== itemId)
+                        : [...currentSubItems, itemId]
+
+                    return {
+                        visibleSubItems: {
+                            ...state.visibleSubItems,
+                            [parentId]: newSubItems,
+                        },
+                    }
+                }),
 
             toggleUserSection: () =>
                 set((state) => ({
@@ -87,47 +104,3 @@ export const useNavigationStore = create<NavigationState>()(
         }
     )
 )
-
-interface FilteredNavigation {
-    mainNav: NavMainItem[]
-    secondaryNav: NavSecondaryItem[]
-    showUserSection: boolean
-}
-
-export const getFilteredNavigation = (): FilteredNavigation => {
-    const state = useNavigationStore.getState()
-
-    const mainNav = navigationConfig.mainNav
-        .filter(item => state.visibleMainItems.includes(item.id))
-        .map(item => {
-            // Transform the main item first to ensure icon is properly set
-            const transformed = transformToMainNavItem(item)
-
-            // Then handle sub-items if they exist
-            if (hasSubItems(item)) {
-                transformed.items = item.items
-                    .filter(subItem => state.visibleSubItems[item.id]?.includes(subItem.id))
-                    .map(subItem => ({
-                        title: subItem.title,
-                        url: subItem.url,
-                        notViewedCount: subItem.notViewedCount,
-                    }))
-            }
-
-            return transformed
-        })
-
-    const secondaryNav = navigationConfig.secondaryNav
-        .filter(item => state.visibleSecondaryItems.includes(item.id))
-        .map(item => {
-            // Transform secondary items ensuring icon is properly set
-            const transformed = transformToSecondaryNavItem(item)
-            return transformed
-        })
-
-    return {
-        mainNav,
-        secondaryNav,
-        showUserSection: state.showUserSection
-    }
-}
