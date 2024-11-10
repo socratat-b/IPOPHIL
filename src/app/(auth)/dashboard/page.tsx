@@ -12,7 +12,7 @@ import { Overview } from "@/components/custom/dashboard/overview"
 import { Icons } from "@/components/ui/icons"
 import RecentDocuments from "@/components/custom/dashboard/recent-documents"
 import { useDocuments } from "@/lib/context/document-context"
-import { useMemo } from "react"
+import { ComponentType, useMemo } from "react"
 import { Stats, StatusCounts } from "@/lib/types"
 import { AddDocumentButton } from "@/components/custom/common/add-document-button"
 import { LineChart, Line } from 'recharts'
@@ -82,7 +82,7 @@ const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {
     )
 }
 
-// Stat card component
+// Update the StatCard component type definition
 const StatCard = ({
     title,
     icon: Icon,
@@ -91,7 +91,7 @@ const StatCard = ({
     data
 }: {
     title: string
-    icon: any
+    icon: ComponentType<{ className?: string }>
     count: number
     change: number
     data: Array<{ value: number }>

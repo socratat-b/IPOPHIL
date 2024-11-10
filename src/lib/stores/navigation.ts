@@ -32,7 +32,7 @@ const getDefaultSubItems = () => {
 
 export const useNavigationStore = create<NavigationState>()(
     persist(
-        (set, get) => ({
+        (set) => ({
             visibleMainItems: getDefaultMainItems(),
             visibleSecondaryItems: getDefaultSecondaryItems(),
             visibleSubItems: getDefaultSubItems(),
