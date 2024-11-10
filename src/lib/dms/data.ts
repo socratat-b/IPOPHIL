@@ -1,5 +1,3 @@
-// src/lib/faker/management/data.ts
-
 export const user_role = [
     {
         value: "admin",
