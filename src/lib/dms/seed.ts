@@ -1,130 +1,129 @@
-// src\lib\faker\dms\seed.ts
 import { faker } from "@faker-js/faker";
 import { writeFileSync, mkdirSync } from 'fs';
 import path from 'path';
-import {
-    type UserRole, type LogAction, type IntransitStatus,
-    type DocStatus, type DocClassification, type DocumentType,
-    type Agency, type User, type DocumentDetails, type Document,
-    type DocumentTransitStatus, type DocumentRouting, type DocumentLogs,
-    type UserFeedback,
-    userRoleEnum, logActionEnum, intransitStatusEnum,
-    docStatusEnum, docClassificationEnum
+import { z } from "zod";
+import type {
+    UserRole, LogAction, IntransitStatus,
+    DocStatus, DocClassification, DocumentType,
+    Agency, User, DocumentDetails, Document,
+    DocumentTransitStatus, DocumentRouting, DocumentLogs,
+    UserFeedback
 } from './schema';
-import { doc_type_samples } from "./data";
+import {
+    user_role, log_action, intransit_status,
+    doc_status, doc_classification, doc_type_samples
+} from './data';
 
-// Use __dirname directly since we're in CommonJS
 const SEED_DATA_PATH = path.join(__dirname, 'data');
-
-// Helper to generate UUID
 const generateUUID = () => faker.string.uuid();
 
-// Create sets to track used values
+// Track unique values
+const usedTypeNames = new Set<string>();
 const usedAgencyCodes = new Set<string>();
-const usedDocumentCodes = new Set<string>();
-const usedTrackingCodes = new Set<string>();
 const usedEmails = new Set<string>();
+const usedTrackingCodes = new Set<string>();
+const usedDocumentCodes = new Set<string>();
 
-// Helper to generate unique codes
-const generateUniqueCode = (length: number, prefix = ''): string => {
-    let code: string;
-    do {
-        code = `${prefix}${faker.string.alphanumeric(length).toUpperCase()}`;
-    } while (usedAgencyCodes.has(code));
-    usedAgencyCodes.add(code);
-    return code;
+// Helper to ensure Zod branded uniqueness
+const ensureUnique = <T extends string>(
+    value: T,
+    usedValues: Set<string>,
+    generator: () => T
+): T & z.BRAND<"unique"> => {
+    let current = value;
+    while (usedValues.has(current)) {
+        current = generator();
+    }
+    usedValues.add(current);
+    return current as T & z.BRAND<"unique">;
 };
 
-const generateUniqueDocumentCode = (): string => {
-    let code: string;
-    do {
-        code = `DOC-${faker.string.alphanumeric(7).toUpperCase()}`;
-    } while (usedDocumentCodes.has(code));
-    usedDocumentCodes.add(code);
-    return code;
+const generateUniqueCode = (): string & z.BRAND<"unique"> => {
+    return ensureUnique(
+        faker.string.alphanumeric(10).toUpperCase(),
+        usedAgencyCodes,
+        () => faker.string.alphanumeric(10).toUpperCase()
+    );
 };
 
-const generateUniqueTrackingCode = (): string => {
-    let code: string;
-    do {
-        code = `TRK-${faker.string.alphanumeric(5).toUpperCase()}`;
-    } while (usedTrackingCodes.has(code));
-    usedTrackingCodes.add(code);
-    return code;
+const generateUniqueDocumentCode = (): string & z.BRAND<"unique"> => {
+    return ensureUnique(
+        faker.string.alphanumeric(10).toUpperCase(),
+        usedDocumentCodes,
+        () => faker.string.alphanumeric(10).toUpperCase()
+    );
 };
 
-const generateUniqueEmail = (firstName: string, lastName: string): string => {
-    let email: string;
-    do {
-        const username = faker.internet.userName({ firstName, lastName }).toLowerCase();
-        email = `${username}@example.com`;
-    } while (usedEmails.has(email));
-    usedEmails.add(email);
-    return email;
+const generateUniqueTrackingCode = (): string & z.BRAND<"unique"> => {
+    return ensureUnique(
+        faker.string.alphanumeric(8).toUpperCase(),
+        usedTrackingCodes,
+        () => faker.string.alphanumeric(8).toUpperCase()
+    );
 };
 
-// Updated type-safe helper functions for enum values
-const getUserRole = (): UserRole =>
-    faker.helpers.arrayElement(Object.values(userRoleEnum.enum));
+const generateUniqueEmail = (firstName: string, lastName: string): string & z.BRAND<"unique"> => {
+    return ensureUnique(
+        `${faker.internet.userName({ firstName, lastName }).toLowerCase()}@example.com`.substring(0, 255),
+        usedEmails,
+        () => `${faker.internet.userName()}@example.com`.substring(0, 255)
+    );
+};
 
-const getDocStatus = (): DocStatus =>
-    faker.helpers.arrayElement(Object.values(docStatusEnum.enum));
+const generateUniqueTypeName = (baseName: string): string & z.BRAND<"unique"> => {
+    return ensureUnique(
+        baseName.substring(0, 50),
+        usedTypeNames,
+        () => faker.company.name().substring(0, 50)
+    );
+};
 
-const getDocClassification = (): DocClassification =>
-    faker.helpers.arrayElement(Object.values(docClassificationEnum.enum));
-
-const getLogAction = (): LogAction =>
-    faker.helpers.arrayElement(Object.values(logActionEnum.enum));
-
-const getIntransitStatus = (): IntransitStatus =>
-    faker.helpers.arrayElement(Object.values(intransitStatusEnum.enum));
+// Generic helper to get random value from data array
+const getRandomFromData = <T extends { value: string }>(dataArray: T[]): string => {
+    return faker.helpers.arrayElement(dataArray).value;
+};
 
 // Generate Document Types
 const generateDocumentTypes = (count = 10): DocumentType[] => {
-    // Ensure we don't try to generate more types than we have samples
     const sampleCount = Math.min(count, doc_type_samples.length);
-
-    // Randomly select unique samples from doc_type_samples
     const selectedTypes = faker.helpers.shuffle([...doc_type_samples]).slice(0, sampleCount);
 
     return selectedTypes.map(typeObj => ({
         type_id: generateUUID(),
-        name: typeObj.value,
-        description: `${typeObj.label} - ${faker.lorem.sentence()}`,
+        name: generateUniqueTypeName(typeObj.value),
+        description: typeObj.label ? `${typeObj.label} - ${faker.lorem.sentence()}` : null,
         active: faker.datatype.boolean(),
         created_at: faker.date.past().toISOString(),
         updated_at: faker.date.recent().toISOString()
     }));
 };
 
-// Generate Agencies
 const generateAgencies = (count = 10): Agency[] =>
     Array.from({ length: count }, () => ({
         agency_id: generateUUID(),
-        name: faker.company.name(),
-        code: generateUniqueCode(6, 'AGY-'),
+        name: faker.company.name().substring(0, 255),
+        code: generateUniqueCode(),
         active: faker.datatype.boolean(),
         created_by: generateUUID(),
         created_at: faker.date.past().toISOString(),
         updated_at: faker.date.recent().toISOString()
     }));
 
-// Generate Users
 const generateUsers = (agencies: Agency[], count = 50): User[] =>
     Array.from({ length: count }, () => {
-        const firstName = faker.person.firstName();
-        const lastName = faker.person.lastName();
+        const firstName = faker.person.firstName().substring(0, 255);
+        const lastName = faker.person.lastName().substring(0, 255);
         return {
             user_id: generateUUID(),
             agency_id: faker.helpers.arrayElement(agencies).agency_id,
             first_name: firstName,
             last_name: lastName,
-            middle_name: faker.person.middleName(),
-            user_name: faker.internet.userName({ firstName, lastName }).toLowerCase(),
+            middle_name: faker.person.middleName()?.substring(0, 255) || null,
+            user_name: faker.internet.userName({ firstName, lastName }).substring(0, 255),
             email: generateUniqueEmail(firstName, lastName),
-            role: getUserRole(),
-            title: faker.person.jobTitle(),
-            type: faker.person.jobType(),
+            role: getRandomFromData(user_role) as UserRole,
+            title: faker.person.jobTitle().substring(0, 255),
+            type: faker.person.jobType().substring(0, 255),
             avatar: faker.image.avatar(),
             active: faker.datatype.boolean(),
             created_at: faker.date.past().toISOString(),
@@ -132,21 +131,19 @@ const generateUsers = (agencies: Agency[], count = 50): User[] =>
         };
     });
 
-// Generate Document Details
 const generateDocumentDetails = (users: User[], docTypes: DocumentType[], count = 200): DocumentDetails[] =>
     Array.from({ length: count }, () => ({
         detail_id: generateUUID(),
         document_code: generateUniqueDocumentCode(),
-        document_name: faker.lorem.sentence(4),
-        classification: getDocClassification(),
+        document_name: faker.lorem.sentence(4).substring(0, 255),
+        classification: getRandomFromData(doc_classification) as DocClassification,
         type_id: faker.helpers.arrayElement(docTypes).type_id,
         created_by: faker.helpers.arrayElement(users).user_id,
-        removed_at: faker.datatype.boolean() ? faker.date.recent().toISOString() : undefined,
+        removed_at: faker.datatype.boolean() ? faker.date.recent().toISOString() : null,
         created_at: faker.date.past().toISOString(),
         updated_at: faker.date.recent().toISOString()
     }));
 
-// Generate Documents
 const generateDocuments = (
     details: DocumentDetails[],
     agencies: Agency[],
@@ -163,15 +160,15 @@ const generateDocuments = (
             tracking_code: generateUniqueTrackingCode(),
             originating_agency_id: agency.agency_id,
             current_agency_id: faker.helpers.arrayElement(agencies).agency_id,
-            status: getDocStatus(),
+            status: getRandomFromData(doc_status) as DocStatus,
             is_active: faker.datatype.boolean(),
-            viewed_at: faker.date.between({ from: createdAt, to: new Date() }).toISOString(),
+            viewed_at: faker.datatype.boolean() ?
+                faker.date.between({ from: createdAt, to: new Date() }).toISOString() : null,
             created_at: createdAt,
             updated_at: faker.date.recent().toISOString()
         };
     });
 
-// Generate Document Routing
 const generateDocumentRouting = (
     documents: Document[],
     agencies: Agency[],
@@ -198,7 +195,6 @@ const generateDocumentRouting = (
         };
     });
 
-// Generate Transit Status
 const generateTransitStatus = (
     documents: Document[],
     routings: DocumentRouting[],
@@ -211,18 +207,16 @@ const generateTransitStatus = (
         return {
             transit_id: generateUUID(),
             document_id: routing.document_id,
-            status: getIntransitStatus(),
+            status: getRandomFromData(intransit_status) as IntransitStatus,
             from_agency_id: routing.from_agency_id,
             to_agency_id: routing.to_agency_id,
             initiated_at: initiatedAt,
             completed_at: faker.datatype.boolean() ?
-                faker.date.between({ from: initiatedAt, to: new Date() }).toISOString() :
-                null,
+                faker.date.between({ from: initiatedAt, to: new Date() }).toISOString() : null,
             active: faker.datatype.boolean()
         };
     });
 
-// Generate Document Logs
 const generateDocumentLogs = (
     documents: Document[],
     transitStatuses: DocumentTransitStatus[],
@@ -236,12 +230,13 @@ const generateDocumentLogs = (
             log_id: generateUUID(),
             document_id: transit.document_id,
             transit_id: transit.transit_id,
-            action: getLogAction(),
+            action: getRandomFromData(log_action) as LogAction,
             from_agency_id: transit.from_agency_id,
             to_agency_id: transit.to_agency_id,
             performed_by: faker.helpers.arrayElement(users).user_id,
-            received_by: faker.person.fullName(),
-            remarks: faker.lorem.sentence(),
+            received_by: faker.datatype.boolean() ?
+                faker.person.fullName().substring(0, 255) : null,
+            remarks: faker.datatype.boolean() ? faker.lorem.sentence() : null,
             performed_at: faker.date.between({
                 from: transit.initiated_at,
                 to: transit.completed_at || new Date()
@@ -249,19 +244,14 @@ const generateDocumentLogs = (
         };
     });
 
-// Generate User Feedback
 const generateUserFeedback = (users: User[], count = 50): UserFeedback[] =>
-    Array.from({ length: count }, () => {
-        const createdAt = faker.date.recent().toISOString();
-        return {
-            feedback_id: generateUUID(),
-            user_id: faker.helpers.arrayElement(users).user_id,
-            feedback_text: faker.lorem.paragraph(),
-            created_at: createdAt
-        };
-    });
+    Array.from({ length: count }, () => ({
+        feedback_id: generateUUID(),
+        user_id: faker.helpers.arrayElement(users).user_id,
+        feedback_text: faker.lorem.paragraph(),
+        created_at: faker.date.recent().toISOString()
+    }));
 
-// Generate and save data
 const saveGeneratedData = () => {
     const documentTypes = generateDocumentTypes(10);
     const agencies = generateAgencies(10);
@@ -270,12 +260,7 @@ const saveGeneratedData = () => {
     const documents = generateDocuments(documentDetails, agencies, 150);
     const documentRouting = generateDocumentRouting(documents, agencies, 300);
     const transitStatus = generateTransitStatus(documents, documentRouting, 300);
-    const documentLogs = generateDocumentLogs(
-        documents,
-        transitStatus,
-        users,
-        500
-    );
+    const documentLogs = generateDocumentLogs(documents, transitStatus, users, 500);
     const userFeedback = generateUserFeedback(users, 50);
 
     const data = {
@@ -290,7 +275,6 @@ const saveGeneratedData = () => {
         userFeedback
     };
 
-    // Create the folder if it doesn't exist
     mkdirSync(SEED_DATA_PATH, { recursive: true });
 
     Object.entries(data).forEach(([name, items]) => {
@@ -302,5 +286,4 @@ const saveGeneratedData = () => {
     });
 };
 
-// Run the generator
 saveGeneratedData();

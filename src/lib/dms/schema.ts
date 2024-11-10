@@ -2,29 +2,29 @@ import { z } from "zod";
 
 // Enums definition in Zod
 export const userRoleEnum = z.enum([
-    "user",      // Regular system user
-    "admin"      // System administrator
+    "user",             // Regular system user
+    "admin"             // System administrator
 ]);
 
 export const logActionEnum = z.enum([
-    "created",    // Document creation
-    "released",   // Document released to next agency
-    "received",   // Document received by agency
-    "completed",  // Document processing completed
-    "returned"    // Document returned to previous agency
+    "created",          // Document creation
+    "released",         // Document released to next agency
+    "received",         // Document received by agency
+    "completed",        // Document processing completed
+    "returned"          // Document returned to previous agency
 ]);
 
 export const intransitStatusEnum = z.enum([
-    "incoming",   // Document is incoming to agency
-    "outgoing",   // Document is outgoing from agency
-    "process"     // Document is being processed
+    "incoming",         // Document is incoming to agency
+    "outgoing",         // Document is outgoing from agency
+    "process"           // Document is being processed
 ]);
 
 export const docStatusEnum = z.enum([
-    "dispatch",   // Initial dispatch status
-    "intransit",  // Document is in transit
-    "completed",  // Document processing completed
-    "canceled"    // Document canceled/terminated
+    "dispatch",         // Initial dispatch status
+    "intransit",        // Document is in transit
+    "completed",        // Document processing completed
+    "canceled"          // Document canceled/terminated
 ]);
 
 export const docClassificationEnum = z.enum([
@@ -49,7 +49,7 @@ const timestampFields = z.object({
 // Document Types schema
 export const documentTypesSchema = z.object({
     type_id: z.string().uuid(),
-    name: z.string().min(1).max(50),
+    name: z.string().min(1).max(50).brand('unique'),
     description: z.string().nullable().optional(),
     active: z.boolean().default(true),
 }).merge(timestampFields);
@@ -60,7 +60,7 @@ export type DocumentType = z.infer<typeof documentTypesSchema>;
 export const agencySchema = z.object({
     agency_id: z.string().uuid(),
     name: z.string().min(1).max(255),
-    code: z.string().min(1).max(10),
+    code: z.string().min(1).max(10).brand('unique'),
     active: z.boolean().default(true),
     created_by: z.string().uuid(),
 }).merge(timestampFields);
@@ -75,7 +75,7 @@ export const userSchema = z.object({
     last_name: z.string().min(1).max(255),
     middle_name: z.string().max(255).nullable().optional(),
     user_name: z.string().max(255).nullable().optional(),
-    email: z.string().email().max(255),
+    email: z.string().email().max(255).brand('unique'),
     role: userRoleEnum.default("user"),
     title: z.string().max(255).nullable().optional(),
     type: z.string().max(255).nullable().optional(),
@@ -102,7 +102,7 @@ export type DocumentDetails = z.infer<typeof documentDetailsSchema>;
 export const documentsSchema = z.object({
     document_id: z.string().uuid(),
     detail_id: z.string().uuid(),
-    tracking_code: z.string().length(8).nullable(),
+    tracking_code: z.string().length(8).nullable().brand('unique'),
     originating_agency_id: z.string().uuid(),
     current_agency_id: z.string().uuid(),
     status: docStatusEnum.default("dispatch"),
@@ -165,40 +165,90 @@ export const userFeedbackSchema = z.object({
 export type UserFeedback = z.infer<typeof userFeedbackSchema>;
 
 // Input types for validation functions
-export type DocumentTypeInput = Omit<DocumentType, 'type_id'>;
-export type AgencyInput = Omit<Agency, 'agency_id'>;
-export type UserInput = Omit<User, 'user_id'>;
-export type DocumentDetailsInput = Omit<DocumentDetails, 'detail_id'>;
-export type DocumentInput = Omit<Document, 'document_id'>;
+export type DocumentTypeInput = Omit<DocumentType, 'type_id' | 'created_at' | 'updated_at'>;
+export type AgencyInput = Omit<Agency, 'agency_id' | 'created_at' | 'updated_at'>;
+export type UserInput = Omit<User, 'user_id' | 'created_at' | 'updated_at'>;
+export type DocumentDetailsInput = Omit<DocumentDetails, 'detail_id' | 'created_at' | 'updated_at'>;
+export type DocumentInput = Omit<Document, 'document_id' | 'created_at' | 'updated_at'>;
 export type TransitStatusInput = Omit<DocumentTransitStatus, 'transit_id'>;
 export type RoutingInput = Omit<DocumentRouting, 'route_id'>;
 export type LogsInput = Omit<DocumentLogs, 'log_id'>;
-export type FeedbackInput = Omit<UserFeedback, 'feedback_id'>;
+export type FeedbackInput = Omit<UserFeedback, 'feedback_id' | 'created_at'>;
 
 // Validation functions with proper input types
-export const validateDocumentType = (input: DocumentTypeInput): DocumentType =>
-    documentTypesSchema.parse({ ...input, type_id: crypto.randomUUID() });
+export const validateDocumentType = (input: DocumentTypeInput): DocumentType => {
+    const now = new Date().toISOString();
+    return documentTypesSchema.parse({
+        ...input,
+        type_id: crypto.randomUUID(),
+        created_at: now,
+        updated_at: now
+    });
+};
 
-export const validateAgency = (input: AgencyInput): Agency =>
-    agencySchema.parse({ ...input, agency_id: crypto.randomUUID() });
+export const validateAgency = (input: AgencyInput): Agency => {
+    const now = new Date().toISOString();
+    return agencySchema.parse({
+        ...input,
+        agency_id: crypto.randomUUID(),
+        created_at: now,
+        updated_at: now
+    });
+};
 
-export const validateUser = (input: UserInput): User =>
-    userSchema.parse({ ...input, user_id: crypto.randomUUID() });
+export const validateUser = (input: UserInput): User => {
+    const now = new Date().toISOString();
+    return userSchema.parse({
+        ...input,
+        user_id: crypto.randomUUID(),
+        created_at: now,
+        updated_at: now
+    });
+};
 
-export const validateDocumentDetails = (input: DocumentDetailsInput): DocumentDetails =>
-    documentDetailsSchema.parse({ ...input, detail_id: crypto.randomUUID() });
+export const validateDocumentDetails = (input: DocumentDetailsInput): DocumentDetails => {
+    const now = new Date().toISOString();
+    return documentDetailsSchema.parse({
+        ...input,
+        detail_id: crypto.randomUUID(),
+        created_at: now,
+        updated_at: now
+    });
+};
 
-export const validateDocument = (input: DocumentInput): Document =>
-    documentsSchema.parse({ ...input, document_id: crypto.randomUUID() });
+export const validateDocument = (input: DocumentInput): Document => {
+    const now = new Date().toISOString();
+    return documentsSchema.parse({
+        ...input,
+        document_id: crypto.randomUUID(),
+        created_at: now,
+        updated_at: now
+    });
+};
 
 export const validateTransitStatus = (input: TransitStatusInput): DocumentTransitStatus =>
-    documentTransitStatusSchema.parse({ ...input, transit_id: crypto.randomUUID() });
+    documentTransitStatusSchema.parse({
+        ...input,
+        transit_id: crypto.randomUUID()
+    });
 
 export const validateRouting = (input: RoutingInput): DocumentRouting =>
-    documentRoutingSchema.parse({ ...input, route_id: crypto.randomUUID() });
+    documentRoutingSchema.parse({
+        ...input,
+        route_id: crypto.randomUUID()
+    });
 
 export const validateLogs = (input: LogsInput): DocumentLogs =>
-    documentLogsSchema.parse({ ...input, log_id: crypto.randomUUID() });
+    documentLogsSchema.parse({
+        ...input,
+        log_id: crypto.randomUUID()
+    });
 
-export const validateFeedback = (input: FeedbackInput): UserFeedback =>
-    userFeedbackSchema.parse({ ...input, feedback_id: crypto.randomUUID() });
+export const validateFeedback = (input: FeedbackInput): UserFeedback => {
+    const now = new Date().toISOString();
+    return userFeedbackSchema.parse({
+        ...input,
+        feedback_id: crypto.randomUUID(),
+        created_at: now
+    });
+};
