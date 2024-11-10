@@ -1,30 +1,13 @@
-import { format, parseISO } from "date-fns"
+import React from "react"
+
 import { useState } from "react"
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-    CardDescription
-} from "@/components/ui/card"
+import { format, parseISO } from "date-fns"
 import { Badge } from "@/components/ui/badge"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { DataPreviewProps } from "@/lib/types"
 import { formatBadgeText } from "@/lib/controls/helper"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 export const DataPreview: React.FC<DataPreviewProps> = ({
     filteredData,
@@ -36,6 +19,11 @@ export const DataPreview: React.FC<DataPreviewProps> = ({
     const displayedData = rowLimit === "all"
         ? filteredData
         : filteredData.slice(0, parseInt(rowLimit))
+
+    const ref = React.useRef(null);
+    React.useEffect(() => {
+        import("@lottiefiles/lottie-player");
+    })
 
     return (
         <Card className="border-none shadow-none">
@@ -157,7 +145,18 @@ export const DataPreview: React.FC<DataPreviewProps> = ({
                                     ) : (
                                         <TableRow>
                                             <TableCell colSpan={5} className="h-24 text-center">
-                                                No documents found matching the filters
+                                                <lottie-player
+                                                    id="no result found"
+                                                    ref={ref}
+                                                    autoplay
+                                                    controls={false}
+                                                    loop
+                                                    mode="normal"
+                                                    src={"animation/empty-box.json"}
+                                                    className="w-1/2 mx-auto"
+                                                    title="No Result Found"
+                                                >
+                                                </lottie-player>
                                             </TableCell>
                                         </TableRow>
                                     )}

@@ -76,6 +76,11 @@ export function DataTable<TData, TValue>({
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
 
+    const ref = React.useRef(null);
+    React.useEffect(() => {
+        import("@lottiefiles/lottie-player");
+    })
+
     return (
         <div className="space-y-4">
             <DataTableToolbar table={table} />
@@ -124,7 +129,18 @@ export function DataTable<TData, TValue>({
                                     colSpan={columns.length}
                                     className="h-24 text-center"
                                 >
-                                    No results.
+                                    <lottie-player
+                                        id="no result found"
+                                        ref={ref}
+                                        autoplay
+                                        controls={false}
+                                        loop
+                                        mode="normal"
+                                        src={"animation/empty-box.json"}
+                                        className="w-80 mx-auto"
+                                        title="No Result Found"
+                                    >
+                                    </lottie-player>No result
                                 </TableCell>
                             </TableRow>
                         )}
