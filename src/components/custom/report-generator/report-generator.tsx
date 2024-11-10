@@ -13,6 +13,7 @@ import { FileType, downloadFile, generatePDF } from '@/lib/controls';
 import { DataPreview } from './data-preview';
 import { DocumentDialog } from '../common/document-dialog';
 import FilterForm from './filter-form';
+import { Card } from '@/components/ui/card';
 
 const defaultFilters = {
     office: "all",
@@ -127,18 +128,13 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ data }) => {
                 </div>
 
                 <div className="flex-1">
-                    <ScrollArea className="h-full rounded-md border">
-                        <div
-                            ref={printRef}
-                            className="bg-background p-6 min-h-[33cm]"
-                        >
-                            <DataPreview
-                                filteredData={filteredData}
-                                filters={filters}
-                                onItemClick={setSelectedItem}
-                            />
-                        </div>
-                    </ScrollArea>
+                    <Card className="h-full rounded-md border">
+                        <DataPreview
+                            filteredData={filteredData}
+                            filters={filters}
+                            onItemClick={setSelectedItem}
+                        />
+                    </Card>
                 </div>
             </div>
 

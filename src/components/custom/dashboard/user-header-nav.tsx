@@ -63,7 +63,7 @@ export function UserHeaderNav() {
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => { router.push('/settings/notifications') }}>
+            onClick={() => { router.push('/notifications') }}>
             <Icons.bell className="mr-2 h-4 w-4" />
             Notifications
           </DropdownMenuItem>

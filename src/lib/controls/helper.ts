@@ -1,11 +1,22 @@
 // Helper function to format strings for badges (no more underscore and it is always lowercase)
 export const formatBadgeText = (text: string) => {
     return text
+        .replace(/_/g, ' ')
         .replace(/[^a-zA-Z ]/g, '')
-        .split('_')
-        .join(' ')
         .toLowerCase();
 };
+
+// make things all capital
+export const formatBadgeTextAllCaps = (text: string) => {
+    return text
+        .replace(/_/g, ' ')
+        .replace(/[^a-zA-Z ]/g, '')
+        .toUpperCase();
+};
+
+export const formatPercentage = (value: number) => {
+    return `${value > 0 ? '+' : ''}${value}%`
+}
 
 // Function to get status variant
 export const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {

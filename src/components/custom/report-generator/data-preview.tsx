@@ -1,4 +1,5 @@
 import { format, parseISO } from "date-fns"
+import { useState } from "react"
 import {
     Card,
     CardContent,
@@ -7,101 +8,169 @@ import {
     CardDescription
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { DataPreviewProps } from "@/lib/types";
-import { formatBadgeText } from "@/lib/controls/helper";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { DataPreviewProps } from "@/lib/types"
+import { formatBadgeText } from "@/lib/controls/helper"
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
 
 export const DataPreview: React.FC<DataPreviewProps> = ({
     filteredData,
     filters,
     onItemClick,
 }) => {
+    const [rowLimit, setRowLimit] = useState("5")
+
+    const displayedData = rowLimit === "all"
+        ? filteredData
+        : filteredData.slice(0, parseInt(rowLimit))
+
     return (
         <Card className="border-none shadow-none">
-            <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                    <div>
+            <CardHeader className="pb-2 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex-1 min-w-0">
                         <CardTitle className="text-xl">Document Report</CardTitle>
-                        <CardDescription>
+                        <CardDescription className="mt-2">
                             Total Documents: {filteredData.length}
                         </CardDescription>
                     </div>
+                    <div className="flex items-center gap-2 self-start sm:self-center">
+                        <span className="text-sm text-muted-foreground whitespace-nowrap">Show rows:</span>
+                        <Select
+                            value={rowLimit}
+                            onValueChange={setRowLimit}
+                        >
+                            <SelectTrigger className="w-20">
+                                <SelectValue placeholder="5" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="5">5</SelectItem>
+                                <SelectItem value="10">10</SelectItem>
+                                <SelectItem value="20">20</SelectItem>
+                                <SelectItem value="all">All</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
 
-                {/* Active Filters Summary */}
                 {(filters.office || filters.classification || filters.type || (filters.date?.from && filters.date?.to)) && (
-                    <div className="text-sm text-muted-foreground mt-2">
-                        Filters: {' '}
-                        {[
-                            filters.office && `Office: ${filters.office}`,
-                            filters.classification && `Class: ${filters.classification}`,
-                            filters.type && `Type: ${filters.type}`,
-                            (filters.date?.from && filters.date?.to) &&
-                            `Date: ${filters.date.from instanceof Date && filters.date.to instanceof Date
-                                ? `${format(filters.date.from, "MMM dd")} - ${format(filters.date.to, "MMM dd, yyyy")}`
-                                : ''}`
-                        ].filter(Boolean).join(" | ")}
+                    <div className="text-sm text-muted-foreground break-words">
+                        <span className="font-medium">Filters:</span>{' '}
+                        <span className="inline-flex flex-wrap gap-2">
+                            {[
+                                filters.office && (
+                                    <span className="whitespace-nowrap">Office: {filters.office}</span>
+                                ),
+                                filters.classification && (
+                                    <span className="whitespace-nowrap">Class: {filters.classification}</span>
+                                ),
+                                filters.type && (
+                                    <span className="whitespace-nowrap">Type: {filters.type}</span>
+                                ),
+                                (filters.date?.from && filters.date?.to) && (
+                                    <span className="whitespace-nowrap">
+                                        Date: {filters.date.from instanceof Date && filters.date.to instanceof Date
+                                            ? `${format(filters.date.from, "MMM dd")} - ${format(filters.date.to, "MMM dd, yyyy")}`
+                                            : ''}
+                                    </span>
+                                )
+                            ].filter(Boolean).map((filter, index) => (
+                                <span key={index}>
+                                    {index > 0 && <span className="mx-1">|</span>}
+                                    {filter}
+                                </span>
+                            ))}
+                        </span>
                     </div>
                 )}
             </CardHeader>
 
             <CardContent>
-                <div className="overflow-x-auto">
-                    <table className="w-full border-collapse text-sm">
-                        <thead>
-                            <tr className="border-b">
-                                <th className="text-left p-2 whitespace-nowrap">Code</th>
-                                <th className="text-left p-2">Title</th>
-                                <th className="text-left p-2">Created By</th>
-                                <th className="text-left p-2 whitespace-nowrap">Metadata</th>
-                                <th className="text-left p-2 whitespace-nowrap">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredData.length > 0 ? (
-                                filteredData.map((item) => (
-                                    <tr
-                                        key={`${item.id}-${item.code}`}
-                                        className="border-b hover:bg-muted/50 cursor-pointer"
-                                        onClick={() => onItemClick(item)}
-                                    >
-                                        <td className="p-2 align-top whitespace-nowrap">#{item.code}</td>
-                                        <td className="p-2 align-top min-w-[200px]">{item.title}</td>
-                                        <td className="p-2 align-top">
-                                            <div className="flex flex-col space-y-2">
-                                                {item.created_by}
-                                                <Badge variant={"secondary"} className="w-fit font-normal">
-                                                    {item.origin_office}
-                                                </Badge>
-                                            </div>
-                                        </td>
-                                        <td className="p-2">
-                                            <div className="flex flex-col space-y-2">
-                                                <Badge className="w-fit font-normal">
-                                                    {formatBadgeText(item.status)}
-                                                </Badge>
-                                                <Badge variant={"outline"} className="w-fit font-normal">
-                                                    {formatBadgeText(item.type)}
-                                                </Badge>
-                                                <Badge variant={"secondary"} className="w-fit font-normal">
-                                                    {formatBadgeText(item.classification)}
-                                                </Badge>
-                                            </div>
-                                        </td>
-                                        <td className="p-2 align-top whitespace-nowrap">
-                                            {format(parseISO(item.date_created), "MMM dd, yyyy")}
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={5} className="text-center p-8 text-muted-foreground">
-                                        No documents found matching the filters
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                <div className="border p-4">
+                    <div className="relative rounded-md">
+                        <Table>
+                            <TableHeader className="sticky top-0 bg-background border-b">
+                                <TableRow>
+                                    <TableHead className="w-[8%]">Code</TableHead>
+                                    <TableHead className="w-[30%]">Title</TableHead>
+                                    <TableHead className="w-[22%]">Created By</TableHead>
+                                    <TableHead className="w-[25%]">Metadata</TableHead>
+                                    <TableHead className="w-[15%]">Date</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                        </Table>
+                        <div className="max-h-[500px] overflow-y-auto">
+                            <Table>
+                                <TableBody>
+                                    {displayedData.length > 0 ? (
+                                        displayedData.map((item) => (
+                                            <TableRow
+                                                key={`${item.id}-${item.code}`}
+                                                onClick={() => onItemClick(item)}
+                                                className="cursor-pointer"
+                                            >
+                                                <TableCell className="align-top font-medium">
+                                                    #{item.code}
+                                                </TableCell>
+                                                <TableCell className="align-top">
+                                                    {item.title}
+                                                </TableCell>
+                                                <TableCell className="align-top">
+                                                    <div className="flex flex-col gap-2">
+                                                        <span>{item.created_by}</span>
+                                                        <Badge variant="secondary" className="w-fit font-normal">
+                                                            {item.origin_office}
+                                                        </Badge>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex flex-col gap-2">
+                                                        <Badge className="w-fit font-normal">
+                                                            {formatBadgeText(item.status)}
+                                                        </Badge>
+                                                        <Badge variant="outline" className="w-fit font-normal">
+                                                            {formatBadgeText(item.type)}
+                                                        </Badge>
+                                                        <Badge variant="secondary" className="w-fit font-normal">
+                                                            {formatBadgeText(item.classification)}
+                                                        </Badge>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="align-top whitespace-nowrap">
+                                                    {format(parseISO(item.date_created), "MMM dd, yyyy")}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={5} className="h-24 text-center">
+                                                No documents found matching the filters
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </div>
                 </div>
+                {rowLimit !== "all" && filteredData.length > parseInt(rowLimit) && (
+                    <div className="text-sm text-muted-foreground text-center mt-4">
+                        Showing {displayedData.length} of {filteredData.length} documents
+                    </div>
+                )}
             </CardContent>
         </Card>
     );

@@ -54,6 +54,12 @@ import {
     Search,
     User2,
     Building,
+    LucideSend,
+    LucidePenLine,
+    Hash,
+    UserCheck,
+    MessageSquare,
+    CalendarClock,
 
     // mar-note: this commented is not to be used, but please do not remove
     // type Icon as LucideIcon,
@@ -135,6 +141,13 @@ export const Icons = {
     search: Search,
     user2: User2,
     building: Building,
+    helpCircle: HelpCircle,
+    lucideSend: LucideSend,
+    lucidePenLine: LucidePenLine,
+    hash: Hash,
+    userCheck: UserCheck,
+    messageSquare: MessageSquare,
+    calendarClock: CalendarClock,
 
     /**
      * Custom Icons below  
@@ -196,7 +209,7 @@ export const Icons = {
             />
         </svg>
     ),
-    incoming: ({ }: LucideProps) => (
+    incoming: ({ ...props }: LucideProps) => (
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -206,11 +219,17 @@ export const Icons = {
             strokeLinejoin="round"
             strokeWidth="2"
             className="h-4 w-4 text-muted-foreground"
+            {...props}
         >
-            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            {/* The outer file shape */}
+            <path d="M5 2h10l5 5v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
+            {/* Inner lines representing text */}
+            <line x1="8" y1="9" x2="16" y2="9" />
+            <line x1="8" y1="13" x2="12" y2="13" />
+            <line x1="8" y1="17" x2="14" y2="17" />
         </svg>
     ),
-    recieved: ({ }: LucideProps) => (
+    recieved: ({ ...props }: LucideProps) => (
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -220,13 +239,17 @@ export const Icons = {
             strokeLinejoin="round"
             strokeWidth="2"
             className="h-4 w-4 text-muted-foreground"
+            {...props}
         >
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+            {/* Outer envelope or container shape */}
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+
+            {/* Downward arrow indicating "received" */}
+            <line x1="12" y1="8" x2="12" y2="16" />
+            <polyline points="8 12 12 16 16 12" />
         </svg>
     ),
-    outgoing: ({ }: LucideProps) => (
+    outgoing: ({ ...props }: LucideProps) => (
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -236,12 +259,17 @@ export const Icons = {
             strokeLinejoin="round"
             strokeWidth="2"
             className="h-4 w-4 text-muted-foreground"
+            {...props}
         >
-            <rect width="20" height="14" x="2" y="5" rx="2" />
-            <path d="M2 10h20" />
+            {/* Outline for container or envelope */}
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+
+            {/* Upward or rightward arrow indicating "outgoing" */}
+            <line x1="12" y1="12" x2="18" y2="6" />
+            <polyline points="12 6 18 6 18 12" />
         </svg>
     ),
-    completed: ({ }: LucideProps) => (
+    completed: ({ ...props }: LucideProps) => (
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -251,7 +279,9 @@ export const Icons = {
             strokeLinejoin="round"
             strokeWidth="2"
             className="h-4 w-4 text-muted-foreground"
+            {...props}
         >
+            {/* Path representing the completed or checkmark design */}
             <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
         </svg>
     ),

@@ -8,7 +8,7 @@ interface AddDocumentButtonProps {
     title?: string
     onAdd?: () => void
     actionType: "Create" | "Receive" | "Release"
-    variant?: "default" | "secondary" | "outline"
+    variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
     className?: string
 }
 
@@ -32,9 +32,9 @@ export const AddDocumentButton: React.FC<AddDocumentButtonProps> = ({
             case "Create":
                 return <Icons.add className="h-4 w-4" />
             case "Receive":
-                return <Icons.reciept className="h-4 w-4" />
+                return <Icons.lucidePenLine className="h-4 w-4" />
             case "Release":
-                return <Icons.add className="h-4 w-4" />
+                return <Icons.lucideSend className="h-4 w-4" />
             default:
                 return <Icons.add className="h-4 w-4" />
         }

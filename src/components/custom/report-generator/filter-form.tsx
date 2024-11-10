@@ -1,15 +1,12 @@
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { Separator } from "@/components/ui/separator"
-import { classifications, origin_offices, types } from "@/lib/faker/documents/data"
-import { FilterFormProps, FilterConfig } from "@/lib/types"
 import { Icons } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { FilterFormProps, FilterConfig } from "@/lib/types"
+import { classifications, origin_offices, types } from "@/lib/faker/documents/data"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import DateFilter from "./date-filter"
 
 const FILE_TYPES = [
     { value: 'pdf', label: 'PDF Document' },
@@ -80,7 +77,7 @@ const FilterForm: React.FC<FilterFormProps> = ({
                     <div className="flex justify-between items-center">
                         <div>
                             <CardTitle>Generate Reports</CardTitle>
-                            <CardDescription>
+                            <CardDescription className="mt-2">
                                 Create a custom report by selecting filters and date range
                             </CardDescription>
                         </div>
@@ -128,45 +125,11 @@ const FilterForm: React.FC<FilterFormProps> = ({
                             ))}
                         </div>
 
-                        <div className="grid gap-2">
-                            <Label>Date Range</Label>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        id="date"
-                                        variant={"outline"}
-                                        className={cn(
-                                            "w-full justify-start text-left font-normal",
-                                            !values.date && "text-muted-foreground"
-                                        )}
-                                    >
-                                        <Icons.calendarIcon className="mr-2 h-4 w-4" />
-                                        {values.date?.from ? (
-                                            values.date.to ? (
-                                                <>
-                                                    {format(values.date.from, "LLL dd, y")} -{" "}
-                                                    {format(values.date.to, "LLL dd, y")}
-                                                </>
-                                            ) : (
-                                                format(values.date.from, "LLL dd, y")
-                                            )
-                                        ) : (
-                                            <span>All Dates</span>
-                                        )}
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                    <Calendar
-                                        initialFocus
-                                        mode="range"
-                                        defaultMonth={values.date?.from}
-                                        selected={values.date}
-                                        onSelect={onDateSelect}
-                                        numberOfMonths={2}
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                        </div>
+                        <DateFilter
+                            date={values.date}
+                            onDateSelect={onDateSelect}
+                            className="grid gap-2"
+                        />
 
                         <Separator />
 
