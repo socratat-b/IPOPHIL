@@ -2,11 +2,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Document } from "@/lib/faker/documents/schema"
-import { format, parseISO } from "date-fns"
 import { Icons } from "@/components/ui/icons"
-import { getStatusVariant } from "@/lib/controls"
 import DocumentRouting from "./document-routing"
 import { Separator } from "@/components/ui/separator"
+import DocumentMetadata from "./document-metadata"
 
 interface DocumentDialogProps {
     item: Document | null
@@ -59,46 +58,6 @@ const MetadataItem = ({
                 )}
             </div>
         )}
-    </div>
-);
-
-const DocumentMetadata = ({ item }: { item: Document }) => (
-    <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <MetadataItem
-                icon={Icons.user}
-                label="Created By"
-                value={item.created_by}
-                subValue={{
-                    label: "Office",
-                    value: item.origin_office,
-                    variant: "secondary"
-                }}
-            />
-            <MetadataItem
-                icon={Icons.calendarIcon}
-                label="Date Created"
-                value={format(parseISO(item.date_created), "PPP")}
-            />
-            <MetadataItem
-                icon={Icons.shield}
-                label="Classification"
-                value={item.classification}
-                variant="secondary"
-            />
-            <MetadataItem
-                icon={Icons.tag}
-                label="Status"
-                value={item.status}
-                variant={getStatusVariant(item.status)}
-            />
-            <MetadataItem
-                icon={Icons.tag}
-                label="Type"
-                value={item.type}
-                variant="outline"
-            />
-        </div>
     </div>
 );
 

@@ -8,7 +8,7 @@ interface AddDocumentButtonProps {
     title?: string
     onAdd?: () => void
     actionType: "Create" | "Receive" | "Release"
-    variant?: "default" | "secondary" | "outline"
+    variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
     className?: string
 }
 

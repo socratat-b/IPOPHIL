@@ -42,6 +42,10 @@ export const intransit_status = [
     {
         value: "outgoing",
         label: "Outgoing",
+    },
+    {
+        value: "process",
+        label: "process",
     }
 ];
 
@@ -53,10 +57,6 @@ export const doc_status = [
     {
         value: "intransit",
         label: "Intransit",
-    },
-    {
-        value: "received",
-        label: "Received",
     },
     {
         value: "completed",

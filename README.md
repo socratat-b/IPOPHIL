@@ -20,6 +20,7 @@
 - Supabase - For serverless database
 - Prisma - For ... ORM
 - Apply the [tracing beam](https://ui.aceternity.com/components/tracing-beam) on the sidebar
+- Apply this [pointer](https://ui.aceternity.com/components/following-pointer)
 
 ## Documentation
 

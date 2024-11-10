@@ -14,6 +14,10 @@ export const formatBadgeTextAllCaps = (text: string) => {
         .toUpperCase();
 };
 
+export const formatPercentage = (value: number) => {
+    return `${value > 0 ? '+' : ''}${value}%`
+}
+
 // Function to get status variant
 export const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (status.toLowerCase()) {

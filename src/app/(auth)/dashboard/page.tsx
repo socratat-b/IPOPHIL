@@ -1,19 +1,15 @@
 "use client"
 
-import { DashboardHeader } from "@/components/custom/dashboard/header"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import { Overview } from "@/components/custom/dashboard/overview"
-import { Icons } from "@/components/ui/icons"
 import RecentDocuments from "@/components/custom/dashboard/recent-documents"
-import { useDocuments } from "@/lib/context/document-context"
+
 import { useMemo } from "react"
+import { Icons } from "@/components/ui/icons"
+import { formatPercentage } from "@/lib/controls"
 import { Stats, StatusCounts } from "@/lib/types"
+import { useDocuments } from "@/lib/context/document-context"
+import { Overview } from "@/components/custom/dashboard/overview"
+import { DashboardHeader } from "@/components/custom/dashboard/header"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AddDocumentButton } from "@/components/custom/common/add-document-button"
 
 export default function Page() {
@@ -87,9 +83,7 @@ export default function Page() {
             .slice(0, 4)
     }, [documents])
 
-    const formatPercentage = (value: number) => {
-        return `${value > 0 ? '+' : ''}${value}%`
-    }
+
 
     return (
         <>
@@ -104,9 +98,9 @@ export default function Page() {
                         <div className="flex items-center justify-between space-y-2">
                             <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
                             <div className="flex items-center space-x-2">
-                                <AddDocumentButton title={"Receive"} actionType={"Receive"} />
-                                <AddDocumentButton title={"Release"} actionType={"Release"} />
-                                <AddDocumentButton title={"Add Document"} actionType={"Create"} />
+                                <AddDocumentButton title={"Receive"} actionType={"Receive"} variant={"secondary"} />
+                                <AddDocumentButton title={"Release"} actionType={"Release"} variant={"destructive"} />
+                                <AddDocumentButton title={"Add Document"} actionType={"Create"} variant={"default"} />
                             </div>
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

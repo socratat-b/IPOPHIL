@@ -55,6 +55,10 @@ import {
     Building,
     LucideSend,
     LucidePenLine,
+    Hash,
+    UserCheck,
+    MessageSquare,
+    CalendarClock,
 
     // mar-note: this commented is not to be used, but please do not remove
     // type Icon as LucideIcon,
@@ -138,6 +142,10 @@ export const Icons = {
     helpCircle: HelpCircle,
     lucideSend: LucideSend,
     lucidePenLine: LucidePenLine,
+    hash: Hash,
+    userCheck: UserCheck,
+    messageSquare: MessageSquare,
+    calendarClock: CalendarClock,
 
     /**
      * Custom Icons below  

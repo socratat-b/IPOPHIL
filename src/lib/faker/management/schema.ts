@@ -70,8 +70,9 @@ export const userSchema = z.object({
     first_name: z.string().min(1).max(255),
     last_name: z.string().min(1).max(255),
     email: z.string().email().max(255),
-    password: z.string().min(6).max(255),
     role: userRoleEnum.default("user"),
+    title: z.string().min(1).max(255),
+    type: z.string().min(1).max(255),
     active: z.boolean().default(true),
 }).merge(timestampFields);
 
@@ -124,8 +125,6 @@ export const documentRoutingSchema = z.object({
     sequence_number: z.number().int().positive(),
     from_agency_id: z.string().uuid(),
     to_agency_id: z.string().uuid(),
-    expected_duration: z.string().optional(), // For INTERVAL type
-    is_required: z.boolean().default(true),
     created_at: z.string().datetime(),
 });
 

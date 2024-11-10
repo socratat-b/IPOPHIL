@@ -40,8 +40,9 @@ const generateUsers = (agencies: any[], count = 50) =>
         first_name: faker.person.firstName(),
         last_name: faker.person.lastName(),
         email: faker.internet.email(),
-        password: faker.internet.password(),
         role: getEnumValue(user_role),
+        title: faker.person.jobTitle(),
+        type: faker.person.jobType(),
         active: faker.datatype.boolean(),
         created_at: faker.date.past().toISOString(),
         updated_at: faker.date.recent().toISOString()
