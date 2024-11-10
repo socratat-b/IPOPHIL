@@ -1,13 +1,13 @@
 import type { Metadata } from "next"
-import { Separator } from "@/components/ui/separator";
-import { DisplayForm } from "@/components/custom/settings/display-form";
+import { Separator } from "@/components/ui/separator"
+import { SidebarDisplayForm } from "@/components/custom/settings/display-form"
 
 export const metadata: Metadata = {
-    title: "DMS | Notifications",
-    description: "User Notifications",
-};
+    title: "DMS | Display Settings",
+    description: "Customize display settings",
+}
 
-export default function Page() {
+export default function DisplaySettingsPage() {
     return (
         <div className="space-y-6">
             <div>
@@ -17,7 +17,7 @@ export default function Page() {
                 </p>
             </div>
             <Separator />
-            <DisplayForm />
+            <SidebarDisplayForm />
         </div>
     )
 }

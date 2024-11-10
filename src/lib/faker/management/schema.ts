@@ -1,5 +1,4 @@
 // src/lib/faker/management/schema.ts
-
 import { z } from "zod";
 
 // Enums definition in Zod

@@ -43,3 +43,4 @@ next-env.d.ts
 src/lib/faker/management/*.js*
 src/lib/faker/management/data/*.json*
 *.todo
+dist/

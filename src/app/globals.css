@@ -93,7 +93,12 @@
     text-rendering: optimizeLegibility;
     line-height: 1.4; /* Adjust line height as per brand guide */
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-neue-haas-grotesk font-bold;
   }
   img {
@@ -101,6 +106,20 @@
   }
   a {
     @apply hover:cursor-pointer;
+  }
+
+  /* for appearance form */
+  .font-inter {
+    font-family: "Inter", sans-serif;
+  }
+
+  .font-manrope {
+    font-family: "Manrope", sans-serif;
+  }
+
+  .font-sans {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, sans-serif;
   }
 }
 

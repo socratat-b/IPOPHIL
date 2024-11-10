@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { writeFileSync, mkdirSync } from 'fs';
-import { join } from 'path';
+import path from 'path';
 import {
     user_role,
     log_action,
@@ -9,19 +9,48 @@ import {
     doc_type,
     doc_classification
 } from './data';
+import type {
+    Agency,
+    User,
+    DocumentDetails,
+    Document,
+    DocumentTransitStatus,
+    DocumentLogs,
+    UserRole,
+    DocType,
+    DocStatus,
+    DocClassification,
+    LogAction,
+    IntransitStatus
+} from './schema';
 
 // Use __dirname directly since we're in CommonJS
-const SEED_DATA_PATH = join(__dirname, 'data');
+const SEED_DATA_PATH = path.join(__dirname, 'data');
 
 // Helper to generate UUID
 const generateUUID = () => faker.string.uuid();
 
-// Helper to get enum value from data array
-const getEnumValue = <T extends { value: string }>(array: T[]): string =>
-    faker.helpers.arrayElement(array).value as string;
+// Updated type-safe helper functions for enum values
+const getUserRole = (): UserRole =>
+    faker.helpers.arrayElement(user_role).value as UserRole;
+
+const getDocType = (): DocType =>
+    faker.helpers.arrayElement(doc_type).value as DocType;
+
+const getDocStatus = (): DocStatus =>
+    faker.helpers.arrayElement(doc_status).value as DocStatus;
+
+const getDocClassification = (): DocClassification =>
+    faker.helpers.arrayElement(doc_classification).value as DocClassification;
+
+const getLogAction = (): LogAction =>
+    faker.helpers.arrayElement(log_action).value as LogAction;
+
+const getIntransitStatus = (): IntransitStatus =>
+    faker.helpers.arrayElement(intransit_status).value as IntransitStatus;
 
 // Generate Agencies
-const generateAgencies = (count = 10) =>
+const generateAgencies = (count = 10): Agency[] =>
     Array.from({ length: count }, () => ({
         agency_id: generateUUID(),
         name: faker.company.name(),
@@ -33,14 +62,14 @@ const generateAgencies = (count = 10) =>
     }));
 
 // Generate Users
-const generateUsers = (agencies: any[], count = 50) =>
+const generateUsers = (agencies: Agency[], count = 50): User[] =>
     Array.from({ length: count }, () => ({
         user_id: generateUUID(),
         agency_id: faker.helpers.arrayElement(agencies).agency_id,
         first_name: faker.person.firstName(),
         last_name: faker.person.lastName(),
         email: faker.internet.email(),
-        role: getEnumValue(user_role),
+        role: getUserRole(),
         title: faker.person.jobTitle(),
         type: faker.person.jobType(),
         active: faker.datatype.boolean(),
@@ -49,13 +78,13 @@ const generateUsers = (agencies: any[], count = 50) =>
     }));
 
 // Generate Document Details
-const generateDocumentDetails = (users: any[], count = 200) =>
+const generateDocumentDetails = (users: User[], count = 200): DocumentDetails[] =>
     Array.from({ length: count }, () => ({
         detail_id: generateUUID(),
         document_code: faker.string.alphanumeric(10).toUpperCase(),
         document_name: faker.lorem.sentence(4),
-        classification: getEnumValue(doc_classification),
-        type: getEnumValue(doc_type),
+        classification: getDocClassification(),
+        type: getDocType(),
         created_by: faker.helpers.arrayElement(users).user_id,
         created_at: faker.date.past().toISOString(),
         updated_at: faker.date.recent().toISOString()
@@ -63,10 +92,10 @@ const generateDocumentDetails = (users: any[], count = 200) =>
 
 // Generate Documents
 const generateDocuments = (
-    details: any[],
-    agencies: any[],
+    details: DocumentDetails[],
+    agencies: Agency[],
     count = 150
-) =>
+): Document[] =>
     Array.from({ length: count }, () => {
         const detail = faker.helpers.arrayElement(details);
         const agency = faker.helpers.arrayElement(agencies);
@@ -76,7 +105,7 @@ const generateDocuments = (
             tracking_code: faker.string.alphanumeric(8).toUpperCase(),
             originating_agency_id: agency.agency_id,
             current_agency_id: faker.helpers.arrayElement(agencies).agency_id,
-            status: getEnumValue(doc_status),
+            status: getDocStatus(),
             is_active: faker.datatype.boolean(),
             archived_at: faker.datatype.boolean() ? faker.date.recent().toISOString() : null,
             created_at: faker.date.past().toISOString(),
@@ -86,10 +115,10 @@ const generateDocuments = (
 
 // Generate Transit Status
 const generateTransitStatus = (
-    documents: any[],
-    agencies: any[],
+    documents: Document[],
+    agencies: Agency[],
     count = 300
-) =>
+): DocumentTransitStatus[] =>
     Array.from({ length: count }, () => {
         const document = faker.helpers.arrayElement(documents);
         const fromAgency = faker.helpers.arrayElement(agencies);
@@ -101,7 +130,7 @@ const generateTransitStatus = (
         return {
             transit_id: generateUUID(),
             document_id: document.document_id,
-            status: getEnumValue(intransit_status),
+            status: getIntransitStatus(),
             from_agency_id: fromAgency.agency_id,
             to_agency_id: toAgency.agency_id,
             initiated_at: faker.date.past().toISOString(),
@@ -112,17 +141,17 @@ const generateTransitStatus = (
 
 // Generate Document Logs
 const generateDocumentLogs = (
-    documents: any[],
-    agencies: any[],
-    users: any[],
-    transitStatuses: any[],
+    documents: Document[],
+    agencies: Agency[],
+    users: User[],
+    transitStatuses: DocumentTransitStatus[],
     count = 500
-) =>
+): DocumentLogs[] =>
     Array.from({ length: count }, () => ({
         log_id: generateUUID(),
         document_id: faker.helpers.arrayElement(documents).document_id,
         transit_id: faker.helpers.arrayElement(transitStatuses).transit_id,
-        action: getEnumValue(log_action),
+        action: getLogAction(),
         from_agency_id: faker.helpers.arrayElement(agencies).agency_id,
         to_agency_id: faker.helpers.arrayElement(agencies).agency_id,
         performed_by: faker.helpers.arrayElement(users).user_id,
@@ -160,7 +189,7 @@ const saveGeneratedData = () => {
 
     Object.entries(data).forEach(([name, items]) => {
         writeFileSync(
-            join(SEED_DATA_PATH, `${name}.json`),
+            path.join(SEED_DATA_PATH, `${name}.json`),
             JSON.stringify(items, null, 2)
         );
         console.log(`✅ ${name} data generated (${items.length} items)`);
