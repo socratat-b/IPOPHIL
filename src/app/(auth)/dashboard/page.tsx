@@ -188,7 +188,7 @@ export default function Page() {
     const recentDocs = useMemo(() => {
         return [...documents]
             .sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())
-            .slice(0, 4)
+            .slice(0, 5)
     }, [documents])
 
     return (
@@ -241,9 +241,6 @@ export default function Page() {
                         </div>
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                             <Card className="col-span-4">
-                                <CardHeader>
-                                    <CardTitle>Document Status</CardTitle>
-                                </CardHeader>
                                 <CardContent className="pl-2">
                                     <Overview documents={documents} />
                                 </CardContent>

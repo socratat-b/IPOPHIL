@@ -1,18 +1,41 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ResponsiveContainer } from "recharts";
 import { Document } from "@/lib/faker/documents/schema";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChartPie, BarChart3, LineChart as LineIcon, CheckCircle, Package, Send, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface OverviewProps {
     documents: Document[]
+}
+
+interface ChartDataItem {
+    name: string;
+    value: number;
+    color: string;
+    percentage: number;
+}
+
+interface TooltipProps {
+    active?: boolean;
+    payload?: Array<{
+        payload: ChartDataItem;
+    }>;
+}
+
+interface ActivationPoint {
+    index: number;
+    dataKey: string;
+    cx: number;
+    cy: number;
 }
 
 export function Overview({ documents }: OverviewProps) {
     const [chartType, setChartType] = useState("Pie Chart");
     const [chartWidth, setChartWidth] = useState(0);
     const [chartHeight, setChartHeight] = useState(0);
-    const [isClickedOutside, setIsClickedOutside] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+    const [hoveredStatus, setHoveredStatus] = useState<string | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -21,21 +44,18 @@ export function Overview({ documents }: OverviewProps) {
             setChartHeight(containerRef.current.offsetHeight);
         }
 
-        const handleClickOutside = (event: MouseEvent) => {
-            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-                setIsClickedOutside(true);
-                setTimeout(() => setIsClickedOutside(false), 300);
+        const handleResize = () => {
+            if (containerRef.current) {
+                setChartWidth(containerRef.current.offsetWidth);
+                setChartHeight(containerRef.current.offsetHeight);
             }
         };
 
-        document.addEventListener("mousedown", handleClickOutside);
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const data = documents.reduce((acc, doc) => {
+    const data: ChartDataItem[] = documents.reduce((acc: ChartDataItem[], doc) => {
         const status = doc.status.charAt(0).toUpperCase() + doc.status.slice(1);
         const existingStatus = acc.find(item => item.name === status);
         
@@ -50,129 +70,268 @@ export function Overview({ documents }: OverviewProps) {
             });
         }
         return acc;
-    }, [] as Array<{
-        percentage: number; name: string; value: number; color: string 
-    }>);
+    }, []);
 
     const total = documents.length;
     data.forEach(item => {
         item.percentage = Number(((item.value / total) * 100).toFixed(1));
     });
 
-    function getStatusColor(status: string) {
-        const colors = {
-            Incoming: '#E879F9',
-            Received: '#93C5FD',
-            Outgoing: '#FB923C',
-            Completed: '#4ADE80',
-            For_dispatch: '#A78BFA'
+    function getStatusColor(status: string): string {
+        const colors: Record<string, string> = {
+            Incoming: '#818CF8',    // Indigo
+            Received: '#34D399',    // Emerald
+            Outgoing: '#F472B6',    // Pink
+            Completed: '#60A5FA',   // Blue
+            For_dispatch: '#FBBF24'  // Amber
         };
-        return colors[status as keyof typeof colors] || '#CBD5E1';
+        return colors[status] || '#94A3B8';
     }
 
-    function getStatusIcon(status: string) {
-        const icons = {
-            Incoming: "📥",
-            Received: "📬",
-            Outgoing: "📤",
-            Completed: "✅",
-            For_dispatch: "📦"
-        };
-        return icons[status as keyof typeof icons] || "📄";
-    }
+    const chartColors = {
+        pie: data.map(item => item.color),
+        bar: ['#818CF8', '#34D399', '#F472B6', '#60A5FA', '#FBBF24'],
+        line: '#6366F1'
+    };
+
+    const CustomTooltip = ({ active, payload }: TooltipProps) => {
+        if (active && payload && payload.length) {
+            const data = payload[0].payload;
+            const Icon = getIconForStatus(data.name);
+            return (
+                <motion.div
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white p-3 rounded-lg shadow-lg border border-gray-100 z-50"
+                >
+                    <div className="flex items-center gap-2 mb-1">
+                        <Icon className="w-4 h-4" style={{ color: data.color }} />
+                        <span className="font-semibold text-gray-800">{data.name}</span>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                        <div>Count: {data.value}</div>
+                        <div>Percentage: {data.percentage}%</div>
+                    </div>
+                </motion.div>
+            );
+        }
+        return null;
+    };
 
     return (
-        <div className="w-full bg-white rounded-lg relative" style={{ padding: '0px' }}>
-            <div className="absolute top-2 right-2 z-10">
-                <select
+        <div className="w-full pt-6">
+            <div className="flex justify-between items-center mb-2">
+                <div className="space-y-1">
+                    <motion.h2 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="text-l font-bold text-gray-800 tracking-tight"  // Updated to text-3xl
+                    >
+                        Document Status Overview
+                    </motion.h2>
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-sm text-gray-500"
+                    >
+                        Total Documents: {total}
+                    </motion.p>
+                </div>
+                <Select
                     value={chartType}
-                    onChange={(e) => setChartType(e.target.value)}
-                    className="px-3 py-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
-                    style={{ zIndex: 10 }}
+                    onValueChange={setChartType}
                 >
-                    <option value="Pie Chart">Pie Chart</option>
-                    <option value="Bar Chart">Bar Chart</option>
-                    <option value="Line Chart">Line Chart</option>
-                </select>
-            </div>
-
-            <div ref={containerRef} className="relative h-[350px] flex justify-center items-center">
-                {chartWidth > 0 && chartHeight > 0 && (
-                    <>
-                        {chartType === "Pie Chart" && (
-                            <PieChart width={chartWidth} height={chartHeight}>
-                                <Pie
-                                    data={data}
-                                    cx={chartWidth / 2}
-                                    cy={chartHeight / 2}
-                                    innerRadius={90}
-                                    outerRadius={120}
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                    animationDuration={800}
-                                    isAnimationActive={true}
-                                >
-                                    {data.map((entry, index) => (
-                                        <Cell
-                                            key={`cell-${index}`}
-                                            fill={entry.color}
-                                            strokeWidth={0}
-                                            style={{
-                                                transform: isClickedOutside ? "scale(1.05)" : "scale(1)",
-                                                transition: "transform 0.3s ease-in-out",
-                                                cursor: "pointer"
-                                            }}
-                                        />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    formatter={(value, name, props) => [
-                                        `${value} documents`,
-                                        `${name} - ${(props.payload as any).percentage}%`
-                                    ]}
-                                    contentStyle={{ borderRadius: '8px', padding: '10px', fontSize: '0.9rem' }}
-                                    labelStyle={{ fontWeight: 'bold' }}
-                                />
-                            </PieChart>
-                        )}
-                        {chartType === "Bar Chart" && (
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Bar dataKey="value" fill="#8884d8" />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        )}
-                        {chartType === "Line Chart" && (
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Line type="monotone" dataKey="value" stroke="#8884d8" />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        )}
-                    </>
-                )}
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-4 mt-6 text-gray-600">
-                {data.map((entry, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
-                        <div className="flex items-center gap-1">
-                            <span className="text-lg">{getStatusIcon(entry.name)}</span>
-                            <span className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
+                    <SelectTrigger className="w-[180px] bg-white hover:bg-gray-50 transition-colors shadow-sm rounded-md border-gray-200">
+                        <div className="flex items-center gap-2">
+                            {chartType === "Pie Chart" && <ChartPie className="w-4 h-4" />}
+                            {chartType === "Bar Chart" && <BarChart3 className="w-4 h-4" />}
+                            {chartType === "Line Chart" && <LineIcon className="w-4 h-4" />}
+                            <span>{chartType}</span>
                         </div>
-                        <span className="text-gray-800 font-semibold">{entry.percentage}%</span>
-                        <span>{entry.name.replace(/_/g, ' ')}</span>
-                    </div>
-                ))}
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Pie Chart">
+                            <div className="flex items-center gap-2">
+                                <ChartPie className="w-4 h-4" />
+                                Pie Chart
+                            </div>
+                        </SelectItem>
+                        <SelectItem value="Bar Chart">
+                            <div className="flex items-center gap-2">
+                                <BarChart3 className="w-4 h-4" />
+                                Bar Chart
+                            </div>
+                        </SelectItem>
+                        <SelectItem value="Line Chart">
+                            <div className="flex items-center gap-2">
+                                <LineIcon className="w-4 h-4" />
+                                Line Chart
+                            </div>
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
+
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={chartType}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                    ref={containerRef}
+                    className="relative h-[400px] w-full"
+                >
+                    {chartWidth > 0 && chartHeight > 0 && (
+                        <ResponsiveContainer width="100%" height="100%">
+                            {chartType === "Pie Chart" ? (
+                                <PieChart>
+                                    <Pie
+                                        data={data}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={120}
+                                        outerRadius={180}
+                                        paddingAngle={5}
+                                        dataKey="value"
+                                        onClick={(_, index) => {
+                                            const status = data[index].name;
+                                            setSelectedStatus(selectedStatus === status ? null : status);
+                                        }}
+                                        onMouseEnter={(_, index) => {
+                                            setHoveredStatus(data[index].name);
+                                        }}
+                                        onMouseLeave={() => {
+                                            setHoveredStatus(null);
+                                        }}
+                                    >
+                                        {data.map((entry, index) => (
+                                            <Cell 
+                                                key={`cell-${index}`} 
+                                                fill={entry.color} 
+                                                opacity={
+                                                    hoveredStatus === entry.name ? 1 :
+                                                    selectedStatus === entry.name ? 1 :
+                                                    selectedStatus ? 0.3 :
+                                                    hoveredStatus ? 0.3 : 1
+                                                }
+                                                className="transition-all duration-300 cursor-pointer"
+                                            />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip content={<CustomTooltip />} />
+                                </PieChart>
+                            ) : chartType === "Bar Chart" ? (
+                                <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                                    <XAxis dataKey="name" stroke="#64748B" />
+                                    <YAxis stroke="#64748B" />
+                                    <Tooltip content={<CustomTooltip />} />
+                                    <Bar 
+                                        dataKey="value" 
+                                        radius={[6, 6, 0, 0]}
+                                    >
+                                        {data.map((entry, index) => (
+                                            <Cell 
+                                                key={`cell-${index}`} 
+                                                fill={chartColors.bar[index]}
+                                                onClick={() => {
+                                                    setSelectedStatus(selectedStatus === entry.name ? null : entry.name);
+                                                }}
+                                                onMouseEnter={() => {
+                                                    setHoveredStatus(entry.name);
+                                                }}
+                                                onMouseLeave={() => {
+                                                    setHoveredStatus(null);
+                                                }}
+                                                opacity={
+                                                    hoveredStatus === entry.name ? 1 :
+                                                    selectedStatus === entry.name ? 1 :
+                                                    selectedStatus ? 0.3 :
+                                                    hoveredStatus ? 0.3 : 1
+                                                }
+                                                className="transition-all duration-300 cursor-pointer"
+                                            />
+                                        ))}
+                                    </Bar>
+                                </BarChart>
+                            ) : (
+                                <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                                    <XAxis dataKey="name" stroke="#64748B" />
+                                    <YAxis stroke="#64748B" />
+                                    <Tooltip content={<CustomTooltip />} />
+                                    <Line 
+                                        type="monotone" 
+                                        dataKey="value" 
+                                        stroke={chartColors.line}
+                                        strokeWidth={3}
+                                        dot={{ 
+                                            fill: chartColors.line, 
+                                            strokeWidth: 2,
+                                            r: 6,
+                                            className: "transition-all duration-300"
+                                        }}
+                                        activeDot={{ 
+                                            r: 8, 
+                                            fill: chartColors.line,
+                                            className: "transition-all duration-300",
+                                            onClick: (props: ActivationPoint) => {
+                                                const status = data[props.index].name;
+                                                setSelectedStatus(selectedStatus === status ? null : status);
+                                            }
+                                        }}
+                                    />
+                                </LineChart>
+                            )}
+                        </ResponsiveContainer>
+                    )}
+                    {chartType === "Pie Chart" && (
+                        <img
+                            src="/images/cube.png"
+                            alt="Center Logo"
+                            className="absolute w-20 h-20 z-10"
+                            style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                        />
+                    )}
+                </motion.div>
+            </AnimatePresence>
+
+            <motion.div 
+                className="flex flex-wrap justify-center gap-3 mt-2"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+            >
+                {data.map((entry, index) => {
+                    const Icon = getIconForStatus(entry.name);
+                    return (
+                        <motion.div 
+                            key={index}
+                            onClick={() => setSelectedStatus(selectedStatus === entry.name ? null : entry.name)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full ${selectedStatus === entry.name ? 'bg-gray-100 ring-2 ring-gray-200' : 'bg-gray-50'} transition-all duration-300 cursor-pointer shadow-sm`}
+                            whileTap={{ scale: 0.95 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                        >
+                            <Icon className="h-4 w-4" style={{ color: chartColors.pie[index] }} />
+                            <span className="text-sm font-medium text-gray-700">{entry.name.replace(/_/g, ' ')}</span>
+                            <span className="text-sm text-gray-500">{entry.percentage}%</span>
+                        </motion.div>
+                    );
+                })}
+            </motion.div>
         </div>
     );
+
+    function getIconForStatus(status: string): React.ElementType {
+        const icons: Record<string, React.ElementType> = {
+            Incoming: Package,
+            Received: CheckCircle,
+            Outgoing: Send,
+            Completed: Check,
+            For_dispatch: BarChart3
+        };
+        return icons[status] || CheckCircle;
+    }
 }
