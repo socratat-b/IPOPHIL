@@ -4,6 +4,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ResponsiveContainer } from "recharts";
 import { Document } from "@/lib/faker/documents/schema";
 import { useTheme } from "next-themes";
+import { 
+    MoveDown, 
+    Inbox, 
+    Send, 
+    CheckCircle2, 
+    Package,
+    PieChart as PieChartIcon,
+    BarChart as BarChartIcon,
+    LineChart as LineChartIcon 
+} from "lucide-react";
 
 interface OverviewProps {
     documents: Document[]
@@ -62,7 +72,6 @@ export function Overview({ documents }: OverviewProps) {
     });
 
     function getStatusColor(status: string) {
-        // Use CSS variables for colors
         const colors = {
             Incoming: 'hsl(var(--chart-1))',
             Received: 'hsl(var(--chart-2))',
@@ -74,31 +83,53 @@ export function Overview({ documents }: OverviewProps) {
     }
 
     function getStatusIcon(status: string) {
-        const icons = {
-            Incoming: "📥",
-            Received: "📬",
-            Outgoing: "📤",
-            Completed: "✅",
-            For_dispatch: "📦"
+        const iconProps = {
+            size: 18,
+            className: "text-foreground opacity-80"
         };
-        return icons[status as keyof typeof icons] || "📄";
+        
+        const icons = {
+            Incoming: <MoveDown {...iconProps} />,
+            Received: <Inbox {...iconProps} />,
+            Outgoing: <Send {...iconProps} />,
+            Completed: <CheckCircle2 {...iconProps} />,
+            For_dispatch: <Package {...iconProps} />
+        };
+        return icons[status as keyof typeof icons] || null;
     }
 
     const isDark = theme === 'dark';
 
+    const chartTypes = [
+        { value: "Pie Chart", icon: PieChartIcon },
+        { value: "Bar Chart", icon: BarChartIcon },
+        { value: "Line Chart", icon: LineChartIcon }
+    ];
     return (
         <div className="w-full rounded-lg relative bg-card">
             <div className="absolute top-2 right-2 z-10">
-                <select
-                    value={chartType}
-                    onChange={(e) => setChartType(e.target.value)}
-                    className="px-3 py-1 rounded-lg bg-background text-foreground border-border 
-                             focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                >
-                    <option value="Pie Chart">Pie Chart</option>
-                    <option value="Bar Chart">Bar Chart</option>
-                    <option value="Line Chart">Line Chart</option>
-                </select>
+                <div className="relative inline-block">
+                    <select
+                        value={chartType}
+                        onChange={(e) => setChartType(e.target.value)}
+                        className="appearance-none px-3 py-1.5 pr-8 rounded-lg bg-background 
+                                 text-foreground border border-border hover:bg-accent
+                                 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent
+                                 transition-colors duration-200"
+                    >
+                        {chartTypes.map(type => (
+                            <option key={type.value} value={type.value}>
+                                {type.value}
+                            </option>
+                        ))}
+                    </select>
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                        {React.createElement(
+                            chartTypes.find(t => t.value === chartType)?.icon || PieChartIcon,
+                            { size: 16, className: "text-foreground opacity-70" }
+                        )}
+                    </div>
+                </div>
             </div>
 
             <div ref={containerRef} className="relative h-[350px] flex justify-center items-center">
@@ -123,8 +154,8 @@ export function Overview({ documents }: OverviewProps) {
                                             fill={entry.color}
                                             strokeWidth={0}
                                             style={{
-                                                transform: isClickedOutside ? "scale(1.05)" : "scale(1)",
-                                                transition: "transform 0.3s ease-in-out",
+                                                filter: isClickedOutside ? "brightness(1.1)" : "none",
+                                                transition: "filter 0.3s ease-in-out",
                                                 cursor: "pointer"
                                             }}
                                         />
@@ -141,7 +172,8 @@ export function Overview({ documents }: OverviewProps) {
                                         fontSize: '0.9rem',
                                         backgroundColor: isDark ? 'hsl(var(--popover))' : 'white',
                                         color: isDark ? 'hsl(var(--popover-foreground))' : 'inherit',
-                                        border: '1px solid hsl(var(--border))'
+                                        border: '1px solid hsl(var(--border))',
+                                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                                     }}
                                     labelStyle={{ fontWeight: 'bold' }}
                                 />
@@ -206,18 +238,27 @@ export function Overview({ documents }: OverviewProps) {
                 )}
             </div>
 
-            <div className="flex flex-wrap justify-center gap-4 mt-6 text-muted-foreground">
+            <div className="flex flex-wrap justify-center gap-6 mt-6 pb-4">
                 {data.map((entry, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
-                        <div className="flex items-center gap-1">
-                            <span className="text-lg">{getStatusIcon(entry.name)}</span>
+                    <div 
+                        key={index} 
+                        className="flex items-center gap-3 text-sm bg-background/50 
+                                 px-3 py-1.5 rounded-lg transition-colors duration-200 
+                                 hover:bg-accent cursor-pointer"
+                    >
+                        <div className="flex items-center gap-2">
+                            {getStatusIcon(entry.name)}
                             <span
-                                className="h-3 w-3 rounded-full"
+                                className="h-2.5 w-2.5 rounded-full"
                                 style={{ backgroundColor: entry.color }}
                             />
                         </div>
-                        <span className="text-foreground font-semibold">{entry.percentage}%</span>
-                        <span>{entry.name.replace(/_/g, ' ')}</span>
+                        <span className="text-foreground font-medium">
+                            {entry.percentage}%
+                        </span>
+                        <span className="text-muted-foreground">
+                            {entry.name.replace(/_/g, ' ')}
+                        </span>
                     </div>
                 ))}
             </div>
