@@ -31,52 +31,52 @@
     --chart-5: 290 50.7% 37.8%; /* Purple */
 
     /* Sidebar colors, do not remove */
-    --sidebar-background: 0 0% 98%; /* Light Gray */
-    --sidebar-foreground: 240 5.3% 26.1%; /* Dark Gray */
-    --sidebar-primary: 240 5.9% 10%; /* Dark Gray */
-    --sidebar-primary-foreground: 0 0% 98%; /* Light Gray */
-    --sidebar-accent: 240 4.8% 95.9%; /* Light Gray */
-    --sidebar-accent-foreground: 240 5.9% 10%; /* Dark Gray */
-    --sidebar-border: 220 13% 91%; /* Light Gray */
-    --sidebar-ring: 17 76.5% 52.9%; /* Orange */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-  --background: 240 10% 8%; /* Very Dark Blue-Gray */
-  --foreground: 240 5% 84%; /* Light Gray */
-  --card: 240 10% 12%; /* Dark Blue-Gray */
-  --card-foreground: 240 5% 84%; /* Light Gray */
-  --popover: 240 10% 12%; /* Dark Blue-Gray */
-  --popover-foreground: 240 5% 84%; /* Light Gray */
-  --primary: 17 76.5% 52.9%; /* Kept Original Orange */
-  --primary-foreground: 240 5% 84%; /* Light Gray */
-  --secondary: 240 8% 20%; /* Dark Gray */
-  --secondary-foreground: 240 5% 84%; /* Light Gray */
-  --muted: 240 8% 20%; /* Dark Gray */
-  --muted-foreground: 240 5% 64.9%; /* Medium Gray */
-  --accent: 240 8% 20%; /* Dark Gray */
-  --accent-foreground: 240 5% 84%; /* Light Gray */
-  --destructive: 6 78.7% 51.2%; /* Kept Original Red Orange */
-  --destructive-foreground: 240 5% 84%; /* Light Gray */
-  --border: 240 8% 24%; /* Dark Gray Border */
-  --input: 240 8% 24%; /* Dark Gray Input */
-  --ring: 17 76.5% 52.9%; /* Kept Original Orange */
-  --radius: 0.5rem;
-  --chart-1: 32 78.4% 57.6%; /* Kept Original Yellow Orange */
-  --chart-2: 168 48.8% 43.9%; /* Kept Original Teal */
-  --chart-3: 210 37.3% 43.7%; /* Kept Original Yale */
-  --chart-4: 6 78.7% 51.2%; /* Kept Original Red Orange */
-  --chart-5: 290 50.7% 37.8%; /* Kept Original Purple */
+    --background: 240 10% 8%; /* Very Dark Blue-Gray */
+    --foreground: 240 5% 84%; /* Light Gray */
+    --card: 240 10% 12%; /* Dark Blue-Gray */
+    --card-foreground: 240 5% 84%; /* Light Gray */
+    --popover: 240 10% 12%; /* Dark Blue-Gray */
+    --popover-foreground: 240 5% 84%; /* Light Gray */
+    --primary: 17 76.5% 52.9%; /* Kept Original Orange */
+    --primary-foreground: 240 5% 84%; /* Light Gray */
+    --secondary: 240 8% 20%; /* Dark Gray */
+    --secondary-foreground: 240 5% 84%; /* Light Gray */
+    --muted: 240 8% 20%; /* Dark Gray */
+    --muted-foreground: 240 5% 64.9%; /* Medium Gray */
+    --accent: 240 8% 20%; /* Dark Gray */
+    --accent-foreground: 240 5% 84%; /* Light Gray */
+    --destructive: 6 78.7% 51.2%; /* Kept Original Red Orange */
+    --destructive-foreground: 240 5% 84%; /* Light Gray */
+    --border: 240 8% 24%; /* Dark Gray Border */
+    --input: 240 8% 24%; /* Dark Gray Input */
+    --ring: 17 76.5% 52.9%; /* Kept Original Orange */
+    --radius: 0.5rem;
+    --chart-1: 32 78.4% 57.6%; /* Kept Original Yellow Orange */
+    --chart-2: 168 48.8% 43.9%; /* Kept Original Teal */
+    --chart-3: 210 37.3% 43.7%; /* Kept Original Yale */
+    --chart-4: 6 78.7% 51.2%; /* Kept Original Red Orange */
+    --chart-5: 290 50.7% 37.8%; /* Kept Original Purple */
 
-  /* Sidebar colors */
-  --sidebar-background: 240 10% 8%;  /* Darker Blue-Gray */
-  --sidebar-foreground: 240 5% 84%; /* Light Gray */
-  --sidebar-primary: 240 5% 84%; /* Light Gray */
-  --sidebar-primary-foreground: 240 10% 10%; /* Darker Blue-Gray */
-  --sidebar-accent: 240 8% 20%; /* Dark Gray */
-  --sidebar-accent-foreground: 240 5% 84%; /* Light Gray */
-  --sidebar-border: 240 8% 24%; /* Dark Gray Border */
-  --sidebar-ring: 17 76.5% 52.9%; /* Kept Original Orange */
+    /* Sidebar colors, do not remove */
+    --sidebar-background: 240 10% 8%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 240 4.9% 83.9%;
   }
 }
 @layer base {
