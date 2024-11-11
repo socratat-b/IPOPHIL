@@ -3,10 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { DocumentType } from "@/lib/dms/schema";
 import { DataTableColumnHeader } from "../table/data-table-column-header";
-import { formatBadgeText } from "@/lib/controls";
 
 export const columns: ColumnDef<DocumentType>[] = [
     {
@@ -58,7 +56,7 @@ export const columns: ColumnDef<DocumentType>[] = [
             if (value === undefined) return true;
             return row.getValue(id) === value;
         },
-    },  
+    },
     {
         id: "actions",
         cell: ({ row }) => <DataTableRowActions row={row} />,

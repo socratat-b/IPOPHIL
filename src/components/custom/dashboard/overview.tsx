@@ -1,9 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ResponsiveContainer } from "recharts";
+import React from 'react'
+import Image from 'next/image'
+
+import { useEffect, useRef, useState } from 'react';
 import { Document } from "@/lib/faker/documents/schema";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChartPie, BarChart3, LineChart as LineIcon, CheckCircle, Package, Send, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { ChartPie, BarChart3, LineChart as LineIcon, CheckCircle, Package, Send, Check } from 'lucide-react';
+import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ResponsiveContainer } from "recharts";
 
 interface OverviewProps {
     documents: Document[]
@@ -285,10 +288,12 @@ export function Overview({ documents }: OverviewProps) {
                         </ResponsiveContainer>
                     )}
                     {chartType === "Pie Chart" && (
-                        <img
-                            src="/images/cube.png"
+                        <Image
+                            src={"/images/cube.png"}
                             alt="Center Logo"
-                            className="absolute w-20 h-20 z-10" // Keep a lower z-index for the logo
+                            className="absolute z-10"
+                            height={80}
+                            width={80}
                             style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
                         />
                     )}
