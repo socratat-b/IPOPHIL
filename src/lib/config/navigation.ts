@@ -66,7 +66,7 @@ export const navigationConfig: NavigationConfiguration = {
                 {
                     id: "dispatch",
                     title: "For Dispatch",
-                    url: "/documents/intransit",
+                    url: "/documents/dispatch",
                 },
                 {
                     id: "intransit",
@@ -76,12 +76,12 @@ export const navigationConfig: NavigationConfiguration = {
                 {
                     id: "received",
                     title: "Received",
-                    url: "/documents/intransit",
+                    url: "/documents/recieved",
                 },
                 {
                     id: "completed",
                     title: "Completed",
-                    url: "/documents/intransit",
+                    url: "/documents/completed",
                 },
             ],
         },

@@ -23,7 +23,7 @@ interface DashboardHeaderProps {
     }[];
 }
 
-export function DashboardHeader({ userName = "John Doe", breadcrumbs = [] }: DashboardHeaderProps) {
+export function DashboardHeader({ userName = "User", breadcrumbs = [] }: DashboardHeaderProps) {
     const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
     useEffect(() => {
