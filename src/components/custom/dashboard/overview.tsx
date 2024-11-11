@@ -289,9 +289,11 @@ export function Overview({ documents }: OverviewProps) {
                     )}
                     {chartType === "Pie Chart" && (
                         <Image
-                            src="/images/cube.png"
+                            src={"/images/cube.png"}
                             alt="Center Logo"
-                            className="absolute w-20 h-20 z-10"
+                            className="absolute z-10"
+                            height={80}
+                            width={80}
                             style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
                         />
                     )}
