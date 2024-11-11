@@ -16,8 +16,33 @@ import { useMemo } from "react"
 import { Stats, StatusCounts } from "@/lib/types"
 import { AddDocumentButton } from "@/components/custom/common/add-document-button"
 import { Line, LineChart} from "recharts"
+import { motion } from "framer-motion"
 
-// Sample data for the sparkline charts
+// Subtle fade-in animation for initial page load
+const pageVariants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 }
+}
+
+// Subtle stagger effect for cards
+const containerVariants = {
+    initial: { opacity: 0 },
+    animate: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1 }
+    }
+}
+
+const itemVariants = {
+    initial: { opacity: 0, y: 10 },
+    animate: { 
+        opacity: 1, 
+        y: 0,
+        transition: { duration: 0.3 }
+    }
+}
+
+// Sample data remains the same
 const incomingData = [
     { value: 10 },
     { value: 15 },
@@ -54,6 +79,36 @@ const completedData = [
     { value: 9 },
     { value: 9 },
 ]
+// ... rest of the sample data remains unchanged
+
+const StatCard = ({ title, value, percentage, icon: Icon, data }: any) => (
+    <motion.div variants={itemVariants}>
+        <Card className="transition-all duration-200 hover:shadow-md">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{title}</CardTitle>
+                <Icon className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{value}</div>
+                <p className="text-xs text-muted-foreground">
+                    {percentage > 0 ? '+' : ''}{percentage}% from last month
+                </p>
+                <div className="h-[40px] mt-3">
+                    <LineChart data={data} width={200} height={40}>
+                        <Line
+                            type="monotone"
+                            dataKey="value"
+                            stroke="hsl(var(--primary))"
+                            strokeWidth={2}
+                            dot={{ r: 2, fill: "#fff" }}
+                        />
+                    </LineChart>
+                </div>
+            </CardContent>
+        </Card>
+    </motion.div>
+)
+
 export default function Page() {
     const { documents } = useDocuments()
 
@@ -130,7 +185,12 @@ export default function Page() {
     }
 
     return (
-        <>
+        <motion.div
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            transition={{ duration: 0.4 }}
+        >
             <DashboardHeader
                 breadcrumbs={[
                     { label: "Dashboard", href: "/dashboard", active: true },
@@ -142,135 +202,77 @@ export default function Page() {
                         <div className="flex items-center justify-between space-y-2">
                             <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
                             <div className="flex items-center space-x-2">
-                                <AddDocumentButton title={"Receive"} actionType={"Receive"} />
-                                <AddDocumentButton title={"Release"} actionType={"Release"} />
-                                <AddDocumentButton title={"Add Document"} actionType={"Create"} />
+                                <AddDocumentButton title="Receive" actionType="Receive" />
+                                <AddDocumentButton title="Release" actionType="Release" />
+                                <AddDocumentButton title="Add Document" actionType="Create" />
                             </div>
                         </div>
-                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        Total Incoming
-                                    </CardTitle>
-                                    <Icons.incoming className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">{stats.current.incoming}</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {formatPercentage(stats.percentageChanges.incoming)} from last month
-                                    </p>
-                                    <div className="h-[40px] mt-3">
-                                        <LineChart data={incomingData} width={200} height={40}>
-                                            <Line
-                                                type="monotone"
-                                                dataKey="value"
-                                                stroke="hsl(var(--primary))"
-                                                strokeWidth={2}
-                                                dot={{ r: 2, fill: "#fff" }}
-                                            />
-                                        </LineChart>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        Total Received
-                                    </CardTitle>
-                                    <Icons.recieved className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">{stats.current.recieved}</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {formatPercentage(stats.percentageChanges.recieved)} from last month
-                                    </p>
-                                    <div className="h-[40px] mt-3">
-                                        <LineChart data={receivedData} width={200} height={40}>
-                                            <Line
-                                                type="monotone"
-                                                dataKey="value"
-                                                stroke="hsl(var(--primary))"
-                                                strokeWidth={2}
-                                                dot={{ r: 2, fill: "#fff" }}
-                                            />
-                                        </LineChart>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">Total Outgoing</CardTitle>
-                                    <Icons.outgoing className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">{stats.current.outgoing}</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {formatPercentage(stats.percentageChanges.outgoing)} from last month
-                                    </p>
-                                    <div className="h-[40px] mt-3">
-                                        <LineChart data={outgoingData} width={200} height={40}>
-                                            <Line
-                                                type="monotone"
-                                                dataKey="value"
-                                                stroke="hsl(var(--primary))"
-                                                strokeWidth={2}
-                                                dot={{ r: 2, fill: "#fff" }}
-                                            />
-                                        </LineChart>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">
-                                        Total Completed
-                                    </CardTitle>
-                                    <Icons.completed className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-2xl font-bold">{stats.current.completed}</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        {formatPercentage(stats.percentageChanges.completed)} from last month
-                                    </p>
-                                    <div className="h-[40px] mt-3">
-                                        <LineChart data={completedData} width={200} height={40}>
-                                            <Line
-                                                type="monotone"
-                                                dataKey="value"
-                                                stroke="hsl(var(--primary))"
-                                                strokeWidth={2}
-                                                dot={{ r: 2, fill: "#fff" }}
-                                            />
-                                        </LineChart>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
+
+                        <motion.div 
+                            className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+                            variants={containerVariants}
+                            initial="initial"
+                            animate="animate"
+                        >
+                            <StatCard
+                                title="Total Incoming"
+                                value={stats.current.incoming}
+                                percentage={stats.percentageChanges.incoming}
+                                icon={Icons.incoming}
+                                data={incomingData}
+                            />
+                            <StatCard
+                                title="Total Received"
+                                value={stats.current.recieved}
+                                percentage={stats.percentageChanges.recieved}
+                                icon={Icons.recieved}
+                                data={receivedData}
+                            />
+                            <StatCard
+                                title="Total Outgoing"
+                                value={stats.current.outgoing}
+                                percentage={stats.percentageChanges.outgoing}
+                                icon={Icons.outgoing}
+                                data={outgoingData}
+                            />
+                            <StatCard
+                                title="Total Completed"
+                                value={stats.current.completed}
+                                percentage={stats.percentageChanges.completed}
+                                icon={Icons.completed}
+                                data={completedData}
+                            />
+                        </motion.div>
+
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                            <Card className="col-span-4">
-                                <CardHeader>
-                                    <CardTitle>Document Status</CardTitle>
-                                </CardHeader>
-                                <CardContent className="pl-2">
-                                    <Overview documents={documents} />
-                                </CardContent>
-                            </Card>
-                            <Card className="col-span-3">
-                                <CardHeader>
-                                    <CardTitle>My Recent Documents</CardTitle>
-                                    <CardDescription>
-                                        You have {documents.length} documents total.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <RecentDocuments documents={recentDocs} />
-                                </CardContent>
-                            </Card>
+                            <div className="col-span-4">
+                                <Card className="transition-all duration-200 hover:shadow-md">
+                                    <CardHeader>
+                                        <CardTitle>Document Status</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="pl-2">
+                                        <Overview documents={documents} />
+                                    </CardContent>
+                                </Card>
+                            </div>
+
+                            <div className="col-span-3">
+                                <Card className="transition-all duration-200 hover:shadow-md">
+                                    <CardHeader>
+                                        <CardTitle>My Recent Documents</CardTitle>
+                                        <CardDescription>
+                                            You have {documents.length} documents total.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <RecentDocuments documents={recentDocs} />
+                                    </CardContent>
+                                </Card>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </>
+        </motion.div>
     )
 }

@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import localFont from "next/font/local"
 import "./globals.css"
 import { ThemeProvider } from 'next-themes'
+import { LoadingProvider } from "@/components/loading/loading-provider"
+import { ClientRouteLoadingWrapper } from "@/components/loading/client-wrapper"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,8 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={` ${geistSans.className} ${geistMono.variable} antialiased`} suppressHydrationWarning>
-
+    <html lang="en" className={`${geistSans.className} ${geistMono.variable} antialiased`} suppressHydrationWarning>
       <head>
         <link
           rel="icon"
@@ -35,18 +36,20 @@ export default function RootLayout({
           type="image/svg+xml"
         />
       </head>
-
       <body className="text-foreground select-none">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <LoadingProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ClientRouteLoadingWrapper>
+              {children}
+            </ClientRouteLoadingWrapper>
+          </ThemeProvider>
+        </LoadingProvider>
       </body>
-
     </html>
   );
 }

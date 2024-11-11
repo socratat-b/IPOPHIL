@@ -49,7 +49,7 @@ export function Overview({ documents }: OverviewProps) {
                 />
                 <Bar
                     dataKey="total"
-                    fill="#3182ce"
+                    fill="#F26524"
                     radius={[4, 4, 0, 0]}
                 />
             </BarChart>
