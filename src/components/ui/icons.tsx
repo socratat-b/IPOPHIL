@@ -70,6 +70,7 @@ import {
     ArrowRightIcon,
     ArrowUpIcon,
     CircleIcon,
+    Cross2Icon,
     InfoCircledIcon,
     StopwatchIcon,
 } from "@radix-ui/react-icons"
@@ -148,6 +149,7 @@ export const Icons = {
     messageSquare: MessageSquare,
     calendarClock: CalendarClock,
     search: SearchIcon,
+    cross2Icon: Cross2Icon,
 
     /**
      * Custom Icons below  

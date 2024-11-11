@@ -19,8 +19,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { userSchema } from "@/lib/faker/users/schema"
-import { status_types } from "@/lib/faker/users/data"
+import { userSchema } from "@/lib/dms/schema"
+import { status_types } from "@/lib/dms/data"
 
 interface DataTableRowActionsProps<TData> {
     row: Row<TData>
@@ -38,7 +38,7 @@ export function DataTableRowActions<TData>({
 
     // Function to copy user ID
     const handleCopyId = () => {
-        navigator.clipboard.writeText(user.id);
+        navigator.clipboard.writeText(user.user_id);
         toast.success("User ID copied to clipboard");
     };
 
@@ -101,7 +101,7 @@ export function DataTableRowActions<TData>({
                         Change Status
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent onClick={(e) => e.stopPropagation()}>
-                        <DropdownMenuRadioGroup value={user.status}>
+                        <DropdownMenuRadioGroup value={user.active ? 'b' : 'a'}>
                             {status_types.map((status) => (
                                 <DropdownMenuRadioItem
                                     key={status.value}
