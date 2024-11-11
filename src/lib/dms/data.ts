@@ -9,6 +9,19 @@ export const user_role = [
     }
 ];
 
+// extra
+export const status_types = [
+    {
+        value: "active",
+        label: "Active",
+    },
+    {
+        value: "inactive",
+        label: "Inactive",
+    },
+]
+
+
 export const log_action = [
     {
         value: "created",

@@ -1,12 +1,12 @@
 "use client"
 
-import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/custom/table/data-table-view-options";
-import { status_types, user_types } from "@/lib/faker/users/data";
+import { status_types, user_role } from "@/lib/dms/data";
 import { DataTableFacetedFilter } from "@/components/custom/table/data-table-faceted-filter";
+import { Icons } from "@/components/ui/icons";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -41,7 +41,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                     <DataTableFacetedFilter
                         column={table.getColumn("role")}
                         title="Role"
-                        options={user_types.map((type) => ({
+                        options={user_role.map((type) => ({
                             value: type.value,
                             label: type.label
                         }))}
@@ -49,12 +49,12 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                 )}
                 {isFiltered && (
                     <Button
-                        variant={"ghost"}
+                        variant="ghost"
                         onClick={() => table.resetColumnFilters()}
                         className="h-8 px-2 lg:px-3"
                     >
                         Reset
-                        <Cross2Icon className="ml-2 h-4 w-4" />
+                        <Icons.cross2Icon className="ml-2 h-4 w-4" />
                     </Button>
                 )}
             </div>
