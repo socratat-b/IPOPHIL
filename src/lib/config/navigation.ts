@@ -100,7 +100,7 @@ export const navigationConfig: NavigationConfiguration = {
                 {
                     id: "types",
                     title: "Type",
-                    url: "/documents/intransit",
+                    url: "/document-types",
                 },
             ],
         },

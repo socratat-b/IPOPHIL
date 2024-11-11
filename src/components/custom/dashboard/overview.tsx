@@ -4,6 +4,17 @@ import { Document } from "@/lib/faker/documents/schema";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChartPie, BarChart3, LineChart as LineIcon, CheckCircle, Package, Send, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from "next-themes";
+import { 
+    MoveDown, 
+    Inbox, 
+    Send, 
+    CheckCircle2, 
+    Package,
+    PieChart as PieChartIcon,
+    BarChart as BarChartIcon,
+    LineChart as LineChartIcon 
+} from "lucide-react";
 
 interface OverviewProps {
     documents: Document[]
@@ -31,6 +42,7 @@ interface ActivationPoint {
 }
 
 export function Overview({ documents }: OverviewProps) {
+    const { theme } = useTheme();
     const [chartType, setChartType] = useState("Pie Chart");
     const [chartWidth, setChartWidth] = useState(0);
     const [chartHeight, setChartHeight] = useState(0);

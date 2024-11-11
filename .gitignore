@@ -44,3 +44,4 @@ src/lib/faker/management/*.js*
 src/lib/faker/management/data/*.json*
 *.todo
 dist/
+.history
