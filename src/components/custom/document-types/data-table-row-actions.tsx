@@ -34,11 +34,6 @@ export function DataTableRowActions<TData>({
         action();
     };
 
-    // Function to view document type
-    const handleView = () => {
-        setSelectedItem(documentType);
-    };
-
     // Function to open edit dialog
     const handleEdit = () => {
         setSelectedItem(documentType);
@@ -78,12 +73,6 @@ export function DataTableRowActions<TData>({
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align="end" className="w-[160px]">
-                    <DropdownMenuItem
-                        onClick={(e) => handleAction(e, handleView)}
-                    >
-                        View Details
-                    </DropdownMenuItem>
-
                     <DropdownMenuItem
                         onClick={(e) => handleAction(e, handleEdit)}
                     >

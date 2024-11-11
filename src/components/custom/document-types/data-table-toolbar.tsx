@@ -7,6 +7,12 @@ import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/custom/table/data-table-view-options";
 import { AddDocumentTypeButton } from "./control/add-document-type-button";
 import { useState, useCallback } from "react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -21,11 +27,8 @@ export function DataTableToolbar<TData>({ table, onAdd }: DataTableToolbarProps<
     const isFiltered = table.getState().columnFilters.length > 0;
 
     // Toggle active filter callback
-    const toggleActiveFilter = useCallback(() => {
-        const activeColumn = table.getColumn("active");
-        const currentValue = activeColumn?.getFilterValue();
-        // Toggle between true, false, and undefined
-        activeColumn?.setFilterValue(currentValue === true ? false : currentValue === false ? undefined : true);
+    const setActiveFilter = useCallback((status: boolean | undefined) => {
+        table.getColumn("active")?.setFilterValue(status);
     }, [table]);
 
     // Update filter value for search input
@@ -44,20 +47,30 @@ export function DataTableToolbar<TData>({ table, onAdd }: DataTableToolbarProps<
                     className="h-8 w-[150px] lg:w-[250px]"
                 />
 
-                {/* Toggle button for Active status */}
+                {/* Dropdown selection for Active status */}
                 {table.getColumn("active") && (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8"
-                        onClick={toggleActiveFilter}
-                    >
-                        {table.getColumn("active")?.getFilterValue() === true
-                            ? "Show Inactive"
-                            : table.getColumn("active")?.getFilterValue() === false
-                            ? "Show All"
-                            : "Show Active"}
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="h-8">
+                                {table.getColumn("active")?.getFilterValue() === true
+                                    ? "Show Active"
+                                    : table.getColumn("active")?.getFilterValue() === false
+                                    ? "Show Inactive"
+                                    : "Show All"}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            <DropdownMenuItem onClick={() => setActiveFilter(undefined)}>
+                                Show All
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setActiveFilter(true)}>
+                                Show Active
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setActiveFilter(false)}>
+                                Show Inactive
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 )}
 
                 {isFiltered && (
@@ -75,7 +88,6 @@ export function DataTableToolbar<TData>({ table, onAdd }: DataTableToolbarProps<
                 <AddDocumentTypeButton onAdd={onAdd} title="Add Type" actionType="Create" />
                 <DataTableViewOptions table={table} />
             </div>
-
         </div>
     );
 }
