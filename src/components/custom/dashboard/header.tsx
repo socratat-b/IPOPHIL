@@ -1,16 +1,29 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeChange } from '../theme/theme-change';
 import { Calendar } from 'lucide-react';
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator
+} from "@/components/ui/breadcrumb";
+import { Separator } from '@/components/ui/separator';
 
 interface DashboardHeaderProps {
     userName?: string;
+    breadcrumbs?: {
+        href?: string;
+        label: string;
+        active?: boolean;
+    }[];
 }
 
-export function DashboardHeader({ userName = "John Doe" }: DashboardHeaderProps) {
+export function DashboardHeader({ userName = "John Doe", breadcrumbs = [] }: DashboardHeaderProps) {
     const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
     useEffect(() => {
@@ -47,15 +60,45 @@ export function DashboardHeader({ userName = "John Doe" }: DashboardHeaderProps)
     };
 
     return (
-        <header className="flex h-14 items-center border-b bg-background px-6">
-            <div className="flex items-center gap-3">
-                <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
-                <span className="text-muted-foreground">
-                    {getGreeting()}
-                </span>
-                <span className="font-medium">
-                    {userName} ✨
-                </span>
+        <header className="flex h-16 shrink-0 items-center px-4 justify-between border-b bg-background">
+            <div className="flex items-center gap-2">
+                <SidebarTrigger className="-ml-1" />
+                {breadcrumbs.length > 0 ? (
+                    <>
+                        <Separator orientation="vertical" className="mr-2 h-4" />
+                        <Breadcrumb>
+                            <BreadcrumbList>
+                                {breadcrumbs.map((breadcrumb, index) => (
+                                    <React.Fragment key={index}>
+                                        {index < breadcrumbs.length - 1 ? (
+                                            <>
+                                                <BreadcrumbItem className="hidden md:block">
+                                                    <BreadcrumbLink href={breadcrumb.href || '#'}>
+                                                        {breadcrumb.label}
+                                                    </BreadcrumbLink>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator className="hidden md:block" />
+                                            </>
+                                        ) : (
+                                            <BreadcrumbItem>
+                                                <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
+                                            </BreadcrumbItem>
+                                        )}
+                                    </React.Fragment>
+                                ))}
+                            </BreadcrumbList>
+                        </Breadcrumb>
+                    </>
+                ) : (
+                    <div className="flex items-center gap-3">
+                        <span className="text-muted-foreground">
+                            {getGreeting()}
+                        </span>
+                        <span className="font-medium">
+                            {userName} ✨
+                        </span>
+                    </div>
+                )}
             </div>
 
             <div className="ml-auto flex items-center gap-4">

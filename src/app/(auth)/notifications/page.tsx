@@ -169,7 +169,7 @@ export default function NotificationsPage() {
                     { label: "Notifications", href: "/dashboard/notifications", active: true },
                 ]}
             />
-            <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            <div className="flex flex-1 flex-col gap-4 p-4">
                 <Tabs defaultValue="all" className="w-full">
                     <div className="flex items-center justify-between space-x-4 pb-3">
                         <TabsList className="bg-muted">
