@@ -1,19 +1,15 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "@/components/custom/table/data-table-column-header";
-import { DataTableRowActions } from "./data-table-row-actions";
-import { User } from "@/lib/faker/users/schema";
+import { Icons } from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
+import { User } from "@/lib/faker/users/schema";
+import { formatBadgeText } from "@/lib/controls";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTableRowActions } from "./data-table-row-actions";
 import { status_types, user_types } from "@/lib/faker/users/data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Icons } from "@/components/ui/icons";
+import { DataTableColumnHeader } from "@/components/custom/table/data-table-column-header";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const columns: ColumnDef<User>[] = [
     {
@@ -157,7 +153,7 @@ export const columns: ColumnDef<User>[] = [
                     variant={role === "admin" ? "destructive" : "secondary"}
                     className="font-medium"
                 >
-                    {roleType?.label || role}
+                    {formatBadgeText(roleType?.label || role)}
                 </Badge>
             );
         },

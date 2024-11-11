@@ -1,56 +1,68 @@
-import { type LucideIcon } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
+// src/components/custom/sidebar/nav-secondary.tsx
+"use client"
+
+import { useEffect, useState } from "react"
+import { LucideIcon } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog"
+import {
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem
+} from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { useState } from "react"
+import { type NavSecondaryItem } from "@/lib/types/navigation"
 
-interface NavItem {
-  title: string
-  url: string
-  icon: LucideIcon
+interface NavSecondaryProps extends React.ComponentPropsWithoutRef<typeof SidebarGroup> {
+  items: Array<NavSecondaryItem & { icon?: LucideIcon }>
 }
-
-/**
- * ContactInfo component for customer support details
- */
-const ContactInfo = () => (
-  <div className="space-y-4">
-    <p className="text-muted-foreground">
-      Need help? Our support team is here for you.
-    </p>
-    <Card>
-      <CardHeader>
-        <CardTitle>Contact Options</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <div className="grid gap-1">
-          <Label>Email</Label>
-          <p className="text-sm text-muted-foreground">support@example.com</p>
-        </div>
-        <div className="grid gap-1">
-          <Label>Phone</Label>
-          <p className="text-sm text-muted-foreground">1-800-SUPPORT</p>
-        </div>
-        <div className="grid gap-1">
-          <Label>Hours</Label>
-          <p className="text-sm text-muted-foreground">24/7</p>
-        </div>
-      </CardContent>
-    </Card>
-  </div>
-)
 
 interface FeedbackFormProps {
   onSubmit: () => void
 }
 
-/**
- * FeedbackForm component for handling user feedback
- */
+// Contact Info Component
+const ContactInfo = () => {
+  return (
+    <div className="space-y-4">
+      <p className="text-muted-foreground">
+        Need help? Our support team is here for you.
+      </p>
+      <Card>
+        <CardHeader>
+          <CardTitle>Contact Options</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <div className="grid gap-1">
+            <Label>Email</Label>
+            <p className="text-sm text-muted-foreground">support@example.com</p>
+          </div>
+          <div className="grid gap-1">
+            <Label>Phone</Label>
+            <p className="text-sm text-muted-foreground">1-800-SUPPORT</p>
+          </div>
+          <div className="grid gap-1">
+            <Label>Hours</Label>
+            <p className="text-sm text-muted-foreground">24/7</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+// Feedback Form Component
 const FeedbackForm = ({ onSubmit }: FeedbackFormProps) => {
   const [feedback, setFeedback] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -110,17 +122,18 @@ const FeedbackForm = ({ onSubmit }: FeedbackFormProps) => {
   )
 }
 
-export function NavSecondary({
-  items,
-  ...props
-}: {
-  items: NavItem[]
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+// Main NavSecondary Component
+export function NavSecondary({ items, ...props }: NavSecondaryProps) {
+  const [mounted, setMounted] = useState(false)
   const [openDialog, setOpenDialog] = useState<string | null>(null)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleClose = () => setOpenDialog(null)
 
-  const getDialogContent = (item: NavItem) => {
+  const getDialogContent = (item: NavSecondaryItem) => {
     switch (item.title) {
       case "Customer Support":
         return <ContactInfo />
@@ -131,34 +144,42 @@ export function NavSecondary({
     }
   }
 
+  if (!mounted || !items?.length) {
+    return null
+  }
+
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <Dialog
-                open={openDialog === item.title}
-                onOpenChange={(open) => setOpenDialog(open ? item.title : null)}
-              >
-                <DialogTrigger asChild>
-                  <SidebarMenuButton
-                    size="sm"
-                    className="w-full"
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>{item.title}</DialogTitle>
-                  </DialogHeader>
-                  {getDialogContent(item)}
-                </DialogContent>
-              </Dialog>
-            </SidebarMenuItem>
-          ))}
+          {items.map((item) => {
+            const ItemIcon = item.icon
+
+            return (
+              <SidebarMenuItem key={item.title}>
+                <Dialog
+                  open={openDialog === item.title}
+                  onOpenChange={(open) => setOpenDialog(open ? item.title : null)}
+                >
+                  <DialogTrigger asChild>
+                    <SidebarMenuButton
+                      size="sm"
+                      className="w-full"
+                    >
+                      {ItemIcon && <ItemIcon className="h-4 w-4" />}
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{item.title}</DialogTitle>
+                    </DialogHeader>
+                    {getDialogContent(item)}
+                  </DialogContent>
+                </Dialog>
+              </SidebarMenuItem>
+            )
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

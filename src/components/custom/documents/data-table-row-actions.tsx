@@ -39,10 +39,10 @@ export function DataTableRowActions<TData>({
         action();
     };
 
-    // Function to Copy ID
-    const handleCopyId = () => {
-        navigator.clipboard.writeText(document.id);
-        toast.success("Document ID copied to clipboard");
+    // Function to Copy Code
+    const handleCopyCode = () => {
+        navigator.clipboard.writeText(document.code);
+        toast.success("Document Code copied to clipboard");
     };
 
     // Function to view document
@@ -86,9 +86,9 @@ export function DataTableRowActions<TData>({
 
                 <DropdownMenuContent align="end" className="w-[160px]">
                     <DropdownMenuItem
-                        onClick={(e) => handleAction(e, handleCopyId)}
+                        onClick={(e) => handleAction(e, handleCopyCode)}
                     >
-                        Copy ID
+                        Copy Code
                     </DropdownMenuItem>
 
                     <DropdownMenuItem

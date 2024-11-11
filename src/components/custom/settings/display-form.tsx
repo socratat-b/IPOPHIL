@@ -1,121 +1,161 @@
 "use client"
 
+import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import { z } from "zod"
+import { navigationConfig } from "@/lib/config/navigation"
+import { useNavigationStore } from "@/lib/stores/navigation"
+import { NavConfig, hasSubItems } from "@/lib/types/navigation"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form"
 
-const items = [
-    {
-        id: "recents",
-        label: "Recents",
-    },
-    {
-        id: "home",
-        label: "Home",
-    },
-    {
-        id: "applications",
-        label: "Applications",
-    },
-    {
-        id: "desktop",
-        label: "Desktop",
-    },
-    {
-        id: "downloads",
-        label: "Downloads",
-    },
-    {
-        id: "documents",
-        label: "Documents",
-    },
-] as const
+export function SidebarDisplayForm() {
+    const {
+        visibleMainItems,
+        visibleSecondaryItems,
+        visibleSubItems,
+        showUserSection,
+        toggleMainItem,
+        toggleSecondaryItem,
+        toggleSubItem,
+        toggleUserSection,
+        resetToDefault,
+    } = useNavigationStore()
 
-const displayFormSchema = z.object({
-    items: z.array(z.string()).refine((value) => value.some((item) => item), {
-        message: "You have to select at least one item.",
-    }),
-})
-
-type DisplayFormValues = z.infer<typeof displayFormSchema>
-
-// This can come from your database or API.
-const defaultValues: Partial<DisplayFormValues> = {
-    items: ["recents", "home"],
-}
-
-export function DisplayForm() {
-    const form = useForm<DisplayFormValues>({
-        resolver: zodResolver(displayFormSchema),
-        defaultValues,
+    const form = useForm({
+        defaultValues: {
+            mainItems: visibleMainItems,
+            secondaryItems: visibleSecondaryItems,
+            subItems: visibleSubItems,
+            showUserSection: showUserSection,
+        },
     })
 
-    function onSubmit(data: DisplayFormValues) {
-        toast("You submitted the following values:", {
-            description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-        })
+    const renderSubItems = (item: NavConfig) => {
+        if (!hasSubItems(item)) {
+            return null
+        }
+
+        return (
+            <div className="ml-6 space-y-4">
+                {item.items.map((subItem) => (
+                    <FormField
+                        key={subItem.id}
+                        control={form.control}
+                        name={`subItems.${item.id}`}
+                        render={() => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                <FormControl>
+                                    <Checkbox
+                                        checked={(visibleSubItems[item.id] || []).includes(subItem.id)}
+                                        onCheckedChange={() => toggleSubItem(item.id, subItem.id)}
+                                        disabled={!visibleMainItems.includes(item.id)}
+                                    />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                    <FormLabel className={!visibleMainItems.includes(item.id) ? "text-muted-foreground" : ""}>
+                                        {subItem.title}
+                                    </FormLabel>
+                                </div>
+                            </FormItem>
+                        )}
+                    />
+                ))}
+            </div>
+        )
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form className="space-y-8">
+                {/* Main Menu Section */}
+                <div className="space-y-4">
+                    <div className="mb-4">
+                        <h3 className="text-lg font-medium">Main Menu</h3>
+                        <p className="text-sm text-muted-foreground">
+                            Select the main menu items to display in the sidebar.
+                        </p>
+                    </div>
+                    {navigationConfig.mainNav.map((item) => (
+                        <div key={item.id} className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="mainItems"
+                                render={() => (
+                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={visibleMainItems.includes(item.id)}
+                                                onCheckedChange={() => toggleMainItem(item.id)}
+                                            />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                            <FormLabel>{item.title}</FormLabel>
+                                        </div>
+                                    </FormItem>
+                                )}
+                            />
+                            {renderSubItems(item)}
+                        </div>
+                    ))}
+                </div>
+
+                {/* Secondary Menu */}
+                <div className="space-y-4">
+                    <div className="mb-4">
+                        <h3 className="text-lg font-medium">Secondary Menu</h3>
+                        <p className="text-sm text-muted-foreground">
+                            Select which secondary menu items to display.
+                        </p>
+                    </div>
+                    {navigationConfig.secondaryNav.map((item) => (
+                        <FormField
+                            key={item.id}
+                            control={form.control}
+                            name="secondaryItems"
+                            render={() => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={visibleSecondaryItems.includes(item.id)}
+                                            onCheckedChange={() => toggleSecondaryItem(item.id)}
+                                        />
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                        <FormLabel>{item.title}</FormLabel>
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                    ))}
+                </div>
+
+                {/* User Section Toggle */}
                 <FormField
                     control={form.control}
-                    name="items"
+                    name="showUserSection"
                     render={() => (
-                        <FormItem>
-                            <div className="mb-4">
-                                <FormLabel className="text-base">Sidebar</FormLabel>
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                            <FormControl>
+                                <Checkbox
+                                    checked={showUserSection}
+                                    onCheckedChange={() => toggleUserSection()}
+                                />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel>Show User Section</FormLabel>
                                 <FormDescription>
-                                    Select the items you want to display in the sidebar.
+                                    Toggle visibility of the user profile section in the sidebar footer
                                 </FormDescription>
                             </div>
-                            {items.map((item) => (
-                                <FormField
-                                    key={item.id}
-                                    control={form.control}
-                                    name="items"
-                                    render={({ field }) => {
-                                        return (
-                                            <FormItem
-                                                key={item.id}
-                                                className="flex flex-row items-start space-x-3 space-y-0"
-                                            >
-                                                <FormControl>
-                                                    <Checkbox
-                                                        checked={field.value?.includes(item.id)}
-                                                        onCheckedChange={(checked) => {
-                                                            return checked
-                                                                ? field.onChange([...field.value, item.id])
-                                                                : field.onChange(
-                                                                    field.value?.filter(
-                                                                        (value) => value !== item.id
-                                                                    )
-                                                                )
-                                                        }}
-                                                    />
-                                                </FormControl>
-                                                <FormLabel className="font-normal">
-                                                    {item.label}
-                                                </FormLabel>
-                                            </FormItem>
-                                        )
-                                    }}
-                                />
-                            ))}
-                            <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Update display</Button>
+
+                <div className="flex space-x-4">
+                    <Button onClick={() => resetToDefault()} variant="outline" type="button">
+                        Reset to Default
+                    </Button>
+                </div>
             </form>
         </Form>
     )

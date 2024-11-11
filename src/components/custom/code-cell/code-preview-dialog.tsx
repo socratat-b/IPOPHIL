@@ -27,21 +27,31 @@ export const CodePreviewDialog: React.FC<CodePreviewDialogProps> = ({
                 {/* Print Container */}
                 <div className="print-container">
                     {type === 'QR' ? (
-                        <div className="qr-code flex items-center justify-center">
-                            <CodeDisplay
-                                code={code}
-                                type={type}
-                                size={{ width: 400 }}
-                            />
+                        <div className="flex flex-col items-center justify-center gap-4">
+                            <div className="qr-code">
+                                <CodeDisplay
+                                    code={code}
+                                    type={type}
+                                    size={{ width: 400 }}
+                                />
+                            </div>
+                            <div className="text-center text-lg font-mono break-all max-w-[400px]">
+                                {code}
+                            </div>
                         </div>
                     ) : (
-                        <div className="barcode-container flex items-center justify-center">
-                            <CodeDisplay
-                                code={code}
-                                type={type}
-                                showValue={true}
-                                size={{ width: 3, height: 200 }}
-                            />
+                        <div className="flex flex-col items-center justify-center gap-4">
+                            <div className="barcode-container">
+                                <CodeDisplay
+                                    code={code}
+                                    type={type}
+                                    showValue={false}
+                                    size={{ width: 3, height: 200 }}
+                                />
+                            </div>
+                            <div className="text-center text-lg font-mono">
+                                {code}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -59,7 +69,7 @@ export const CodePreviewDialog: React.FC<CodePreviewDialogProps> = ({
                     <DialogClose asChild>
                         <Button
                             onClick={onClose}
-                            variant={"outline"}
+                            variant="outline"
                         >
                             Close
                         </Button>

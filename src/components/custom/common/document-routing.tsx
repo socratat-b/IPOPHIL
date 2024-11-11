@@ -9,6 +9,7 @@ import { DocumentRoutingProps, RoutingStep } from "@/lib/types";
 import { MobileStepCard } from "@/components/custom/common/mobile-step-card";
 import { StepIcon } from "@/components/custom/common/step-card";
 import { getStepVariant } from "@/lib/component-utils/status";
+import { formatBadgeTextAllCaps } from "@/lib/controls";
 
 export default function DocumentRouting({ document }: DocumentRoutingProps) {
     const getRoutingSteps = (): RoutingStep[] => {
@@ -63,8 +64,8 @@ export default function DocumentRouting({ document }: DocumentRoutingProps) {
             <Card>
                 <CardHeader>
                     <div className="flex justify-between">
-                        <Badge variant="secondary">{document.status}</Badge>
-                        <Badge>{document.classification}</Badge>
+                        <Badge variant="secondary">{formatBadgeTextAllCaps(document.status)}</Badge>
+                        <Badge>{formatBadgeTextAllCaps(document.classification)}</Badge>
                     </div>
                     <CardTitle>{document.title}</CardTitle>
                     <CardDescription>{document.remarks || "No remarks available"}</CardDescription>
@@ -98,7 +99,7 @@ export default function DocumentRouting({ document }: DocumentRoutingProps) {
                                                     <TableCell className="w-[140px]">
                                                         <Badge variant={getStepVariant(step.status)} className="flex items-center gap-2">
                                                             <StepIcon status={step.status} />
-                                                            {step.status}
+                                                            {formatBadgeTextAllCaps(step.status)}
                                                         </Badge>
                                                     </TableCell>
                                                     <TableCell className="w-[120px]">{step.date ? format(parseISO(step.date), 'PPP') : 'N/A'}</TableCell>

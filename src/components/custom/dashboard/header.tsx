@@ -1,20 +1,16 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { UserHeaderNav } from '@/components/custom/dashboard/user-header-nav';
+import { ThemeChange } from '../theme/theme-change';
+import { Calendar } from 'lucide-react';
 
 interface DashboardHeaderProps {
-    breadcrumbs?: {
-        href?: string;
-        label: string;
-        active?: boolean;
-    }[];
+    userName?: string;
 }
 
-export function DashboardHeader({ breadcrumbs = [] }: DashboardHeaderProps) {
+export function DashboardHeader({ userName = "John Doe" }: DashboardHeaderProps) {
     const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
     useEffect(() => {
@@ -26,46 +22,51 @@ export function DashboardHeader({ breadcrumbs = [] }: DashboardHeaderProps) {
         return () => clearInterval(timer);
     }, []);
 
+    const formatTime = (date: Date) => {
+        return new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        }).format(date);
+    };
+
+    const formatDate = (date: Date) => {
+        return new Intl.DateTimeFormat('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric'
+        }).format(date);
+    };
+
+    const getGreeting = () => {
+        const hour = currentTime?.getHours() || 0;
+        if (hour < 12) return "Good morning";
+        if (hour < 17) return "Good afternoon";
+        return "Good evening";
+    };
+
     return (
-        <header className="flex h-16 shrink-0 items-center px-4 justify-between">
-            <div className="flex items-center gap-2">
-                <SidebarTrigger className="-ml-1" />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-                <Breadcrumb>
-                    <BreadcrumbList>
-                        {breadcrumbs.map((breadcrumb, index) => (
-                            <React.Fragment key={index}>
-                                {index < breadcrumbs.length - 1 ? (
-                                    <>
-                                        <BreadcrumbItem className="hidden md:block">
-                                            <BreadcrumbLink href={breadcrumb.href || '#'}>
-                                                {breadcrumb.label}
-                                            </BreadcrumbLink>
-                                        </BreadcrumbItem>
-                                        <BreadcrumbSeparator className="hidden md:block" />
-                                    </>
-                                ) : (
-                                    <BreadcrumbItem>
-                                        <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
-                                    </BreadcrumbItem>
-                                )}
-                            </React.Fragment>
-                        ))}
-                    </BreadcrumbList>
-                </Breadcrumb>
+        <header className="flex h-14 items-center border-b bg-background px-6">
+            <div className="flex items-center gap-3">
+                <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
+                <span className="text-muted-foreground">
+                    {getGreeting()}
+                </span>
+                <span className="font-medium">
+                    {userName} ✨
+                </span>
             </div>
-            {/* Display current date and time only when on the client */}
-            <div className="flex items-center space-x-4">
+
+            <div className="ml-auto flex items-center gap-4">
                 {currentTime && (
-                    <div className="hidden md:block text-sm">
-                        {currentTime.toLocaleString()}
+                    <div className="flex items-center gap-4 text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
+                        <span>{formatDate(currentTime)}</span>
+                        <span className="tabular-nums">{formatTime(currentTime)}</span>
                     </div>
                 )}
-                {/* 
-                    mar-note: to fix the theme change button
-                    <ThemeChange /> 
-                */}
-                <UserHeaderNav />
+                <ThemeChange />
             </div>
         </header>
     );

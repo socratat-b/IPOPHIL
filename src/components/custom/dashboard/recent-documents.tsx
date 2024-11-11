@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { format, parseISO } from 'date-fns';
 import { FolderIcon } from 'lucide-react';
-import { getStatusVariant } from '@/lib/controls';
+import { formatBadgeText, getStatusVariant } from '@/lib/controls';
 import { DocumentDialog } from '../common/document-dialog';
 
 interface RecentDocumentsProps {
@@ -59,14 +59,14 @@ const RecentDocuments: React.FC<RecentDocumentsProps> = ({ documents }) => {
                                         {doc.code}
                                     </Badge>
                                     <Badge variant={getStatusVariant(doc.status)} className="text-xs">
-                                        {doc.status}
+                                        {formatBadgeText(doc.status)}
                                     </Badge>
                                 </div>
                             </div>
 
                             <div className="flex flex-col items-end gap-1 flex-shrink-0">
                                 <Badge variant={"secondary"} className="whitespace-nowrap">
-                                    {doc.origin_office}
+                                    {formatBadgeText(doc.origin_office)}
                                 </Badge>
                                 <span className="text-xs text-muted-foreground">
                                     {format(parseISO(doc.date_created), 'MMM d, yyyy')}

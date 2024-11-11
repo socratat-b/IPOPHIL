@@ -1,8 +1,10 @@
+// src/components/custom/sidebar/nav-main.tsx
 "use client"
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { type LucideIcon } from "lucide-react"
+import { LucideIcon } from "lucide-react"
 import {
   Collapsible,
   CollapsibleContent,
@@ -21,23 +23,23 @@ import {
 } from "@/components/ui/sidebar"
 import { Badge } from '@/components/ui/badge'
 import { Icons } from '@/components/ui/icons'
+import { type NavMainItem } from '@/lib/types/navigation'
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string
-    url: string
-    icon: LucideIcon
-    notViewedCount?: number
-    items?: {
-      title: string
-      url: string
-      notViewedCount?: number
-    }[]
-  }[]
-}) {
+interface NavMainProps {
+  items: Array<NavMainItem & { icon?: LucideIcon }>
+}
+
+export function NavMain({ items }: NavMainProps) {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
 
   return (
     <SidebarGroup>
@@ -46,6 +48,7 @@ export function NavMain({
         {items.map((item) => {
           const hasActiveSubItem = item.items?.some(subItem => pathname === subItem.url)
           const isActive = pathname === item.url
+          const ItemIcon = item.icon
 
           return (
             <Collapsible
@@ -66,18 +69,22 @@ export function NavMain({
                     href={item.url}
                     className="flex items-center gap-2"
                   >
-                    <item.icon className={`
-                      w-4 h-4 transition-colors duration-150
-                      ${isActive ? 'text-accent-foreground' : 'text-muted-foreground'}
-                    `} />
+                    {ItemIcon && (
+                      <ItemIcon className={`
+                        w-4 h-4 transition-colors duration-150
+                        ${isActive ? 'text-accent-foreground' : 'text-muted-foreground'}
+                      `} />
+                    )}
                     <span>{item.title}</span>
-                    {item.title === "Documents" && item.notViewedCount && (
-                      <Badge variant={"default"} className="text-xs px-1.5 py-0.5">{item.notViewedCount}</Badge>
+                    {item.notViewedCount !== undefined && item.notViewedCount > 0 && (
+                      <Badge variant="default" className="text-xs px-1.5 py-0.5">
+                        {item.notViewedCount}
+                      </Badge>
                     )}
                   </Link>
                 </SidebarMenuButton>
 
-                {item.items?.length && (
+                {item.items?.length ? (
                   <>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuAction
@@ -108,8 +115,10 @@ export function NavMain({
                               >
                                 <Link href={subItem.url}>
                                   <span>{subItem.title}</span>
-                                  {item.title === "Documents" && subItem.notViewedCount && (
-                                    <Badge variant={"destructive"} className="text-xs px-1.5 py-0.5">{subItem.notViewedCount}</Badge>
+                                  {subItem.notViewedCount !== undefined && subItem.notViewedCount > 0 && (
+                                    <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
+                                      {subItem.notViewedCount}
+                                    </Badge>
                                   )}
                                 </Link>
                               </SidebarMenuSubButton>
@@ -119,7 +128,7 @@ export function NavMain({
                       </SidebarMenuSub>
                     </CollapsibleContent>
                   </>
-                )}
+                ) : null}
               </SidebarMenuItem>
             </Collapsible>
           )
