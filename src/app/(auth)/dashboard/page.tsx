@@ -1,23 +1,24 @@
-"use client"
+"use client";
 
-import { DashboardHeader } from "@/components/custom/dashboard/header"
+import { DashboardHeader } from "@/components/custom/dashboard/header";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card"
-import { Overview } from "@/components/custom/dashboard/overview"
-import { Icons } from "@/components/ui/icons"
-import RecentDocuments from "@/components/custom/dashboard/recent-documents"
-import { useDocuments } from "@/lib/context/document-context"
-import { ComponentType, useMemo } from "react"
-import { Stats, StatusCounts } from "@/lib/types"
-import { AddDocumentButton } from "@/components/custom/common/add-document-button"
-import { LineChart, Line } from 'recharts'
+} from "@/components/ui/card";
+import { Overview } from "@/components/custom/dashboard/overview";
+import { Icons } from "@/components/ui/icons";
+import RecentDocuments from "@/components/custom/dashboard/recent-documents";
+import { useDocuments } from "@/lib/context/document-context";
+import { ComponentType, useMemo } from "react";
+import { Stats, StatusCounts } from "@/lib/types";
+import { AddDocumentButton } from "@/components/custom/common/add-document-button";
+import { LineChart, Line } from 'recharts';
 
-import React from "react"
+import React from "react";
+
 
 // Chart data
 const chartData = {
@@ -54,18 +55,18 @@ const chartData = {
         { value: 9 },
         { value: 9 },
     ],
-}
+};
 
 // Create a client-side only chart component
 const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {
-    const [isMounted, setIsMounted] = React.useState(false)
+    const [isMounted, setIsMounted] = React.useState(false);
 
     React.useEffect(() => {
-        setIsMounted(true)
-    }, [])
+        setIsMounted(true);
+    }, []);
 
     if (!isMounted) {
-        return <div className="h-[40px]" />
+        return <div className="h-[40px]" />;
     }
 
     return (
@@ -80,10 +81,10 @@ const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {
                 />
             </LineChart>
         </div>
-    )
-}
+    );
+};
 
-// Update the StatCard component type definition
+// StatCard component with updated props
 const StatCard = ({
     title,
     icon: Icon,
@@ -91,11 +92,11 @@ const StatCard = ({
     change,
     data
 }: {
-    title: string
-    icon: ComponentType<{ className?: string }>
-    count: number
-    change: number
-    data: Array<{ value: number }>
+    title: string;
+    icon: ComponentType<{ className?: string }>;
+    count: number;
+    change: number;
+    data: Array<{ value: number }>;
 }) => (
     <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -110,70 +111,70 @@ const StatCard = ({
             <SparklineChart data={data} />
         </CardContent>
     </Card>
-)
+);
 
 export default function Page() {
-    const { documents } = useDocuments()
+    const { documents } = useDocuments();
 
     const stats = useMemo<Stats>(() => {
-        const now = new Date()
-        const currentMonth = now.getMonth()
-        const currentYear = now.getFullYear()
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
 
         const currentCounts: StatusCounts = {
             incoming: 0,
             recieved: 0,
             outgoing: 0,
             forDispatch: 0,
-            completed: 0
-        }
+            completed: 0,
+        };
 
         const lastMonthCounts: StatusCounts = {
             incoming: 0,
             recieved: 0,
             outgoing: 0,
             forDispatch: 0,
-            completed: 0
-        }
+            completed: 0,
+        };
 
         documents.forEach(doc => {
-            const docDate = new Date(doc.date_created)
-            const docMonth = docDate.getMonth()
-            const docYear = docDate.getFullYear()
+            const docDate = new Date(doc.date_created);
+            const docMonth = docDate.getMonth();
+            const docYear = docDate.getFullYear();
 
             const counts = (docMonth === currentMonth && docYear === currentYear)
                 ? currentCounts
                 : (docMonth === (currentMonth - 1 + 12) % 12 &&
                     (docMonth === 11 ? docYear === currentYear - 1 : docYear === currentYear))
                     ? lastMonthCounts
-                    : null
+                    : null;
 
             if (counts) {
-                const status = doc.status.toLowerCase()
+                const status = doc.status.toLowerCase();
                 switch (status) {
                     case 'incoming':
-                        counts.incoming++
-                        break
+                        counts.incoming++;
+                        break;
                     case 'recieved':
-                        counts.recieved++
-                        break
+                        counts.recieved++;
+                        break;
                     case 'outgoing':
-                        counts.outgoing++
-                        break
+                        counts.outgoing++;
+                        break;
                     case 'for_dispatch':
-                        counts.forDispatch++
-                        break
+                        counts.forDispatch++;
+                        break;
                     case 'completed':
-                        counts.completed++
-                        break
+                        counts.completed++;
+                        break;
                 }
             }
-        })
+        });
 
         const getPercentageChange = (current: number, previous: number): number => {
-            if (previous === 0) return current > 0 ? 100 : 0
-            return Number(((current - previous) / previous * 100).toFixed(1))
-        }
+            if (previous === 0) return current > 0 ? 100 : 0;
+            return Number(((current - previous) / previous * 100).toFixed(1));
+        };
 
         return {
             current: currentCounts,
@@ -181,16 +182,16 @@ export default function Page() {
                 incoming: getPercentageChange(currentCounts.incoming, lastMonthCounts.incoming),
                 recieved: getPercentageChange(currentCounts.recieved, lastMonthCounts.recieved),
                 outgoing: getPercentageChange(currentCounts.outgoing, lastMonthCounts.outgoing),
-                completed: getPercentageChange(currentCounts.completed, lastMonthCounts.completed)
-            }
-        }
-    }, [documents])
+                completed: getPercentageChange(currentCounts.completed, lastMonthCounts.completed),
+            },
+        };
+    }, [documents]);
 
     const recentDocs = useMemo(() => {
         return [...documents]
             .sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())
-            .slice(0, 5)
-    }, [documents])
+            .slice(0, 5);
+    }, [documents]);
 
     return (
         <>
@@ -262,5 +263,5 @@ export default function Page() {
                 </div>
             </div>
         </>
-    )
+    );
 }
