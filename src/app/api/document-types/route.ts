@@ -1,22 +1,17 @@
-//src/app/api/document-types/routes.ts
-import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { documentTypesSchema } from '@/lib/dms/schema';
+import { NextResponse } from 'next/server'
+import { getCachedDocumentTypes } from '@/lib/services/document-types'
 
 export async function GET() {
     try {
-        // Read the documents.json file
-        const data = await fs.readFile(
-            path.join(process.cwd(), 'dist/lib/dms/data/documentTypes.json')
-        );
-
-        // Parse the data using the documentsSchema
-        const documents = documentTypesSchema.array().parse(JSON.parse(data.toString()));
- 
-        return NextResponse.json(documents);
+        const documentTypes = await getCachedDocumentTypes()
+        return NextResponse.json(documentTypes)
     } catch (error) {
-        console.error('Error fetching documents:', error);
-        return NextResponse.json({ error: 'Error fetching documents' }, { status: 500 });
+        console.error('API error:', error)
+        return NextResponse.json(
+            {
+                error: error instanceof Error ? error.message : 'Unknown error fetching document types'
+            },
+            { status: 500 }
+        )
     }
 }
