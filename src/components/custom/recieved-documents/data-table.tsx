@@ -136,7 +136,7 @@ export function DataTable<TData, TValue>({
                                         controls={false}
                                         loop
                                         mode="normal"
-                                        src={"animation/empty-box.json"}
+                                        src={"animation/1.json"}
                                         className="w-80 mx-auto"
                                         title="No Result Found"
                                     >
