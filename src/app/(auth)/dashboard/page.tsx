@@ -2,7 +2,6 @@
 
 import React from "react"
 import RecentDocuments from "@/components/custom/dashboard/recent-documents";
-
 import { DashboardHeader } from "@/components/custom/dashboard/header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Overview } from "@/components/custom/dashboard/overview";
@@ -12,45 +11,38 @@ import { ComponentType, useMemo } from "react";
 import { Stats, StatusCounts } from "@/lib/types";
 import { AddDocumentButton } from "@/components/custom/common/add-document-button";
 import { LineChart, Line } from 'recharts';
+import { Document } from "@/lib/faker/documents/schema";
 
-// Chart data
-const chartData = {
-    incoming: [
-        { value: 10 },
-        { value: 15 },
-        { value: 12 },
-        { value: 18 },
-        { value: 15 },
-        { value: 21 },
-        { value: 25 },
-    ],
-    received: [
-        { value: 8 },
-        { value: 12 },
-        { value: 15 },
-        { value: 18 },
-        { value: 20 },
-        { value: 21 },
-    ],
-    outgoing: [
-        { value: 5 },
-        { value: 8 },
-        { value: 6 },
-        { value: 9 },
-        { value: 7 },
-        { value: 8 },
-    ],
-    completed: [
-        { value: 4 },
-        { value: 6 },
-        { value: 8 },
-        { value: 7 },
-        { value: 9 },
-        { value: 9 },
-    ],
+const isWeekday = (date: Date) => {
+    const day = date.getDay();
+    return day !== 0 && day !== 5; 
 };
 
-// Create a client-side only chart component
+const getStatusCountsByDate = (documents: Document[], status: string, date: string) => {
+    return documents.filter(doc => 
+        doc.status === status && 
+        new Date(doc.date_created).toISOString().split('T')[0] === date
+    ).length;
+};
+
+const getLast7WeekdayStats = (documents: Document[], status: string) => {
+    const stats = [];
+    let currentDate = new Date();
+    let count = 0;
+
+    while (count < 7) {
+        if (isWeekday(currentDate)) {
+            const dateStr = currentDate.toISOString().split('T')[0];
+            const value = getStatusCountsByDate(documents, status, dateStr);
+            stats.unshift({ value });
+            count++;
+        }
+        currentDate.setDate(currentDate.getDate() - 1);
+    }
+    
+    return stats;
+};
+
 const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {
     const [isMounted, setIsMounted] = React.useState(false);
 
@@ -77,7 +69,6 @@ const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {
     );
 };
 
-// StatCard component with updated props
 const StatCard = ({
     title,
     icon: Icon,
@@ -179,6 +170,13 @@ export default function Page() {
             },
         };
     }, [documents]);
+
+    const chartData = useMemo(() => ({
+        incoming: getLast7WeekdayStats(documents, 'incoming'),
+        received: getLast7WeekdayStats(documents, 'recieved'),
+        outgoing: getLast7WeekdayStats(documents, 'outgoing'),
+        completed: getLast7WeekdayStats(documents, 'completed'),
+    }), [documents]);
 
     const recentDocs = useMemo(() => {
         return [...documents]
