@@ -39,7 +39,7 @@ export default async function TaskPage() {
                 ]}
             />
 
-            <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            <div className="flex flex-1 flex-col gap-4 p-4">
                 <Tabs defaultValue="outgoing" className="flex-1 flex flex-col">
                     <TabsList className="grid grid-cols-2 w-max">
                         <TabsTrigger value="outgoing">Outgoing Documents</TabsTrigger>

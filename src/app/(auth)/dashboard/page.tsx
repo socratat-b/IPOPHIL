@@ -1,24 +1,17 @@
 "use client";
 
-import { DashboardHeader } from "@/components/custom/dashboard/header";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import React from "react"
+import RecentDocuments from "@/components/custom/dashboard/recent-documents";
+
+import { DashboardHeader } from "@/components/custom/dashboard/header"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Overview } from "@/components/custom/dashboard/overview";
 import { Icons } from "@/components/ui/icons";
-import RecentDocuments from "@/components/custom/dashboard/recent-documents";
 import { useDocuments } from "@/lib/context/document-context";
 import { ComponentType, useMemo } from "react";
 import { Stats, StatusCounts } from "@/lib/types";
 import { AddDocumentButton } from "@/components/custom/common/add-document-button";
 import { LineChart, Line } from 'recharts';
-
-import React from "react";
-
 
 // Chart data
 const chartData = {
@@ -195,12 +188,8 @@ export default function Page() {
 
     return (
         <>
-            <DashboardHeader
-                breadcrumbs={[
-                    { label: "Dashboard", href: "/dashboard", active: true },
-                ]}
-            />
-            <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            <DashboardHeader />
+            <div className="flex flex-1 flex-col gap-4 p-4">
                 <div className="hidden flex-col md:flex">
                     <div className="flex-1 space-y-4">
                         <div className="flex items-center justify-between space-y-2">

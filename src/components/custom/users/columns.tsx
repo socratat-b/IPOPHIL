@@ -1,12 +1,12 @@
 "use client";
 
+import { User } from "@/lib/dms/schema";
 import { Icons } from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
-import { User } from "@/lib/faker/users/schema";
 import { formatBadgeText } from "@/lib/controls";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableRowActions } from "./data-table-row-actions";
-import { status_types, user_types } from "@/lib/faker/users/data";
+import { user_role } from "@/lib/dms/data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DataTableColumnHeader } from "@/components/custom/table/data-table-column-header";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -26,7 +26,7 @@ export const columns: ColumnDef<User>[] = [
                 <div className="flex items-center gap-3 py-1">
                     <Avatar className="h-9 w-9">
                         <AvatarImage
-                            src={data.profile_url}
+                            src={data.avatar!}
                             alt={`${data.first_name} ${data.last_name}`}
                         />
                         <AvatarFallback className="font-medium">
@@ -43,7 +43,7 @@ export const columns: ColumnDef<User>[] = [
                                     <div className="flex items-center gap-1.5 mt-0.5">
                                         <Icons.user className="h-3 w-3 text-blue-500" />
                                         <span className="text-sm text-muted-foreground">
-                                            @{data.username}
+                                            @{data.user_name}
                                         </span>
                                     </div>
                                 </div>
@@ -51,8 +51,8 @@ export const columns: ColumnDef<User>[] = [
                             <TooltipContent className="w-64">
                                 <div className="space-y-1.5">
                                     <p>{`${data.first_name} ${data.last_name}`}</p>
-                                    <p>Username: @{data.username}</p>
-                                    <p>ID: {data.id}</p>
+                                    <p>user_name: @{data.user_name}</p>
+                                    <p>ID: {data.user_id}</p>
                                 </div>
                             </TooltipContent>
                         </Tooltip>
@@ -89,11 +89,11 @@ export const columns: ColumnDef<User>[] = [
                             <TooltipTrigger className="flex items-center gap-1.5">
                                 <Icons.mapPin className="w-3 h-3 text-emerald-500" />
                                 <span className="text-sm text-muted-foreground truncate max-w-[150px]">
-                                    {data.address}
+                                    {data.agency_id}
                                 </span>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>{data.address}</p>
+                                <p>{data.agency_id}</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
@@ -121,7 +121,7 @@ export const columns: ColumnDef<User>[] = [
                                     <div className="flex items-center gap-1.5">
                                         <Icons.building className="h-3 w-3 text-blue-500" />
                                         <span className="text-sm text-muted-foreground">
-                                            Department {data.department_id}
+                                            Department {data.agency_id}
                                         </span>
                                     </div>
                                 </div>
@@ -129,8 +129,8 @@ export const columns: ColumnDef<User>[] = [
                             <TooltipContent className="w-64">
                                 <div className="space-y-1.5">
                                     <p>{data.title}</p>
-                                    <p>Department: {data.department_id}</p>
-                                    <p>Employee ID: {data.id}</p>
+                                    <p>Department: {data.agency_id}</p>
+                                    <p>Employee ID: {data.user_id}</p>
                                 </div>
                             </TooltipContent>
                         </Tooltip>
@@ -147,7 +147,7 @@ export const columns: ColumnDef<User>[] = [
         ),
         cell: ({ row }) => {
             const role = row.original.role;
-            const roleType = user_types.find((r) => r.value === role);
+            const roleType = user_role.find((r) => r.value === role);
             return (
                 <Badge
                     variant={role === "admin" ? "destructive" : "secondary"}
@@ -164,29 +164,28 @@ export const columns: ColumnDef<User>[] = [
     },
     {
         id: "status",
-        accessorKey: "status",
+        accessorKey: "active",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Status" />
         ),
         cell: ({ row }) => {
-            const status = row.original.status;
-            const statusType = status_types.find((s) => s.value === status);
+            const isActive = Boolean(row.getValue("status"));
             return (
                 <div className="flex items-center gap-1.5">
                     <div
-                        className={`h-2 w-2 rounded-full ${status === "active" ? "bg-emerald-500" : "bg-gray-300"
+                        className={`h-2 w-2 rounded-full ${isActive ? "bg-emerald-500" : "bg-gray-300"
                             }`}
                     />
-                    <span className={`text-sm ${status === "active" ? "text-emerald-600" : "text-muted-foreground"
+                    <span className={`text-sm ${isActive ? "text-emerald-600" : "text-muted-foreground"
                         }`}>
-                        {statusType?.label || status}
+                        {isActive ? "Active" : "Inactive"}
                     </span>
                 </div>
             );
         },
-        filterFn: (row, id, filterValue) => {
-            if (!row || (Array.isArray(row) && row.length === 0)) return true;
-            return filterValue.includes(row.getValue(id));
+        filterFn: (row, id, value) => {
+            const isActive = Boolean(row.getValue(id));
+            return value.includes(isActive ? "active" : "inactive");
         },
     },
     {
