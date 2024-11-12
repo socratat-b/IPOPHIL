@@ -1,52 +1,21 @@
 "use client";
 
-import React from "react"
+import React, { useMemo, useEffect, useState, ComponentType } from "react";
 import RecentDocuments from "@/components/custom/dashboard/recent-documents";
-import { DashboardHeader } from "@/components/custom/dashboard/header"
+import { DashboardHeader } from "@/components/custom/dashboard/header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Overview } from "@/components/custom/dashboard/overview";
 import { Icons } from "@/components/ui/icons";
 import { useDocuments } from "@/lib/context/document-context";
-import { ComponentType, useMemo } from "react";
 import { Stats, StatusCounts } from "@/lib/types";
 import { AddDocumentButton } from "@/components/custom/common/add-document-button";
-import { LineChart, Line } from 'recharts';
+import { LineChart, Line } from "recharts";
 import { Document } from "@/lib/faker/documents/schema";
 
-const isWeekday = (date: Date) => {
-    const day = date.getDay();
-    return day !== 0 && day !== 5; 
-};
-
-const getStatusCountsByDate = (documents: Document[], status: string, date: string) => {
-    return documents.filter(doc => 
-        doc.status === status && 
-        new Date(doc.date_created).toISOString().split('T')[0] === date
-    ).length;
-};
-
-const getLast7WeekdayStats = (documents: Document[], status: string) => {
-    const stats = [];
-    let currentDate = new Date();
-    let count = 0;
-
-    while (count < 7) {
-        if (isWeekday(currentDate)) {
-            const dateStr = currentDate.toISOString().split('T')[0];
-            const value = getStatusCountsByDate(documents, status, dateStr);
-            stats.unshift({ value });
-            count++;
-        }
-        currentDate.setDate(currentDate.getDate() - 1);
-    }
-    
-    return stats;
-};
-
 const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {
-    const [isMounted, setIsMounted] = React.useState(false);
+    const [isMounted, setIsMounted] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setIsMounted(true);
     }, []);
 
@@ -74,7 +43,7 @@ const StatCard = ({
     icon: Icon,
     count,
     change,
-    data
+    data,
 }: {
     title: string;
     icon: ComponentType<{ className?: string }>;
@@ -90,7 +59,8 @@ const StatCard = ({
         <CardContent>
             <div className="text-2xl font-bold">{count}</div>
             <p className="text-xs text-muted-foreground">
-                {change > 0 ? '+' : ''}{change}% from last month
+                {change > 0 ? "+" : ""}
+                {change}% from last month
             </p>
             <SparklineChart data={data} />
         </CardContent>
@@ -98,7 +68,7 @@ const StatCard = ({
 );
 
 export default function Page() {
-    const { documents } = useDocuments();
+    const { documents }: { documents: Document[] } = useDocuments();
 
     const stats = useMemo<Stats>(() => {
         const now = new Date();
@@ -121,37 +91,39 @@ export default function Page() {
             completed: 0,
         };
 
-        documents.forEach(doc => {
+        documents.forEach((doc) => {
             const docDate = new Date(doc.date_created);
             const docMonth = docDate.getMonth();
             const docYear = docDate.getFullYear();
 
-            const counts = (docMonth === currentMonth && docYear === currentYear)
-                ? currentCounts
-                : (docMonth === (currentMonth - 1 + 12) % 12 &&
-                    (docMonth === 11 ? docYear === currentYear - 1 : docYear === currentYear))
+            const counts =
+                docMonth === currentMonth && docYear === currentYear
+                    ? currentCounts
+                    : docMonth === (currentMonth - 1 + 12) % 12 &&
+                      (docMonth === 11 ? docYear === currentYear - 1 : docYear === currentYear)
                     ? lastMonthCounts
                     : null;
 
             if (counts) {
                 const status = doc.status.toLowerCase();
                 switch (status) {
-                    case 'incoming':
+                    case "incoming":
                         counts.incoming++;
                         break;
-                    case 'recieved':
+                    case "recieved":
                         counts.recieved++;
                         break;
-                    case 'outgoing':
+                    case "outgoing":
                         counts.outgoing++;
                         break;
-                    case 'for_dispatch':
+                    case "for_dispatch":
                         counts.forDispatch++;
                         break;
-                    case 'completed':
+                    case "completed":
                         counts.completed++;
                         break;
                 }
+                
             }
         });
 
@@ -171,12 +143,51 @@ export default function Page() {
         };
     }, [documents]);
 
-    const chartData = useMemo(() => ({
-        incoming: getLast7WeekdayStats(documents, 'incoming'),
-        received: getLast7WeekdayStats(documents, 'recieved'),
-        outgoing: getLast7WeekdayStats(documents, 'outgoing'),
-        completed: getLast7WeekdayStats(documents, 'completed'),
-    }), [documents]);
+    const chartData = useMemo(() => {
+        const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+        const today = new Date();
+        let currentDate = new Date(today);
+        currentDate.setDate(currentDate.getDate() - 4);
+
+        const weeklyData = daysOfWeek.map(() => {
+            const dateStr = currentDate.toISOString().split("T")[0];
+            const dayData = {
+                incoming: documents.filter(
+                    (doc) =>
+                        doc.status.toLowerCase() === "incoming" &&
+                        doc.date_created &&
+                        doc.date_created.split("T")[0] === dateStr
+                ).length,
+                recieved: documents.filter(
+                    (doc) =>
+                        doc.status.toLowerCase() === "recieved" &&
+                        doc.date_created &&
+                        doc.date_created.split("T")[0] === dateStr
+                ).length,
+                outgoing: documents.filter(
+                    (doc) =>
+                        doc.status.toLowerCase() === "outgoing" &&
+                        doc.date_created &&
+                        doc.date_created.split("T")[0] === dateStr
+                ).length,
+                completed: documents.filter(
+                    (doc) =>
+                        doc.status.toLowerCase() === "completed" &&
+                        doc.date_created &&
+                        doc.date_created.split("T")[0] === dateStr
+                ).length,
+            };
+            currentDate.setDate(currentDate.getDate() + 1);
+            return dayData;
+        });
+
+        return {
+            incoming: weeklyData.map((day) => ({ value: day.incoming })),
+            recieved: weeklyData.map((day) => ({ value: day.recieved })),
+            outgoing: weeklyData.map((day) => ({ value: day.outgoing })),
+            completed: weeklyData.map((day) => ({ value: day.completed })),
+        };
+    }, [documents]);
 
     const recentDocs = useMemo(() => {
         return [...documents]
@@ -211,7 +222,7 @@ export default function Page() {
                                 icon={Icons.recieved}
                                 count={stats.current.recieved}
                                 change={stats.percentageChanges.recieved}
-                                data={chartData.received}
+                                data={chartData.recieved}
                             />
                             <StatCard
                                 title="Total Outgoing"
