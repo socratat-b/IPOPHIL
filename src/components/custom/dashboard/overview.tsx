@@ -141,7 +141,7 @@ return (
                 value={chartType}
                 onValueChange={setChartType}
             >
-                <SelectTrigger className="w-[180px] bg-white hover:bg-gray-50 transition-colors shadow-sm rounded-md border-gray-200">
+                <SelectTrigger className="w-[180px] bg-background hover:bg-hvr-clr transition-colors shadow-sm rounded-md border-gray-200">
                     <div className="flex items-center gap-2">
                         {chartType === "Pie Chart" && <ChartPie className="w-4 h-4" />}
                         {chartType === "Bar Chart" && <BarChart3 className="w-4 h-4" />}
@@ -149,6 +149,7 @@ return (
                         <span>{chartType}</span>
                     </div>
                 </SelectTrigger>
+
                 <SelectContent>
                     <SelectItem value="Pie Chart">
                         <div className="flex items-center gap-2">

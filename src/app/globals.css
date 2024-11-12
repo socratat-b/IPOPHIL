@@ -5,6 +5,7 @@
 @layer base {
   :root {
     --background: 0 0% 100%; /* White */
+    --hover-clr: 0 0% 70%;  /* hover bg */
     --foreground: 240 1.6% 37.1%; /* Dark Gray */
     --card: 0 0% 100%; /* White */
     --card-foreground: 240 1.6% 37.1%; /* Dark Gray */

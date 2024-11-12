@@ -1,4 +1,3 @@
-// src/components/custom/document-types/control/add-document-type-dialog.tsx
 "use client";
 
 import {
@@ -16,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HelpScanCard } from "@/components/custom/common/help-scan-card";
 import { z } from "zod";
+import { useState } from "react";
 
 // Schema
 const createDocumentTypeSchema = z.object({
@@ -27,6 +27,16 @@ const scanDocumentTypeSchema = z.object({
     code: z.string().min(1, "Code is required"),
     description: z.string().min(1, "Description is required"),
 });
+
+// Types
+type CreateDocumentTypeData = z.infer<typeof createDocumentTypeSchema>;
+type ScanDocumentTypeData = z.infer<typeof scanDocumentTypeSchema>;
+type ActionType = "Receive" | "Release" | "Create";
+
+interface AddDocumentTypeDialogProps {
+    onCloseAction: () => void;
+    actionType: ActionType;
+}
 
 // Separate components for each form type
 const CreateDocumentTypeForm = ({ onSubmit, onClose }: {
@@ -89,14 +99,22 @@ const CreateDocumentTypeForm = ({ onSubmit, onClose }: {
     );
 }
 
-const ScanDocumentTypeForm = ({ onSubmit, onClose }: {
+const ScanDocumentTypeForm = ({ onSubmit, onClose, actionType }: {
     onSubmit: (data: ScanDocumentTypeData) => void;
     onClose: () => void;
     actionType: string;
 }) => {
-    const { register, handleSubmit, formState: { errors } } = useForm<ScanDocumentTypeData>({
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm<ScanDocumentTypeData>({
         resolver: zodResolver(scanDocumentTypeSchema),
     });
+
+    const [scannedCode, setScannedCode] = useState<string>("");
+
+    // Update `setScannedCode` when `HelpScanCard` provides a new code
+    const handleCodeChange = (code: string) => {
+        setScannedCode(code);
+        setValue("code", code); // Update the form value with the scanned code for submission
+    };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
@@ -105,23 +123,13 @@ const ScanDocumentTypeForm = ({ onSubmit, onClose }: {
                 <Input
                     id="code"
                     placeholder="Scan or manually enter type code"
-                    {...register("code")}
+                    value={scannedCode}
+                    onChange={(e) => handleCodeChange(e.target.value)} // Call `handleCodeChange` directly
                     className="w-full"
                 />
                 {errors.code && <p className="text-red-500 text-sm">{errors.code.message}</p>}
             </div>
-            <div>
-                <label htmlFor="description" className="block mb-1">Description *</label>
-                <Input
-                    id="description"
-                    placeholder="Enter description"
-                    {...register("description")}
-                    className="w-full"
-                />
-                {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
-            </div>
-
-            <HelpScanCard />
+            <HelpScanCard onCodeChange={handleCodeChange} />
 
             <div className="flex justify-end space-x-2">
                 <Button type="submit" variant={"default"}>Proceed</Button>
@@ -133,34 +141,20 @@ const ScanDocumentTypeForm = ({ onSubmit, onClose }: {
             </div>
         </form>
     );
-}
+};
 
-// Types
-type CreateDocumentTypeData = z.infer<typeof createDocumentTypeSchema>;
-type ScanDocumentTypeData = z.infer<typeof scanDocumentTypeSchema>;
-type ActionType = "Receive" | "Release" | "Create";
-
-interface AddDocumentTypeDialogProps {
-    onCloseAction: () => void;
-    actionType: ActionType;
-}
 
 // Main Dialog Component
 export const AddDocumentTypeDialog: React.FC<AddDocumentTypeDialogProps> = ({ onCloseAction, actionType }) => {
     const handleCreateSubmit = (data: CreateDocumentTypeData) => {
-        console.log('Create document type:', data);
         toast.success("Document Type Created", {
             description: "Your document type has been successfully created.",
-            action: {
-                label: "Undo",
-                onClick: () => console.log("Undo"),
-            },
+            action: { label: "Undo", onClick: () => console.log("Undo") },
         });
         onCloseAction();
     };
 
     const handleScanSubmit = (data: ScanDocumentTypeData) => {
-        console.log('Scan document type:', data);
         toast.success(`Document Type ${actionType}d`, {
             description: `Your document type has been successfully ${actionType.toLowerCase()}d.`,
         });

@@ -1,17 +1,33 @@
-"use client"
+"use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { toast } from "sonner"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { createDocumentSchema } from "@/lib/validations/documents/create_documents"
-import { scanDocumentSchema } from "@/lib/validations/documents/scan_documents"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { HelpScanCard } from "@/components/custom/common/help-scan-card"
-import { z } from "zod"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createDocumentSchema } from "@/lib/validations/documents/create_documents";
+import { scanDocumentSchema } from "@/lib/validations/documents/scan_documents";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { HelpScanCard } from "@/components/custom/common/help-scan-card";
+import { z } from "zod";
+
+// Types
+type CreateDocumentData = z.infer<typeof createDocumentSchema>;
+type ScanDocumentData = z.infer<typeof scanDocumentSchema>;
+type ActionType = "Receive" | "Release" | "Create";
+
+interface AddDocumentDialogProps {
+    onCloseAction: () => void;
+    actionType: ActionType;
+}
 
 // Separate components for each form type
 const CreateDocumentForm = ({ onSubmit, onClose }: {
@@ -94,32 +110,25 @@ const CreateDocumentForm = ({ onSubmit, onClose }: {
                 </DialogClose>
             </div>
         </form>
-    )
-}
+    );
+};
 
 const ScanDocumentForm = ({ onSubmit, onClose }: {
     onSubmit: (data: ScanDocumentData) => void;
     onClose: () => void;
     actionType: string;
 }) => {
-    const { register, handleSubmit, formState: { errors } } = useForm<ScanDocumentData>({
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm<ScanDocumentData>({
         resolver: zodResolver(scanDocumentSchema),
     });
 
+    const handleCodeChange = (code: string) => {
+        setValue("code", code); // Update form value with scanned code
+    };
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
-            <div>
-                <label htmlFor="code" className="block mb-1">Document Code</label>
-                <Input
-                    id="code"
-                    placeholder="Scan or Manually enter document code"
-                    {...register("code")}
-                    className="w-full"
-                />
-                {errors.code && <p className="text-red-500 text-sm">{errors.code.message}</p>}
-            </div>
-
-            <HelpScanCard />
+            <HelpScanCard onCodeChange={handleCodeChange} />
 
             <div className="flex justify-end space-x-2">
                 <Button type="submit" variant={"default"}>Proceed</Button>
@@ -130,35 +139,19 @@ const ScanDocumentForm = ({ onSubmit, onClose }: {
                 </DialogClose>
             </div>
         </form>
-    )
-}
-
-// Types
-type CreateDocumentData = z.infer<typeof createDocumentSchema>;
-type ScanDocumentData = z.infer<typeof scanDocumentSchema>;
-type ActionType = "Receive" | "Release" | "Create";
-
-interface AddDocumentDialogProps {
-    onCloseAction: () => void;
-    actionType: ActionType;
-}
+    );
+};
 
 // Main Dialog Component
 export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAction, actionType }) => {
     const handleCreateSubmit = (data: CreateDocumentData) => {
-        console.log('Create document:', data);
         toast.success("Document Created", {
             description: "Your document has been successfully created.",
-            action: {
-                label: "Undo",
-                onClick: () => console.log("Undo"),
-            },
         });
         onCloseAction();
     };
 
     const handleScanSubmit = (data: ScanDocumentData) => {
-        console.log('Scan document:', data);
         toast.success(`Document ${actionType}d`, {
             description: `Your document has been successfully ${actionType.toLowerCase()}d.`,
         });
@@ -167,19 +160,21 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAct
 
     return (
         <Dialog open onOpenChange={(isOpen) => !isOpen && onCloseAction()}>
-            <DialogContent className="max-w-md">
+            <DialogContent
+                className="w-full max-w-3xl p-6 bg-white rounded-lg shadow-lg"
+                aria-describedby="dialog-description"
+            >
                 <DialogHeader>
                     <DialogTitle>{`${actionType} Document`}</DialogTitle>
                 </DialogHeader>
+                <div id="dialog-description" className="sr-only">
+                    {actionType} a document by entering details or scanning the QR code.
+                </div>
 
                 {actionType === "Create" ? (
                     <CreateDocumentForm onSubmit={handleCreateSubmit} onClose={onCloseAction} />
                 ) : (
-                    <ScanDocumentForm
-                        onSubmit={handleScanSubmit}
-                        onClose={onCloseAction}
-                        actionType={actionType}
-                    />
+                    <ScanDocumentForm onSubmit={handleScanSubmit} onClose={onCloseAction} actionType={""} />
                 )}
             </DialogContent>
         </Dialog>
