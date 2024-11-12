@@ -1,16 +1,18 @@
-"use client";
+"use client"
 
-import React, { useMemo, useEffect, useState, ComponentType } from "react";
-import RecentDocuments from "@/components/custom/dashboard/recent-documents";
-import { DashboardHeader } from "@/components/custom/dashboard/header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Overview } from "@/components/custom/dashboard/overview";
-import { Icons } from "@/components/ui/icons";
-import { useDocuments } from "@/lib/context/document-context";
-import { Stats, StatusCounts } from "@/lib/types";
-import { AddDocumentButton } from "@/components/custom/common/add-document-button";
-import { LineChart, Line } from "recharts";
-import { Document } from "@/lib/faker/documents/schema";
+import React from "react"
+import RecentDocuments from "@/components/custom/dashboard/recent-documents"
+
+import { LineChart, Line } from "recharts"
+import { Icons } from "@/components/ui/icons"
+import { Stats, StatusCounts } from "@/lib/types"
+import { Document } from "@/lib/faker/documents/schema"
+import { useDocuments } from "@/lib/context/document-context"
+import { Overview } from "@/components/custom/dashboard/overview"
+import { useMemo, useEffect, useState, ComponentType } from "react"
+import { DashboardHeader } from "@/components/custom/dashboard/header"
+import { AddDocumentButton } from "@/components/custom/common/add-document-button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {
     const [isMounted, setIsMounted] = useState(false);
@@ -100,9 +102,9 @@ export default function Page() {
                 docMonth === currentMonth && docYear === currentYear
                     ? currentCounts
                     : docMonth === (currentMonth - 1 + 12) % 12 &&
-                      (docMonth === 11 ? docYear === currentYear - 1 : docYear === currentYear)
-                    ? lastMonthCounts
-                    : null;
+                        (docMonth === 11 ? docYear === currentYear - 1 : docYear === currentYear)
+                        ? lastMonthCounts
+                        : null;
 
             if (counts) {
                 const status = doc.status.toLowerCase();
@@ -123,7 +125,7 @@ export default function Page() {
                         counts.completed++;
                         break;
                 }
-                
+
             }
         });
 

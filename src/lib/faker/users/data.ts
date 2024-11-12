@@ -1,5 +1,5 @@
 // src\lib\faker\users\data.ts
-export const status_types = [
+export const user_status = [
     {
         value: "active",
         label: "Active",

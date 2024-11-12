@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { userSchema } from "@/lib/dms/schema"
-import { status_types } from "@/lib/dms/data"
+import { user_status } from "@/lib/dms/data"
 
 interface DataTableRowActionsProps<TData> {
     row: Row<TData>
@@ -102,7 +102,7 @@ export function DataTableRowActions<TData>({
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent onClick={(e) => e.stopPropagation()}>
                         <DropdownMenuRadioGroup value={user.active ? 'b' : 'a'}>
-                            {status_types.map((status) => (
+                            {user_status.map((status) => (
                                 <DropdownMenuRadioItem
                                     key={status.value}
                                     value={status.value}
