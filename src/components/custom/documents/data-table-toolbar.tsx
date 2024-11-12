@@ -3,7 +3,7 @@ import { Table } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DataTableViewOptions } from "@/components/custom/table/data-table-view-options"
-import { types, statuses, classifications } from "@/lib/faker/documents/data"
+import { doc_type_samples, doc_status, doc_classification } from "@/lib/dms/data"
 import { DataTableFacetedFilter } from "@/components/custom/table/data-table-faceted-filter"
 import { ExportAllDocument } from "./control/export-document"
 import { AddDocumentButton } from "../common/add-document-button"
@@ -23,9 +23,9 @@ export function DataTableToolbar<TData>({
     const formatLabel = (label: string) => label.replace(/[_-]/g, " ")
 
     // Filter out the "all" option from each array and ensure proper typing
-    const filteredStatuses = statuses.filter(status => status.value !== "all")
-    const filteredTypes = types.filter(type => type.value !== "all")
-    const filteredClassifications = classifications.filter(
+    const filteredStatuses = doc_status.filter(status => status.value !== "all")
+    const filteredTypes = doc_type_samples.filter(type => type.value !== "all")
+    const filteredClassifications = doc_classification.filter(
         classification => classification.value !== "all"
     )
 
@@ -43,7 +43,7 @@ export function DataTableToolbar<TData>({
                         placeholder="Search documents..."
                         value={(table.getColumn("document")?.getFilterValue() as string) ?? ""}
                         onChange={(event) => handleFilter("document", event.target.value)}
-                        className="h-8 w-[150px] lg:w-[250px] pl-10"  // add padding for the icon
+                        className="h-8 w-[150px] lg:w-[250px] pl-10"
                     />
                 </div>
 
@@ -54,25 +54,25 @@ export function DataTableToolbar<TData>({
                         options={filteredStatuses.map((status) => ({
                             label: formatLabel(status.label),
                             value: status.value,
-                            icon: status.icon,
+                            // icon: status.icon,
                         }))}
                     />
                 )}
                 {table.getColumn("type") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("type")}
-                        title="Types"
+                        title="Type"
                         options={filteredTypes.map((type) => ({
                             label: formatLabel(type.label),
                             value: type.value,
-                            icon: type.icon,
+                            // icon: type.icon,
                         }))}
                     />
                 )}
                 {table.getColumn("classification") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("classification")}
-                        title="Classifications"
+                        title="Classification"
                         options={filteredClassifications.map((classification) => ({
                             label: formatLabel(classification.label),
                             value: classification.value,

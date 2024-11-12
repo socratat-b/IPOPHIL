@@ -1,4 +1,4 @@
-// DocumentDialog.tsx
+// src\components\custom\common\document-dialog.tsx
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Document } from "@/lib/faker/documents/schema"

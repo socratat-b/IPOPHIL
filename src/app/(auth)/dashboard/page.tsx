@@ -1,16 +1,18 @@
-"use client";
+"use client"
 
-import React, { useMemo, useEffect, useState, ComponentType } from "react";
-import RecentDocuments from "@/components/custom/dashboard/recent-documents";
-import { DashboardHeader } from "@/components/custom/dashboard/header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Overview } from "@/components/custom/dashboard/overview";
-import { Icons } from "@/components/ui/icons";
-import { useDocuments } from "@/lib/context/document-context";
-import { Stats, StatusCounts } from "@/lib/types";
-import { AddDocumentButton } from "@/components/custom/common/add-document-button";
-import { LineChart, Line } from "recharts";
-import { Document } from "@/lib/faker/documents/schema";
+import React from "react"
+import RecentDocuments from "@/components/custom/dashboard/recent-documents"
+
+import { LineChart, Line } from "recharts"
+import { Icons } from "@/components/ui/icons"
+import { Stats, StatusCounts } from "@/lib/types"
+import { Document } from "@/lib/faker/documents/schema"
+import { useDocuments } from "@/lib/context/document-context"
+import { Overview } from "@/components/custom/dashboard/overview"
+import { useMemo, useEffect, useState, ComponentType } from "react"
+import { DashboardHeader } from "@/components/custom/dashboard/header"
+import { AddDocumentButton } from "@/components/custom/common/add-document-button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {
     const [isMounted, setIsMounted] = useState(false);
@@ -57,12 +59,14 @@ const StatCard = ({
             <Icon className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-            <div className="text-2xl font-bold">{count}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-bold pl-2">{count}</div>
+            <p className="text-xs text-muted-foreground pl-2">
                 {change > 0 ? "+" : ""}
                 {change}% from last month
             </p>
-            <SparklineChart data={data} />
+            <div className="flex justify-center">
+                <SparklineChart data={data} />
+            </div>
         </CardContent>
     </Card>
 );
@@ -100,9 +104,9 @@ export default function Page() {
                 docMonth === currentMonth && docYear === currentYear
                     ? currentCounts
                     : docMonth === (currentMonth - 1 + 12) % 12 &&
-                      (docMonth === 11 ? docYear === currentYear - 1 : docYear === currentYear)
-                    ? lastMonthCounts
-                    : null;
+                        (docMonth === 11 ? docYear === currentYear - 1 : docYear === currentYear)
+                        ? lastMonthCounts
+                        : null;
 
             if (counts) {
                 const status = doc.status.toLowerCase();
@@ -123,7 +127,7 @@ export default function Page() {
                         counts.completed++;
                         break;
                 }
-                
+
             }
         });
 
@@ -202,7 +206,7 @@ export default function Page() {
                 <div className="hidden flex-col md:flex">
                     <div className="flex-1 space-y-4">
                         <div className="flex items-center justify-between space-y-2">
-                            <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
+                            <h2 className="text-3xl font-bold tracking-tight ml-5">Overview</h2>
                             <div className="flex items-center space-x-2">
                                 <AddDocumentButton title="Receive" actionType="Receive" variant="outline" />
                                 <AddDocumentButton title="Release" actionType="Release" variant="destructive" />

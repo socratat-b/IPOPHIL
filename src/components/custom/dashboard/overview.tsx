@@ -103,7 +103,7 @@ const CustomTooltip = ({ active, payload }: TooltipProps) => {
                     position: 'relative', // Position relative for stacking
                 }}
             >
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb- ">
                     <Icon className="w-4 h-4" style={{ color: data.color }} />
                     <span className="font-semibold text-gray-800">{data.name}</span>
                 </div>
@@ -124,7 +124,7 @@ return (
                 <motion.h2 
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="text-l font-bold text-gray-800 tracking-tight"
+                    className="text-l font-bold text-gray-800 tracking-tight pl-4"
                 >
                     Document Status Overview
                 </motion.h2>
@@ -132,7 +132,7 @@ return (
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="text-sm text-gray-500"
+                    className="text-sm text-gray-500 pl-4"
                 >
                     Total Documents: {total}
                 </motion.p>
