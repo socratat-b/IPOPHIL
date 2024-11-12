@@ -57,12 +57,14 @@ const StatCard = ({
             <Icon className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-            <div className="text-2xl font-bold">{count}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-bold pl-2">{count}</div>
+            <p className="text-xs text-muted-foreground pl-2">
                 {change > 0 ? "+" : ""}
                 {change}% from last month
             </p>
-            <SparklineChart data={data} />
+            <div className="flex justify-center">
+                <SparklineChart data={data} />
+            </div>
         </CardContent>
     </Card>
 );
@@ -202,7 +204,7 @@ export default function Page() {
                 <div className="hidden flex-col md:flex">
                     <div className="flex-1 space-y-4">
                         <div className="flex items-center justify-between space-y-2">
-                            <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
+                            <h2 className="text-3xl font-bold tracking-tight ml-5">Overview</h2>
                             <div className="flex items-center space-x-2">
                                 <AddDocumentButton title="Receive" actionType="Receive" variant="outline" />
                                 <AddDocumentButton title="Release" actionType="Release" variant="destructive" />

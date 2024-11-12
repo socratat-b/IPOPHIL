@@ -54,13 +54,13 @@ export function DashboardHeader({ userName = "User", breadcrumbs = [] }: Dashboa
 
     const getGreeting = () => {
         const hour = currentTime?.getHours() || 0;
-        if (hour < 12) return "Good morning";
-        if (hour < 17) return "Good afternoon";
-        return "Good evening";
+        if (hour < 12) return "Good morning,";
+        if (hour < 17) return "Good afternoon,";
+        return "Good evening,";
     };
 
     return (
-        <header className="flex h-16 shrink-0 items-center px-4 justify-between m-4 rounded-lg shadow-md bg-popover">
+        <header className="flex h-16 shrink-0 items-center px-4 justify-between mr-4 ml-4 mt-4 mb-2 rounded-lg shadow-sm border bg-popover">
             <div className="flex items-center gap-2">
                 <SidebarTrigger className="-ml-1" />
                 {breadcrumbs.length > 0 ? (
@@ -94,8 +94,8 @@ export function DashboardHeader({ userName = "User", breadcrumbs = [] }: Dashboa
                         <span className="text-muted-foreground">
                             {getGreeting()}
                         </span>
-                        <span className="font-medium">
-                            {userName} ✨
+                        <span className="font-semibold">
+                            {userName} ! ✨
                         </span>
                     </div>
                 )}
