@@ -1,147 +1,211 @@
 "use client"
 
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { Icons } from "@/components/ui/icons";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-
-import Link from "next/link";
+import { useState } from "react"
+import { Input } from "@/components/ui/input"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import Link from "next/link"
+import { motion, AnimatePresence } from "framer-motion"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 
 export default function SignIn() {
-  const router = useRouter();
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted");
-    router.push("/dashboard");
-  };
-
-  const handleGoogleSignIn = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    console.log("Google sign in clicked");
-    // Add your Google authentication logic here
-    router.push("/dashboard");
-  };
-
-  const handleMicrosoftSignIn = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    console.log("Microsoft sign in clicked");
-    // Add your Microsoft authentication logic here
-    router.push("/dashboard");
-  };
+    e.preventDefault()
+    setIsLoading(true)
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false)
+      router.push("/dashboard")
+    }, 1500)
+  }
 
   return (
-    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-slate-300 dark:bg-slate-800">
-      <div className="flex flex-col space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Welcome Back!
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          The Intellectual Property System related to rights and obligations, as well as privileges and incentives.
-        </p>
-      </div>
-
-      <form className="my-8" onSubmit={handleSubmit}>
-
-        <LabelInputContainer className="mb-4">
-
-          <Label htmlFor="email">Email Address</Label>
-          <Input id="email" placeholder="user@gmail.com" type="email" />
-
-        </LabelInputContainer>
-
-        <LabelInputContainer className="mb-4">
-
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" placeholder="••••••••" type="password" />
-
-        </LabelInputContainer>
-
-        {/* remember me */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center">
-
-            <Checkbox id="remember" />
-            <div className="grid gap-1.5 leading-none">
-              <label
-                htmlFor="remember"
-                className="text-sm ml-2"
-              >
-                Remember Me
-              </label>
-            </div>
-
-          </div>
-          <Link
-            href="#"
-            className="text-cyan-500 text-sm hover:underline"
-          >
-            Forgot password?
-          </Link>
-        </div>
-
-        <Button
-          className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-          type="submit"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.6 }}
+      className="w-full"
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Email Input */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+          className="group space-y-2"
         >
-          Sign in &rarr;
-          <BottomGradient />
-        </Button>
-
-        <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
-
-        <div className="flex flex-col space-y-4">
-          <Button
-            className="relative group/btn flex space-x-2 items-center justify-center px-4 w-full rounded-md h-10 font-medium shadow-input bg-gray-50 hover:bg-gray-900 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)] transition-colors duration-200"
-            type="button"
-            onClick={handleGoogleSignIn}
+          <Label 
+            htmlFor="email" 
+            className="text-sm font-medium text-neutral-700 dark:text-neutral-300"
           >
-            <Icons.google className="h-4 w-4 text-neutral-800 group-hover/btn:text-white dark:text-neutral-300 transition-colors duration-200" />
-            <span className="text-neutral-700 group-hover/btn:text-white dark:text-neutral-300 text-sm transition-colors duration-200">
-              Sign in with Google
-            </span>
-            <BottomGradient />
-          </Button>
+            Email address
+          </Label>
+          <div className="relative">
+            <Input 
+              id="email" 
+              placeholder="name@example.com" 
+              type="email"
+              className="h-11 bg-white/50 dark:bg-neutral-900/50 border-neutral-200 dark:border-neutral-800 focus:border-primary/50 dark:focus:border-primary/50 transition-all duration-200 backdrop-blur-sm"
+            />
+            <div className="absolute inset-0 border border-primary/50 rounded-md opacity-0 scale-105 group-focus-within:opacity-100 group-focus-within:scale-100 transition-all duration-200 pointer-events-none" />
+          </div>
+        </motion.div>
 
-          <Button
-            className="relative group/btn flex space-x-2 items-center justify-center px-4 w-full rounded-md h-10 font-medium shadow-input bg-gray-50 hover:bg-gray-900 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)] transition-colors duration-200"
-            type="button"
-            onClick={handleMicrosoftSignIn}
+        {/* Password Input */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.8 }}
+          className="group space-y-2"
+        >
+          <div className="flex justify-between items-center">
+            <Label 
+              htmlFor="password" 
+              className="text-sm font-medium text-neutral-700 dark:text-neutral-300"
+            >
+              Password
+            </Label>
+            <Link
+              href="#"
+              className="text-xs text-primary hover:text-primary/80 transition-colors hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+          <div className="relative">
+            <Input 
+              id="password" 
+              placeholder="••••••••" 
+              type={showPassword ? "text" : "password"}
+              className="h-11 bg-white/50 dark:bg-neutral-900/50 border-neutral-200 dark:border-neutral-800 focus:border-primary/50 dark:focus:border-primary/50 transition-all duration-200 backdrop-blur-sm pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {showPassword ? (
+                  <motion.div
+                    key="hide"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <EyeOff className="h-4 w-4" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="show"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </button>
+            <div className="absolute inset-0 border border-primary/50 rounded-md opacity-0 scale-105 group-focus-within:opacity-100 group-focus-within:scale-100 transition-all duration-200 pointer-events-none" />
+          </div>
+        </motion.div>
+
+        {/* Remember Me Checkbox */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.9 }}
+          className="flex items-center space-x-2"
+        >
+          <Checkbox 
+            id="remember" 
+            className="border-neutral-300 dark:border-neutral-700 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+          />
+          <Label 
+            htmlFor="remember" 
+            className="text-sm text-neutral-600 dark:text-neutral-400 select-none cursor-pointer"
           >
-            <Icons.microsoft className="h-4 w-4 text-neutral-800 group-hover/btn:text-white dark:text-neutral-300 transition-colors duration-200" />
-            <span className="text-neutral-700 group-hover/btn:text-white dark:text-neutral-300 text-sm transition-colors duration-200">
-              Sign in with Microsoft
-            </span>
-            <BottomGradient />
-          </Button>
-        </div>
+            Keep me signed in
+          </Label>
+        </motion.div>
+
+        {/* Sign In Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1 }}
+        >
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+          >
+            <Button
+              className="w-full h-11 bg-gradient-to-r from-primary to-primary/90 hover:to-primary text-white transition-all duration-300"
+              type="submit"
+              disabled={isLoading}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {isLoading ? (
+                  <motion.div
+                    key="loading"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="flex items-center gap-2"
+                  >
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Signing in...
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="sign-in"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="flex items-center gap-2 relative"
+                  >
+                    Sign in
+                    <motion.div
+                      animate={{ 
+                        x: [0, 5, 0],
+                        opacity: [1, 0.7, 1]
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <svg 
+                        width="16" 
+                        height="16" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                        className="translate-y-[1px]"
+                      >
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
+          </motion.div>
+        </motion.div>
       </form>
-    </div>
-  );
+    </motion.div>
+  )
 }
-
-const BottomGradient = () => {
-  return (
-    <>
-      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-    </>
-  );
-};
-
-const LabelInputContainer = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div className={cn("flex flex-col space-y-2 w-full", className)}>
-      {children}
-    </div>
-  );
-};
