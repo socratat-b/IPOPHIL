@@ -60,7 +60,7 @@ export function DashboardHeader({ userName = "User", breadcrumbs = [] }: Dashboa
     };
 
     return (
-        <header className="flex h-16 shrink-0 items-center px-4 justify-between border-b bg-background">
+        <header className="flex h-16 shrink-0 items-center px-4 justify-between m-4 rounded-lg shadow-md bg-popover">
             <div className="flex items-center gap-2">
                 <SidebarTrigger className="-ml-1" />
                 {breadcrumbs.length > 0 ? (
@@ -109,7 +109,7 @@ export function DashboardHeader({ userName = "User", breadcrumbs = [] }: Dashboa
                         <span className="tabular-nums">{formatTime(currentTime)}</span>
                     </div>
                 )}
-                <ThemeChange />
+                <ThemeChange/>
             </div>
         </header>
     );
