@@ -41,4 +41,7 @@ console.log("✅ Documents data generated.");
  * 
  * > Compile the script with `tsc seed.ts`.
  * > Run the compiled script with `node seed`.
+ * 
+ * on the package json:
+ * > now you can just run `pnpm seed:all` to generate the data
  */

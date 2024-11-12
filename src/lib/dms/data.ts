@@ -1,16 +1,8 @@
-export const user_role = [
-    {
-        value: "admin",
-        label: "Admin",
-    },
-    {
-        value: "user",
-        label: "User",
-    }
-];
-
-// extra
-export const status_types = [
+// src\lib\dms\data.ts
+/**
+ * This status is just for extra.
+ */
+export const user_status = [
     {
         value: "active",
         label: "Active",
@@ -21,6 +13,16 @@ export const status_types = [
     },
 ]
 
+export const user_role = [
+    {
+        value: "admin",
+        label: "Admin",
+    },
+    {
+        value: "user",
+        label: "User",
+    }
+];
 
 export const log_action = [
     {
@@ -76,10 +78,6 @@ export const doc_status = [
     {
         value: "canceled",
         label: "Canceled",
-    },
-    {
-        value: "archived",
-        label: "Archived",
     }
 ];
 

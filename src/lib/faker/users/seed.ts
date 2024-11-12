@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { faker } from "@faker-js/faker";
 
-import { status_types, user_types } from "./data";
+import { user_status, user_types } from "./data";
 
 const users = Array.from({ length: 100 }, () => ({
     id: `${faker.number.int({ min: 1000, max: 9999 })}`,
@@ -15,7 +15,7 @@ const users = Array.from({ length: 100 }, () => ({
     role: faker.helpers.arrayElement(user_types).value,
     title: faker.person.jobTitle(),
     address: faker.address.streetAddress(),
-    status: faker.helpers.arrayElement(status_types).value,
+    status: faker.helpers.arrayElement(user_status).value,
     profile_url: faker.image.avatar(),
     created_at: faker.date.past().toISOString(),
     updated_at: faker.date.recent().toISOString(),
@@ -32,5 +32,8 @@ console.log("✅ Users data generated.");
  * mar note:
  * 
  * > Compile the script with `tsc seed.ts`.
- * > Run the compiled script with `node seed.js`.
+ * > Run the compiled script with `node seed`.
+ * 
+ * on the package json:
+ * > now you can just run `pnpm seed:all` to generate the data
  */

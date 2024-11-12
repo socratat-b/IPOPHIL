@@ -64,9 +64,9 @@ const generateUniqueTrackingCode = (): string & z.BRAND<"unique"> => {
 
 const generateUniqueEmail = (firstName: string, lastName: string): string & z.BRAND<"unique"> => {
     return ensureUnique(
-        `${faker.internet.userName({ firstName, lastName }).toLowerCase()}@example.com`.substring(0, 255),
+        `${faker.internet.username({ firstName, lastName }).toLowerCase()}@example.com`.substring(0, 255),
         usedEmails,
-        () => `${faker.internet.userName()}@example.com`.substring(0, 255)
+        () => `${faker.internet.username()}@example.com`.substring(0, 255)
     );
 };
 
@@ -101,7 +101,7 @@ const generateDocumentTypes = (count = 10): DocumentType[] => {
 const generateAgencies = (count = 10): Agency[] =>
     Array.from({ length: count }, () => ({
         agency_id: generateUUID(),
-        name: faker.company.name().substring(0, 255),
+        name: faker.company.name(),
         code: generateUniqueCode(),
         active: faker.datatype.boolean(),
         created_by: generateUUID(),
@@ -119,7 +119,7 @@ const generateUsers = (agencies: Agency[], count = 50): User[] =>
             first_name: firstName,
             last_name: lastName,
             middle_name: faker.person.middleName()?.substring(0, 255) || null,
-            user_name: faker.internet.userName({ firstName, lastName }).substring(0, 255),
+            user_name: faker.internet.username({ firstName, lastName }).substring(0, 255),
             email: generateUniqueEmail(firstName, lastName),
             role: getRandomFromData(user_role) as UserRole,
             title: faker.person.jobTitle().substring(0, 255),
@@ -135,7 +135,7 @@ const generateDocumentDetails = (users: User[], docTypes: DocumentType[], count 
     Array.from({ length: count }, () => ({
         detail_id: generateUUID(),
         document_code: generateUniqueDocumentCode(),
-        document_name: faker.lorem.sentence(4).substring(0, 255),
+        document_name: faker.commerce.productName(),
         classification: getRandomFromData(doc_classification) as DocClassification,
         type_id: faker.helpers.arrayElement(docTypes).type_id,
         created_by: faker.helpers.arrayElement(users).user_id,
@@ -287,3 +287,13 @@ const saveGeneratedData = () => {
 };
 
 saveGeneratedData();
+
+/**
+ * mar note:
+ * 
+ * > Compile the script with `tsc seed.ts`.
+ * > Run the compiled script with `node seed`.
+ * 
+ * on the package json:
+ * > now you can just run `pnpm seed:all` to generate the data
+ */

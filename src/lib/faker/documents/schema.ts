@@ -2,6 +2,8 @@
 import { z } from "zod";
 
 export const documentsSchema = z.object({
+
+    // for joining columns
     id: z.string(),
     code: z.string(),
     title: z.string(),

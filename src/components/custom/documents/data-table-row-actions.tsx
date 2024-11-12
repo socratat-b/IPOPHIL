@@ -22,7 +22,7 @@ import {
 import { documentsSchema, Document } from "@/lib/faker/documents/schema"
 import { statuses } from "@/lib/faker/documents/data"
 import { toast } from "sonner"
-import { DocumentDialog } from "../common/document-dialog"
+import { DocumentDialog } from "@/components/custom/common/document-dialog"
 
 interface DataTableRowActionsProps<TData> {
     row: Row<TData>

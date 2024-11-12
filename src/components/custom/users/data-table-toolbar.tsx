@@ -4,7 +4,7 @@ import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/custom/table/data-table-view-options";
-import { status_types, user_role } from "@/lib/dms/data";
+import { user_status, user_role } from "@/lib/dms/data";
 import { DataTableFacetedFilter } from "@/components/custom/table/data-table-faceted-filter";
 import { Icons } from "@/components/ui/icons";
 
@@ -31,7 +31,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                     <DataTableFacetedFilter
                         column={table.getColumn("status")}
                         title="Status"
-                        options={status_types.map((status) => ({
+                        options={user_status.map((status) => ({
                             value: status.value,
                             label: status.label
                         }))}
