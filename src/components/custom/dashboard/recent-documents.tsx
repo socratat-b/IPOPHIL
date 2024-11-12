@@ -90,10 +90,6 @@ const RecentDocuments: React.FC<RecentDocumentsProps> = ({ documents }) => {
                                                 {format(parseISO(doc.date_created), 'MMM d, yyyy')}
                                             </span>
                                         </div>
-                                        
-                                        <ChevronRight 
-                                            className="w-5 h-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity absolute right-2 top-1/2 -translate-y-1/2" 
-                                        />
                                     </CardContent>
                                 </Card>
                             </TooltipTrigger>

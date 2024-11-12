@@ -72,11 +72,11 @@
 
         function getStatusColor(status: string): string {
             const colors: Record<string, string> = {
-                Incoming: '#818CF8',    // Indigo
-                Received: '#34D399',    // Emerald
-                Outgoing: '#F472B6',    // Pink
-                Completed: '#60A5FA',   // Blue
-                For_dispatch: '#FBBF24'  // Amber
+                Incoming: '#818CF8',    
+                Received: '#34D399',    
+                Outgoing: '#F472B6',    
+                Completed: '#60A5FA',   
+                For_dispatch: '#FBBF24' 
             };
             return colors[status] || '#94A3B8';
         }
@@ -93,10 +93,16 @@
                 const Icon = getIconForStatus(data.name);
                 return (
                     <motion.div
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white p-3 rounded-lg shadow-lg border border-gray-100 z-50" // Higher z-index for tooltip
-                    >
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="bg-white p-3 rounded-lg shadow-lg border border-gray-100"
+                style={{
+                    transform: 'translateY(100%)',  
+                    marginLeft: '10px',             
+                    zIndex: 50,                     
+                    position: 'relative',
+                }}
+            >
                         <div className="flex items-center gap-2 mb-1">
                             <Icon className="w-4 h-4" style={{ color: data.color }} />
                             <span className="font-semibold text-gray-800">{data.name}</span>
@@ -186,7 +192,8 @@
                                             cy="50%"
                                             innerRadius={120}
                                             outerRadius={180}
-                                            paddingAngle={5}
+                                            paddingAngle={1}
+                                            cornerRadius={6}
                                             dataKey="value"
                                             onClick={(_, index) => {
                                                 const status = data[index].name;
@@ -288,8 +295,13 @@
                             <img
                                 src="/images/cube.png"
                                 alt="Center Logo"
-                                className="absolute w-20 h-20 z-10" // Keep a lower z-index for the logo
-                                style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                                className="absolute w-20 h-20 z-0" 
+                                style={{
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    zIndex: 10,  
+                                }}
                             />
                         )}
                     </motion.div>
