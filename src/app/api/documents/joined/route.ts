@@ -7,8 +7,10 @@ export async function GET() {
         // First check if files exist
         const fileStatus = await debugFileExists()
         console.log('File status:', fileStatus)
-
+        
         const documents = await getCachedJoinedDocuments()
+        console.log('Document is:')
+        console.table(documents)
         return NextResponse.json(documents)
     } catch (error) {
         console.error('API error:', error)

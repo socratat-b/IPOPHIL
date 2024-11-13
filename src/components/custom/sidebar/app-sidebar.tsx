@@ -19,15 +19,14 @@ import {
 import { NavUser } from "./nav-user"
 import type { JoinedDocument } from "@/lib/dms/joined-docs"
 import { getJoinedDocuments } from "@/lib/services/joined-documents"
-
-type DocumentStatus = 'incoming' | 'recieved' | 'outgoing' | 'for_dispatch' | 'completed'
+import { doc_status } from "@/lib/dms/data"
 
 interface DocumentCounts {
-  incoming: number
-  received: number
-  outgoing: number
-  forDispatch: number
+  dispatch: number
+  intransit: number
   completed: number
+  // mar-note: removed this canceled: number, because it is not used in the sidebar
+  received: number
   total: number
 }
 
@@ -48,7 +47,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         const docs = await getJoinedDocuments()
         setDocuments(docs)
       } catch (error) {
-        console.error('Error fetching documents:', error)
+        console.error("Error fetching documents:", error)
         setDocuments([])
       }
     }
@@ -56,84 +55,62 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
   }, [])
 
   const documentCounts = useMemo(() => {
-    const counts: DocumentCounts = {
-      incoming: 0,
-      received: 0,
-      outgoing: 0,
-      forDispatch: 0,
-      completed: 0,
-      total: 0
-    }
+    // Initialize counts for all statuses
+    const counts = doc_status.reduce(
+      (acc, status) => ({
+        ...acc,
+        [status.value]: 0,
+      }),
+      { received: 0, dispatch: 0, intransit: 0, completed: 0 } as DocumentCounts
+    );
 
+    // Loop through documents to count only "not viewed" documents
     documents.forEach((doc) => {
-      if (!doc.date_viewed) {
-        const status = doc.status.toLowerCase() as DocumentStatus
-        switch (status) {
-          case 'incoming':
-            counts.incoming++
-            counts.total++
-            break
-          case 'recieved':
-            counts.received++
-            counts.total++
-            break
-          case 'outgoing':
-            counts.outgoing++
-            counts.total++
-            break
-          case 'for_dispatch':
-            counts.forDispatch++
-            counts.total++
-            break
-          case 'completed':
-            counts.completed++
-            counts.total++
-            break
+      if (!doc.date_viewed) {  // Only consider documents that haven't been viewed
+        const status = doc.status.toLowerCase();
+        const matchedStatus = doc_status.find(
+          (s) => s.value.toLowerCase() === status
+        );
+
+        if (matchedStatus) {
+          counts[matchedStatus.value as keyof DocumentCounts]++;
+        }
+
+        // If the document is marked as received, increment the received count
+        if (doc.is_received) {
+          counts.received++;
         }
       }
-    })
+    });
 
-    return counts
-  }, [documents])
+    // The total count is the sum of all individual status counts
+    counts.total = counts.dispatch + counts.intransit + counts.completed + counts.received;
+
+    return counts;
+  }, [documents]);
 
   // Transform and filter main navigation items
   const visibleMainNav = useMemo<NavMainItem[]>(() => {
     return navigationConfig.mainNav
-      .filter(item => visibleMainItems.includes(item.id))
-      .map(item => {
-        const transformed = transformToMainNavItem(item)
+      .filter((item) => visibleMainItems.includes(item.id))
+      .map((item) => {
+        const transformed = transformToMainNavItem(item);
 
-        if (item.id === 'documents') {
-          transformed.notViewedCount = documentCounts.total - documentCounts.completed
+        if (item.id === "documents") {
+          transformed.notViewedCount = documentCounts.total;
 
           if (transformed.items) {
             transformed.items = item.items
-              ?.filter(subItem => visibleSubItems[item.id]?.includes(subItem.id))
-              .map(subItem => {
+              ?.filter((subItem) => visibleSubItems[item.id]?.includes(subItem.id))
+              .map((subItem) => {
                 const updatedSubItem = {
                   title: subItem.title,
                   url: subItem.url,
-                  notViewedCount: 0
-                }
+                  notViewedCount: documentCounts[subItem.id as keyof DocumentCounts] || 0,
+                };
 
-                // Map counts based on the original subItem.id
-                switch (subItem.id) {
-                  case 'dispatch':
-                    updatedSubItem.notViewedCount = documentCounts.forDispatch
-                    break
-                  case 'intransit':
-                    updatedSubItem.notViewedCount = documentCounts.outgoing
-                    break
-                  case 'received':
-                    updatedSubItem.notViewedCount = documentCounts.received
-                    break
-                  case 'completed':
-                    updatedSubItem.notViewedCount = documentCounts.completed
-                    break
-                }
-
-                return updatedSubItem
-              })
+                return updatedSubItem;
+              });
           }
         }
 
