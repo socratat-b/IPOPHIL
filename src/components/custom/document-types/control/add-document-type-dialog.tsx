@@ -38,7 +38,6 @@ interface AddDocumentTypeDialogProps {
     actionType: ActionType;
 }
 
-// Separate components for each form type
 const CreateDocumentTypeForm = ({ onSubmit, onClose }: {
     onSubmit: (data: CreateDocumentTypeData) => void;
     onClose: () => void;
@@ -48,8 +47,8 @@ const CreateDocumentTypeForm = ({ onSubmit, onClose }: {
     });
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
-            <div>
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
+            <div className="col-span-2">
                 <label htmlFor="name" className="block mb-1">Type Name *</label>
                 <Input
                     id="name"
@@ -59,7 +58,7 @@ const CreateDocumentTypeForm = ({ onSubmit, onClose }: {
                 />
                 {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
             </div>
-            <div>
+            <div className="col-span-2">
                 <label htmlFor="description" className="block mb-1">Description *</label>
                 <Input
                     id="description"
@@ -70,7 +69,7 @@ const CreateDocumentTypeForm = ({ onSubmit, onClose }: {
                 {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
             </div>
 
-            <Card>
+            <Card className="col-span-2">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
                         <p className="text-sm text-gray-500">
@@ -87,7 +86,7 @@ const CreateDocumentTypeForm = ({ onSubmit, onClose }: {
                 </CardContent>
             </Card>
 
-            <div className="flex justify-end space-x-2">
+            <div className="col-span-2 flex justify-end space-x-2">
                 <Button type="submit" variant={"default"}>Create</Button>
                 <DialogClose asChild>
                     <Button variant={"secondary"} onClick={onClose}>
@@ -97,12 +96,12 @@ const CreateDocumentTypeForm = ({ onSubmit, onClose }: {
             </div>
         </form>
     );
-}
+};
 
 const ScanDocumentTypeForm = ({ onSubmit, onClose, actionType }: {
     onSubmit: (data: ScanDocumentTypeData) => void;
     onClose: () => void;
-    actionType: string;
+    actionType: ActionType;
 }) => {
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<ScanDocumentTypeData>({
         resolver: zodResolver(scanDocumentTypeSchema),
@@ -110,28 +109,29 @@ const ScanDocumentTypeForm = ({ onSubmit, onClose, actionType }: {
 
     const [scannedCode, setScannedCode] = useState<string>("");
 
-    // Update `setScannedCode` when `HelpScanCard` provides a new code
     const handleCodeChange = (code: string) => {
         setScannedCode(code);
-        setValue("code", code); // Update the form value with the scanned code for submission
+        setValue("code", code);
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
-            <div>
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
+            <div className="col-span-2">
                 <label htmlFor="code" className="block mb-1">Type Code</label>
                 <Input
                     id="code"
                     placeholder="Scan or manually enter type code"
                     value={scannedCode}
-                    onChange={(e) => handleCodeChange(e.target.value)} // Call `handleCodeChange` directly
+                    onChange={(e) => handleCodeChange(e.target.value)}
                     className="w-full"
                 />
                 {errors.code && <p className="text-red-500 text-sm">{errors.code.message}</p>}
             </div>
-            <HelpScanCard onCodeChange={handleCodeChange} />
+            <div className="col-span-2">
+                <HelpScanCard onCodeChange={handleCodeChange} actionType={actionType} mockDocuments={[]} />
+            </div>
 
-            <div className="flex justify-end space-x-2">
+            <div className="col-span-2 flex justify-end space-x-2">
                 <Button type="submit" variant={"default"}>Proceed</Button>
                 <DialogClose asChild>
                     <Button variant={"secondary"} onClick={onClose}>
@@ -143,8 +143,6 @@ const ScanDocumentTypeForm = ({ onSubmit, onClose, actionType }: {
     );
 };
 
-
-// Main Dialog Component
 export const AddDocumentTypeDialog: React.FC<AddDocumentTypeDialogProps> = ({ onCloseAction, actionType }) => {
     const handleCreateSubmit = (data: CreateDocumentTypeData) => {
         toast.success("Document Type Created", {

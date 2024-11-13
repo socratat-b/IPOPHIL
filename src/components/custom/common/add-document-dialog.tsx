@@ -18,6 +18,7 @@ import { scanDocumentSchema } from "@/lib/validations/documents/scan_documents";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HelpScanCard } from "@/components/custom/common/help-scan-card";
 import { z } from "zod";
+import { useState } from "react";
 
 // Types
 type CreateDocumentData = z.infer<typeof createDocumentSchema>;
@@ -29,7 +30,7 @@ interface AddDocumentDialogProps {
     actionType: ActionType;
 }
 
-// Separate components for each form type
+// Form for Creating a Document
 const CreateDocumentForm = ({ onSubmit, onClose }: {
     onSubmit: (data: CreateDocumentData) => void;
     onClose: () => void;
@@ -113,12 +114,13 @@ const CreateDocumentForm = ({ onSubmit, onClose }: {
     );
 };
 
-const ScanDocumentForm = ({ onSubmit, onClose }: {
+// Form for Scanning a Document
+const ScanDocumentForm = ({ onSubmit, onClose, actionType }: {
     onSubmit: (data: ScanDocumentData) => void;
     onClose: () => void;
-    actionType: string;
+    actionType: ActionType;
 }) => {
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm<ScanDocumentData>({
+    const { handleSubmit, setValue } = useForm<ScanDocumentData>({
         resolver: zodResolver(scanDocumentSchema),
     });
 
@@ -128,12 +130,23 @@ const ScanDocumentForm = ({ onSubmit, onClose }: {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
-            <HelpScanCard onCodeChange={handleCodeChange} />
+            <HelpScanCard onCodeChange={handleCodeChange} actionType={actionType} mockDocuments={[]} />
 
             <div className="flex justify-end space-x-2">
-                <Button type="submit" variant={"default"}>Proceed</Button>
+                <Button
+                    type="submit"
+                    variant="default"
+                    onClick={() => {
+                        toast.success(`Document ${actionType}`, {
+                            description: `Your document has been successfully ${actionType.toLowerCase()}d.`,
+                        });
+                        onClose(); // Close the dialog after showing success
+                    }}
+                >
+                    Proceed
+                </Button>
                 <DialogClose asChild>
-                    <Button variant={"secondary"} onClick={onClose}>
+                    <Button variant="secondary" onClick={onClose}>
                         Cancel
                     </Button>
                 </DialogClose>
@@ -152,18 +165,21 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAct
     };
 
     const handleScanSubmit = (data: ScanDocumentData) => {
-        toast.success(`Document ${actionType}d`, {
-            description: `Your document has been successfully ${actionType.toLowerCase()}d.`,
+        if (!data.code) {
+            toast.error("Error", {
+                description: "Please scan or enter a valid document code.",
+            });
+            return;
+        }
+        // Display a message on code entry; the final success is handled by Proceed button
+        toast.info(`Document ${actionType}`, {
+            description: `Document details have been populated. Review the information before proceeding.`,
         });
-        onCloseAction();
     };
 
     return (
         <Dialog open onOpenChange={(isOpen) => !isOpen && onCloseAction()}>
-            <DialogContent
-                className="w-full max-w-3xl p-6 bg-white rounded-lg shadow-lg"
-                aria-describedby="dialog-description"
-            >
+            <DialogContent className="w-full max-w-3xl bg-white rounded-lg shadow-lg" aria-describedby="dialog-description">
                 <DialogHeader>
                     <DialogTitle>{`${actionType} Document`}</DialogTitle>
                 </DialogHeader>
@@ -174,7 +190,7 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAct
                 {actionType === "Create" ? (
                     <CreateDocumentForm onSubmit={handleCreateSubmit} onClose={onCloseAction} />
                 ) : (
-                    <ScanDocumentForm onSubmit={handleScanSubmit} onClose={onCloseAction} actionType={""} />
+                    <ScanDocumentForm onSubmit={handleScanSubmit} onClose={onCloseAction} actionType={actionType} />
                 )}
             </DialogContent>
         </Dialog>
