@@ -1,15 +1,14 @@
 "use client"
 
-import React from "react"
+import React, { useMemo, useEffect, useState, ComponentType } from "react"
 import RecentDocuments from "@/components/custom/dashboard/recent-documents"
 
 import { LineChart, Line } from "recharts"
 import { Icons } from "@/components/ui/icons"
 import { Stats, StatusCounts } from "@/lib/types"
-import { Document } from "@/lib/faker/documents/schema"
-import { useDocuments } from "@/lib/context/document-context"
+import type { JoinedDocument } from "@/lib/dms/joined-docs"
 import { Overview } from "@/components/custom/dashboard/overview"
-import { useMemo, useEffect, useState, ComponentType } from "react"
+import { getJoinedDocuments } from "@/lib/services/joined-documents"
 import { DashboardHeader } from "@/components/custom/dashboard/header"
 import { AddDocumentButton } from "@/components/custom/common/add-document-button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -72,7 +71,26 @@ const StatCard = ({
 );
 
 export default function Page() {
-    const { documents }: { documents: Document[] } = useDocuments();
+    const [documents, setDocuments] = useState<JoinedDocument[]>([]);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const docs = await getJoinedDocuments()
+
+                /**
+                 * mar: to view data.
+                 * console.table(docs)
+                 * */
+
+                setDocuments(docs)
+            } catch (error) {
+                console.error('Error fetching documents:', error)
+                setDocuments([])
+            }
+        }
+        fetchData();
+    }, []);
 
     const stats = useMemo<Stats>(() => {
         const now = new Date();
@@ -127,7 +145,6 @@ export default function Page() {
                         counts.completed++;
                         break;
                 }
-
             }
         });
 

@@ -19,8 +19,9 @@ export const joinedDocumentSchema = z.object({
     released_by: z.string().optional(),
     released_from: z.string().optional(),
     receiving_office: z.string().optional(),
+    is_received: z.boolean().optional(), 
     date_release: z.string().nullable().optional(),
     date_viewed: z.string().nullable().optional(),
-})
+});
 
 export type JoinedDocument = z.infer<typeof joinedDocumentSchema>

@@ -1,15 +1,18 @@
-// src/lib/services/documents.ts
+// src/lib/services/documents.server.ts
 import path from 'path'
-
-import { z } from 'zod'
-import { cache } from 'react'
 import { promises as fs } from 'fs'
+import { z } from 'zod'
 import { unstable_cache } from 'next/cache'
 import { joinedDocumentSchema, JoinedDocument } from '@/lib/dms/joined-docs'
 import { documentsSchema, documentDetailsSchema, documentLogsSchema, documentTransitStatusSchema, agencySchema, userSchema, documentTypesSchema } from '@/lib/dms/schema'
 
-// File path constants to match seed script
+const CACHE_TAG = 'joined-documents'
+const REVALIDATE_TIME = 3600
+
+// File path constants
 const DATA_PATH = 'dist/lib/dms/data'
+
+
 const FILE_PATHS = {
     documents: path.join(DATA_PATH, 'documents.json'),
     documentDetails: path.join(DATA_PATH, 'documentDetails.json'),
@@ -41,7 +44,6 @@ const loadAndValidateFile = async <T>(
 
 const getJoinedDocumentsFromDatabase = async () => {
     try {
-        // Load all files with proper validation
         const [
             documents,
             details,
@@ -60,11 +62,24 @@ const getJoinedDocumentsFromDatabase = async () => {
             loadAndValidateFile(FILE_PATHS.documentTypes, documentTypesSchema, 'documentTypes'),
         ])
 
+        // console.log('Documents:', documents)
+        // console.log('Details:', details)
+        // console.log('Logs:', logs)
+        // console.log('Transits:', transits)
+        // console.log('Agencies:', agencies)
+        // console.log('Users:', users)
+        // console.log('Types:', types)
+
         // Join and transform the data
         const joinedDocuments = documents.map(doc => {
             try {
+                // console.log('Joining document:', doc.document_id)
+                
                 const detail = details.find(d => d.detail_id === doc.detail_id)
-                if (!detail) return null
+                if (!detail) {
+                    // console.log(`No matching detail found for document ${doc.document_id}`)
+                    return null
+                }
 
                 const docType = types.find(t => t.type_id === detail.type_id)
                 const originAgency = agencies.find(a => a.agency_id === doc.originating_agency_id)
@@ -91,6 +106,12 @@ const getJoinedDocumentsFromDatabase = async () => {
                     ? agencies.find(a => a.agency_id === latestRelease.from_agency_id)
                     : null
 
+                const isReceived = logs.some(
+                    log =>
+                        log.document_id === doc.document_id &&
+                        log.action === 'completed'
+                )
+
                 return joinedDocumentSchema.parse({
                     id: doc.document_id,
                     code: detail.document_code,
@@ -105,26 +126,24 @@ const getJoinedDocumentsFromDatabase = async () => {
                     released_by: releasingUser ? `${releasingUser.first_name} ${releasingUser.last_name}` : undefined,
                     released_from: releasingAgency?.name,
                     receiving_office: receivingAgency?.name,
+                    is_received: isReceived,
                     date_release: latestRelease?.performed_at,
                     date_viewed: doc.viewed_at,
                 })
             } catch (error) {
-                console.error(`Error processing document ${doc.document_id}:`, error)
+                // console.error(`Error processing document ${doc.document_id}:`, error)
                 return null
             }
         }).filter((doc): doc is JoinedDocument => doc !== null)
 
+        // console.log('Joined Documents:', joinedDocuments)
+
         return joinedDocuments
     } catch (error) {
-        console.error('Database error:', error)
+        // console.error('Database error:', error)
         throw new Error(`Failed to fetch joined documents from database: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
 }
-
-// Cache configuration
-const CACHE_TAG = 'joined-documents'
-const REVALIDATE_TIME = 3600
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
 
 export const getCachedJoinedDocuments = unstable_cache(
     getJoinedDocumentsFromDatabase,
@@ -135,30 +154,16 @@ export const getCachedJoinedDocuments = unstable_cache(
     }
 )
 
-export const getJoinedDocuments = cache(async () => {
-    const res = await fetch(`${BASE_URL}/documents/joined`, {
-        cache: 'force-cache',
-        next: { revalidate: REVALIDATE_TIME }
-    })
-
-    if (!res.ok) {
-        throw new Error(`Failed to fetch joined documents: ${res.statusText}`)
-    }
-
-    const data = await res.json()
-    return joinedDocumentSchema.array().parse(data)
-})
-
 export const debugFileExists = async () => {
     const results = await Promise.all(
         Object.entries(FILE_PATHS).map(async ([name, filePath]) => {
             try {
-                await fs.access(path.join(process.cwd(), filePath));
-                return { name, exists: true };
+                await fs.access(path.join(process.cwd(), filePath))
+                return { name, exists: true }
             } catch {
-                return { name, exists: false };
+                return { name, exists: false }
             }
         })
-    );
-    return results;
-};
+    )
+    return results
+}
