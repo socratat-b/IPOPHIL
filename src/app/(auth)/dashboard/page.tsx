@@ -76,11 +76,17 @@ export default function Page() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const docs = await getJoinedDocuments();
-                setDocuments(docs);
+                const docs = await getJoinedDocuments()
+
+                /**
+                 * mar: to view data.
+                 * console.table(docs)
+                 * */
+
+                setDocuments(docs)
             } catch (error) {
-                console.error('Error fetching documents:', error);
-                setDocuments([]);
+                console.error('Error fetching documents:', error)
+                setDocuments([])
             }
         }
         fetchData();
