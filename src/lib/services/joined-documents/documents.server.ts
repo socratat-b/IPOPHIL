@@ -1,14 +1,12 @@
-// src/lib/services/documents.ts
+// src/lib/services/documents.server.ts
 import path from 'path'
-
-import { z } from 'zod'
-import { cache } from 'react'
 import { promises as fs } from 'fs'
+import { z } from 'zod'
 import { unstable_cache } from 'next/cache'
 import { joinedDocumentSchema, JoinedDocument } from '@/lib/dms/joined-docs'
 import { documentsSchema, documentDetailsSchema, documentLogsSchema, documentTransitStatusSchema, agencySchema, userSchema, documentTypesSchema } from '@/lib/dms/schema'
 
-// File path constants to match seed script
+// File path constants
 const DATA_PATH = 'dist/lib/dms/data'
 const FILE_PATHS = {
     documents: path.join(DATA_PATH, 'documents.json'),
@@ -41,7 +39,6 @@ const loadAndValidateFile = async <T>(
 
 const getJoinedDocumentsFromDatabase = async () => {
     try {
-        // Load all files with proper validation
         const [
             documents,
             details,
@@ -120,11 +117,8 @@ const getJoinedDocumentsFromDatabase = async () => {
         throw new Error(`Failed to fetch joined documents from database: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
 }
-
-// Cache configuration
 const CACHE_TAG = 'joined-documents'
 const REVALIDATE_TIME = 3600
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
 
 export const getCachedJoinedDocuments = unstable_cache(
     getJoinedDocumentsFromDatabase,
@@ -135,30 +129,16 @@ export const getCachedJoinedDocuments = unstable_cache(
     }
 )
 
-export const getJoinedDocuments = cache(async () => {
-    const res = await fetch(`${BASE_URL}/documents/joined`, {
-        cache: 'force-cache',
-        next: { revalidate: REVALIDATE_TIME }
-    })
-
-    if (!res.ok) {
-        throw new Error(`Failed to fetch joined documents: ${res.statusText}`)
-    }
-
-    const data = await res.json()
-    return joinedDocumentSchema.array().parse(data)
-})
-
 export const debugFileExists = async () => {
     const results = await Promise.all(
         Object.entries(FILE_PATHS).map(async ([name, filePath]) => {
             try {
-                await fs.access(path.join(process.cwd(), filePath));
-                return { name, exists: true };
+                await fs.access(path.join(process.cwd(), filePath))
+                return { name, exists: true }
             } catch {
-                return { name, exists: false };
+                return { name, exists: false }
             }
         })
-    );
-    return results;
-};
+    )
+    return results
+}

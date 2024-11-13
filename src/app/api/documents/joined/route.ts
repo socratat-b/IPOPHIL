@@ -1,6 +1,6 @@
 // src/app/api/documents/joined/route.ts
 import { NextResponse } from 'next/server'
-import { getCachedJoinedDocuments, debugFileExists } from '@/lib/services/documents'
+import { debugFileExists, getCachedJoinedDocuments } from '@/lib/services/joined-documents/documents.server'
 
 export async function GET() {
     try {
