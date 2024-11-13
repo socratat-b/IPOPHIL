@@ -7,6 +7,9 @@ import { navigationConfig, transformToMainNavItem, transformToSecondaryNavItem }
 import { NavMainItem, NavSecondaryItem } from "@/lib/types/navigation"
 import { NavMain } from "./nav-main"
 import { NavSecondary } from "./nav-secondary"
+import { useRouter } from "next/navigation"
+import { Icons } from "@/components/ui/icons"
+
 import {
   Sidebar,
   SidebarContent,
@@ -53,6 +56,31 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
     }
     fetchDocuments()
   }, [])
+
+
+  const router = useRouter()
+
+  const [isLogoutOpen, setIsModalOpen] = useState(false); 
+
+  const openLogout = () => setIsModalOpen(true);
+  const closeLogout = () => setIsModalOpen(false);
+
+  const handleLogout = async () => {
+    try {
+      /**
+        * mar-note:
+        *    Add any logout logic here (e.g., clearing cookies, local storage, etc.)
+        *    For example:
+        *    await signOut() // if using next-auth
+        *    or
+        *    localStorage.removeItem('token')
+        *    or your custom logout logic
+        */
+      router.push('/')
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
 
   const documentCounts = useMemo(() => {
     // Initialize counts for all statuses
@@ -165,7 +193,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         <NavSecondary items={visibleSecondaryNav} className="mt-auto" />
       </SidebarContent>
 
-      {showUserSection && (
+      {/* {showUserSection && (
         <SidebarFooter>
           <NavUser
             user={{
@@ -175,7 +203,38 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
             }}
           />
         </SidebarFooter>
+      )} */}
+
+      <div onClick={openLogout} className="flex w-56 h-6 mb-2 hover:bg-sidebar-accent p-2 ml-2 rounded-md cursor-pointer">
+        <button className="text-red-600 flex justify-start text-sm items-center dark:text-red-400 ">
+          <Icons.logout className="mr-2 h-4 w-4" />
+          Log out
+        </button>
+      </div>
+
+      {isLogoutOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 border">
+          <div className="bg-white dark:bg-card rounded-lg p-6 w-80">
+            <h2 className="text-lg font-semibold mb-4 text-center">Confirm Logout</h2>
+            <p className="text-sm mb-6 text-center">Are you sure you want to log out?</p>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={closeLogout}
+                className="px-4 py-2 text-sm  bg-transparent  rounded-md hover:border "
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-600 text-sm text-white rounded-md hover:bg-red-700"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+        </div>
       )}
+
     </Sidebar>
   )
 }
