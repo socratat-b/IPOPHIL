@@ -32,7 +32,8 @@ const ScanDocumentForm = ({ onSubmit, onClose, actionType, mockDocuments }: Scan
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
-            <HelpScanCard onCodeChange={handleCodeChange} actionType={actionType} mockDocuments={mockDocuments} />
+            <HelpScanCard onCodeChange={handleCodeChange} actionType={actionType} />
+            {/* mockDocuments={mockDocuments}  */}
 
             <div className="flex justify-end space-x-2">
                 <Button type="submit" variant={"default"}>Proceed</Button>

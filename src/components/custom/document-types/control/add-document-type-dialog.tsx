@@ -128,7 +128,7 @@ const ScanDocumentTypeForm = ({ onSubmit, onClose, actionType }: {
                 {errors.code && <p className="text-red-500 text-sm">{errors.code.message}</p>}
             </div>
             <div className="col-span-2">
-                <HelpScanCard onCodeChange={handleCodeChange} actionType={actionType} mockDocuments={[]} />
+                <HelpScanCard onCodeChange={handleCodeChange} actionType={actionType} />
             </div>
 
             <div className="col-span-2 flex justify-end space-x-2">
