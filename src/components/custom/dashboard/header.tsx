@@ -13,6 +13,7 @@ import {
     BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
 import { Separator } from '@/components/ui/separator';
+import { UserHeaderNav } from './user-header-nav';
 
 interface DashboardHeaderProps {
     userName?: string;
@@ -63,7 +64,7 @@ export function DashboardHeader({ userName = "User", breadcrumbs = [] }: Dashboa
         <header className="flex h-16 shrink-0 items-center px-4 justify-between mr-4 ml-4 mt-4 mb-2 rounded-lg shadow-sm border bg-popover">
             <div className="flex items-center gap-2">
                 <SidebarTrigger className="-ml-1" />
-                {breadcrumbs.length > 0 ? (
+                {/* {breadcrumbs.length > 0 ? (
                     <>
                         <Separator orientation="vertical" className="mr-2 h-4" />
                         <Breadcrumb>
@@ -98,7 +99,15 @@ export function DashboardHeader({ userName = "User", breadcrumbs = [] }: Dashboa
                             {userName} ! ✨
                         </span>
                     </div>
-                )}
+                )} */}
+                <div className="flex items-center gap-3">
+                        <span className="text-muted-foreground">
+                            {getGreeting()}
+                        </span>
+                        <span className="font-semibold">
+                            {userName} ! ✨
+                        </span>
+                    </div>
             </div>
 
             <div className="ml-auto flex items-center gap-4">
@@ -110,6 +119,7 @@ export function DashboardHeader({ userName = "User", breadcrumbs = [] }: Dashboa
                     </div>
                 )}
                 <ThemeChange/>
+                <UserHeaderNav></UserHeaderNav>
             </div>
         </header>
     );

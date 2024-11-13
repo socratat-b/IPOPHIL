@@ -219,7 +219,7 @@ export default function Page() {
                         <div className="flex items-center justify-between space-y-2">
                             <h2 className="text-3xl font-bold tracking-tight ml-5">Overview</h2>
                             <div className="flex items-center space-x-2">
-                                <AddDocumentButton title="Receive" actionType="Receive" variant="outline" />
+                                <AddDocumentButton title="Receive" actionType="Receive" variant="destructive" />
                                 <AddDocumentButton title="Release" actionType="Release" variant="destructive" />
                                 <AddDocumentButton title="Add Document" actionType="Create" variant="default" />
                             </div>

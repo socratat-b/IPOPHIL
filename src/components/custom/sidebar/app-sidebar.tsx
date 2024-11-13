@@ -105,7 +105,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 
         if (item.id === 'documents') {
           transformed.notViewedCount = documentCounts.total - documentCounts.completed
-
+          
           if (transformed.items) {
             transformed.items = item.items
               ?.filter(subItem => visibleSubItems[item.id]?.includes(subItem.id))

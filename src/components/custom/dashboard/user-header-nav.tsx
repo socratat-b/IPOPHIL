@@ -31,8 +31,8 @@ export function UserHeaderNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={"ghost"} className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
+        <Button variant={"ghost"} className="h-10 w-10 rounded-full border border-primary">
+          <Avatar className="h-9 w-9">
             <AvatarImage src="images/user-random-1.jpg" alt="@shadcn" />
             <AvatarFallback>SC</AvatarFallback>
           </Avatar>
@@ -68,7 +68,7 @@ export function UserHeaderNav() {
             Notifications
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        <ModeMenu />
+        {/* <ModeMenu />
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleLogout}
@@ -76,7 +76,7 @@ export function UserHeaderNav() {
         >
           <Icons.logout className="mr-2 h-4 w-4" />
           Log out
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   )
