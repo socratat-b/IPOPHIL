@@ -1,10 +1,9 @@
 "use client"
 
-import { ComponentProps, useMemo } from "react"
+import { ComponentProps, useMemo, useEffect, useState } from "react"
 import Image from "next/image"
 import { useNavigationStore } from "@/lib/stores/navigation"
 import { navigationConfig, transformToMainNavItem, transformToSecondaryNavItem } from "@/lib/config/navigation"
-import { useDocuments } from "@/lib/context/document-context"
 import { NavMainItem, NavSecondaryItem } from "@/lib/types/navigation"
 import { NavMain } from "./nav-main"
 import { NavSecondary } from "./nav-secondary"
@@ -18,6 +17,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { NavUser } from "./nav-user"
+import type { JoinedDocument } from "@/lib/dms/joined-docs"
+import { getJoinedDocuments } from "@/lib/services/joined-documents"
 
 type DocumentStatus = 'incoming' | 'recieved' | 'outgoing' | 'for_dispatch' | 'completed'
 
@@ -30,21 +31,29 @@ interface DocumentCounts {
   total: number
 }
 
-interface Document {
-  status: string
-  date_viewed?: string | null
-}
-
 type AppSidebarProps = ComponentProps<typeof Sidebar>
 
 export function AppSidebar({ ...props }: AppSidebarProps) {
-  const { documents } = useDocuments()
+  const [documents, setDocuments] = useState<JoinedDocument[]>([])
   const {
     visibleMainItems,
     visibleSecondaryItems,
     visibleSubItems,
     showUserSection
   } = useNavigationStore()
+
+  useEffect(() => {
+    async function fetchDocuments() {
+      try {
+        const docs = await getJoinedDocuments()
+        setDocuments(docs)
+      } catch (error) {
+        console.error('Error fetching documents:', error)
+        setDocuments([])
+      }
+    }
+    fetchDocuments()
+  }, [])
 
   const documentCounts = useMemo(() => {
     const counts: DocumentCounts = {
@@ -56,7 +65,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       total: 0
     }
 
-    documents.forEach((doc: Document) => {
+    documents.forEach((doc) => {
       if (!doc.date_viewed) {
         const status = doc.status.toLowerCase() as DocumentStatus
         switch (status) {
