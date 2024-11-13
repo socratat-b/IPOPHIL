@@ -52,7 +52,7 @@ const RecentDocuments: React.FC<RecentDocumentsProps> = ({ documents }) => {
                                     <CardContent className="p-4 flex items-center gap-4 relative">
                                         <Avatar className="h-12 w-12 flex-shrink-0 ring-2 ring-background transition-transform group-hover:scale-105">
                                             <AvatarImage 
-                                                src={`/images/doc-icon-${index + 1}.jpg`} 
+                                                src={''} 
                                                 alt="Document Icon"
                                                 className="object-cover"
                                             />
