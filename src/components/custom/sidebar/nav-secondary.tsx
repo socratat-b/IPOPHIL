@@ -1,111 +1,117 @@
-// src/components/custom/sidebar/nav-secondary.tsx
 'use client'
 
 import { useEffect, useState } from 'react'
-import { LucideIcon } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
-import {
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem
-} from '@/components/ui/sidebar'
+import { LucideIcon, Mail, Phone, Clock, MessageSquare, ExternalLink, Send, Loader2 } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 import { type NavSecondaryItem } from '@/lib/types/navigation'
 
 interface NavSecondaryProps extends React.ComponentPropsWithoutRef<typeof SidebarGroup> {
   items: Array<NavSecondaryItem & { icon?: LucideIcon }>
 }
 
-interface FeedbackFormProps {
-  onSubmit: () => void
-}
-
-// Contact Info Component
 const ContactInfo = () => {
   return (
-    <div className='space-y-4'>
-      <p className='text-muted-foreground'>
-        Need help? Our support team is here for you.
+    <div className="space-y-6">
+      <p className="text-muted-foreground">
+        Our support team is ready to assist you 24/7.
       </p>
-      <Card>
+      <Card className="transition-all hover:shadow-md">
         <CardHeader>
-          <CardTitle>Contact Options</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5 text-primary" />
+            Contact Options
+          </CardTitle>
         </CardHeader>
-        <CardContent className='space-y-2'>
-          <div className='grid gap-1'>
-            <Label>Email</Label>
-            <p className='text-sm text-muted-foreground'>support@example.com</p>
+        <CardContent className="grid gap-6">
+          <div className="flex items-start space-x-4">
+            <Mail className="h-5 w-5 text-primary mt-1" />
+            <div className="space-y-1">
+              <Label className="text-base font-medium">Email</Label>
+              <a 
+                href="mailto:support@example.com"
+                className="text-sm text-primary hover:underline flex items-center gap-1"
+              >
+                support@example.com
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
           </div>
-          <div className='grid gap-1'>
-            <Label>Phone</Label>
-            <p className='text-sm text-muted-foreground'>1-800-SUPPORT</p>
+
+          <div className="flex items-start space-x-4">
+            <Phone className="h-5 w-5 text-primary mt-1" />
+            <div className="space-y-1">
+              <Label className="text-base font-medium">Phone</Label>
+              <a 
+                href="tel:1-800-SUPPORT"
+                className="text-sm text-primary hover:underline flex items-center gap-1"
+              >
+                1-800-SUPPORT
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
           </div>
-          <div className='grid gap-1'>
-            <Label>Hours</Label>
-            <p className='text-sm text-muted-foreground'>24/7</p>
+
+          <div className="flex items-start space-x-4">
+            <Clock className="h-5 w-5 text-primary mt-1" />
+            <div className="space-y-1">
+              <Label className="text-base font-medium">Hours</Label>
+              <p className="text-sm text-muted-foreground">Available 24/7</p>
+            </div>
           </div>
+
+          <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+            Start Live Chat
+          </Button>
         </CardContent>
       </Card>
     </div>
   )
 }
 
-// Feedback Form Component
-const FeedbackForm = ({ onSubmit }: FeedbackFormProps) => {
+const FeedbackForm = ({ onSubmit }: { onSubmit: () => void }) => {
   const [feedback, setFeedback] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async () => {
     if (!feedback.trim()) {
-      toast.error('Error', {
-        description: 'Please enter your feedback before submitting.'
-      })
+      toast.error('Please enter your feedback')
       return
     }
 
     setIsSubmitting(true)
     try {
-      // Simulate API call - replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 500))
-
-      toast.success('Success', {
-        description: 'Thank you for your feedback!'
-      })
+      toast.success('Feedback submitted successfully')
       onSubmit()
+      setFeedback('')
     } catch (error) {
-      console.error(error)
-      toast.error('Error', {
-        description: 'Failed to submit feedback. Please try again.'
-      })
+      toast.error('Failed to submit feedback')
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <div className='space-y-4'>
-      <p className='text-muted-foreground'>
-        We value your feedback! Let us know how we can improve.
+    <div className="space-y-6">
+      <p className="text-muted-foreground">
+        Help us improve by sharing your thoughts and suggestions.
       </p>
-      <div className='grid gap-4'>
-        <div className='grid gap-2'>
-          <Label htmlFor='feedback'>Your feedback</Label>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="feedback" className="text-base font-medium">
+            Your Feedback
+          </Label>
           <Textarea
-            id='feedback'
-            placeholder='Type your feedback here...'
-            rows={4}
+            id="feedback"
+            placeholder="What's on your mind?"
+            className="min-h-[120px] resize-none focus:ring-2 focus:ring-primary"
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
             disabled={isSubmitting}
@@ -114,15 +120,25 @@ const FeedbackForm = ({ onSubmit }: FeedbackFormProps) => {
         <Button
           onClick={handleSubmit}
           disabled={isSubmitting}
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
         >
-          {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            <>
+              <Send className="mr-2 h-4 w-4" />
+              Submit Feedback
+            </>
+          )}
         </Button>
       </div>
     </div>
   )
 }
 
-// Main NavSecondary Component
 export function NavSecondary({ items, ...props }: NavSecondaryProps) {
   const [mounted, setMounted] = useState(false)
   const [openDialog, setOpenDialog] = useState<string | null>(null)
@@ -140,13 +156,11 @@ export function NavSecondary({ items, ...props }: NavSecondaryProps) {
       case 'Send Feedback':
         return <FeedbackForm onSubmit={handleClose} />
       default:
-        return <p className='text-muted-foreground'>Content for {item.title}</p>
+        return <p className="text-muted-foreground">Content for {item.title}</p>
     }
   }
 
-  if (!mounted || !items?.length) {
-    return null
-  }
+  if (!mounted || !items?.length) return null
 
   return (
     <SidebarGroup {...props}>
@@ -154,7 +168,6 @@ export function NavSecondary({ items, ...props }: NavSecondaryProps) {
         <SidebarMenu>
           {items.map((item) => {
             const ItemIcon = item.icon
-
             return (
               <SidebarMenuItem key={item.title}>
                 <Dialog
@@ -163,16 +176,22 @@ export function NavSecondary({ items, ...props }: NavSecondaryProps) {
                 >
                   <DialogTrigger asChild>
                     <SidebarMenuButton
-                      size='sm'
-                      className='w-full'
+                      size="sm"
+                      className={cn(
+                        "w-full transition-colors",
+                        openDialog === item.title && "bg-primary/10 text-primary"
+                      )}
                     >
-                      {ItemIcon && <ItemIcon className='h-4 w-4' />}
+                      {ItemIcon && <ItemIcon className="h-4 w-4" />}
                       <span>{item.title}</span>
                     </SidebarMenuButton>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>{item.title}</DialogTitle>
+                      <DialogTitle className="flex items-center gap-2">
+                        {ItemIcon && <ItemIcon className="h-5 w-5 text-primary" />}
+                        {item.title}
+                      </DialogTitle>
                     </DialogHeader>
                     {getDialogContent(item)}
                   </DialogContent>

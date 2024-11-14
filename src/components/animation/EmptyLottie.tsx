@@ -1,6 +1,7 @@
+// src\components\animation\EmptyLottie.tsx
 'use client'
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, forwardRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
 interface EmptyLottieProps {
@@ -10,17 +11,17 @@ interface EmptyLottieProps {
   animationPath?: string
 }
 
-export const EmptyLottie = ({
-  message = "No Data Found",
-  description = "There are no records to display at the moment",
-  className = "w-60",
-  animationPath = "/animation/empty-box.json"
-}: EmptyLottieProps) => {
-  const ref = useRef(null)
+const EmptyLottie = forwardRef<HTMLDivElement, EmptyLottieProps>(({
+  message = 'No Data Found',
+  description = 'There are no records to display at the moment',
+  className = 'w-60',
+  animationPath = '/animation/1.json'
+}, ref) => {
+  const [lottieLoaded, setLottieLoaded] = useState(false);
 
   useEffect(() => {
-    import('@lottiefiles/lottie-player')
-  }, [])
+    import('@lottiefiles/lottie-player').then(() => setLottieLoaded(true));
+  }, []);
 
   return (
     <motion.div
@@ -29,15 +30,16 @@ export const EmptyLottie = ({
       transition={{ duration: 0.5 }}
       className='flex flex-col items-center justify-center gap-3 py-8'
     >
-      <lottie-player
-        id='empty-state-animation'
-        ref={ref}
-        autoplay
-        loop
-        mode='normal'
-        src={animationPath}
-        className={className}
-      />
+      {lottieLoaded && (
+        <lottie-player
+          id='empty-state-animation'
+          autoplay
+          loop
+          mode='normal'
+          src={animationPath}
+          className={className}
+        />
+      )}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -52,5 +54,7 @@ export const EmptyLottie = ({
         </p>
       </motion.div>
     </motion.div>
-  )
-}
+  );
+});
+
+export default EmptyLottie;
