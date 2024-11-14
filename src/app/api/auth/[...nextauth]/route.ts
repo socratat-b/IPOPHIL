@@ -1,9 +1,9 @@
 // src\app\api\auth\[...nextauth]\route.ts
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-import { z } from "zod"
-import { userSchema } from "@/lib/dms/schema"
-import { NextAuthOptions, DefaultSession } from "next-auth"
+import NextAuth from 'next-auth'
+import CredentialsProvider from 'next-auth/providers/credentials'
+import { z } from 'zod'
+import { userSchema } from '@/lib/dms/schema'
+import { NextAuthOptions, DefaultSession } from 'next-auth'
 
 /**
  * Interface for the login response from the authentication API.
@@ -21,12 +21,12 @@ type NextAuthUser = z.infer<typeof userSchema> & {
     accessToken: string
 }
 
-declare module "next-auth" {
+declare module 'next-auth' {
     /**
      * Extending the Session interface to include user details.
      */
     interface Session {
-        user: NextAuthUser & DefaultSession["user"]
+        user: NextAuthUser & DefaultSession['user']
     }
 
     /**
@@ -35,7 +35,7 @@ declare module "next-auth" {
     interface User extends NextAuthUser { }
 }
 
-declare module "next-auth/jwt" {
+declare module 'next-auth/jwt' {
     /**
      * Extending the JWT interface to include additional properties.
      */
@@ -53,17 +53,17 @@ declare module "next-auth/jwt" {
  */
 async function fetchProtectedUserDetails(accessToken: string): Promise<NextAuthUser> {
     const response = await fetch(process.env.API_AUTH_PROTECTED as string, {
-        method: "POST",
+        method: 'POST',
         headers: {
-            "Authorization": `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
         },
     })
 
     if (!response.ok) {
         const errorDetails = await response.text()
-        console.error("Failed to fetch protected user details:", errorDetails)
-        throw new Error("Failed to fetch protected user details.")
+        console.error('Failed to fetch protected user details:', errorDetails)
+        throw new Error('Failed to fetch protected user details.')
     }
 
     const userDetails = await response.json()
@@ -72,7 +72,7 @@ async function fetchProtectedUserDetails(accessToken: string): Promise<NextAuthU
     return {
         ...validatedUser,
         id: validatedUser.user_id,
-        email: validatedUser.email as string & z.BRAND<"unique">,
+        email: validatedUser.email as string & z.BRAND<'unique'>,
         accessToken
     }
 }
@@ -87,32 +87,32 @@ async function fetchProtectedUserDetails(accessToken: string): Promise<NextAuthU
  */
 async function loginUser(identifier: string, password: string): Promise<NextAuthUser | null> {
     const response = await fetch(process.env.API_AUTH_LOGIN as string, {
-        method: "POST",
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
         },
         body: JSON.stringify({ identifier, password }),
-        cache: "no-store",
+        cache: 'no-store',
     })
 
-    const contentType = response.headers.get("content-type")
-    if (!contentType || !contentType.includes("application/json")) {
+    const contentType = response.headers.get('content-type')
+    if (!contentType || !contentType.includes('application/json')) {
         const errorText = await response.text()
-        console.error("Unexpected response format:", errorText)
-        throw new Error("The server returned an invalid response format. Please contact support.")
+        console.error('Unexpected response format:', errorText)
+        throw new Error('The server returned an invalid response format. Please contact support.')
     }
 
     if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: "Authentication failed" }))
-        console.error("Authentication failed:", errorData)
-        throw new Error(errorData.message || "Authentication failed")
+        const errorData = await response.json().catch(() => ({ message: 'Authentication failed' }))
+        console.error('Authentication failed:', errorData)
+        throw new Error(errorData.message || 'Authentication failed')
     }
 
     const data: LoginResponse = await response.json()
     if (!data.token) {
-        console.error("Invalid response data:", data)
-        throw new Error(data.message || "Invalid response data from the server.")
+        console.error('Invalid response data:', data)
+        throw new Error(data.message || 'Invalid response data from the server.')
     }
 
     return await fetchProtectedUserDetails(data.token)
@@ -126,14 +126,14 @@ async function loginUser(identifier: string, password: string): Promise<NextAuth
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
-            name: "Credentials",
+            name: 'Credentials',
             credentials: {
-                identifier: { label: "Username", type: "text" },
-                password: { label: "Password", type: "password" }
+                identifier: { label: 'Username', type: 'text' },
+                password: { label: 'Password', type: 'password' }
             },
             async authorize(credentials) {
                 if (!credentials?.identifier || !credentials?.password) {
-                    throw new Error("Please enter both username and password")
+                    throw new Error('Please enter both username and password')
                 }
                 return await loginUser(credentials.identifier, credentials.password)
             }
@@ -151,41 +151,41 @@ export const authOptions: NextAuthOptions = {
          */
         async jwt({ token, user }) {
             if (user) {
-                return { ...token, ...user, accessTokenExpires: Date.now() + 60 * 60 * 1000 };
+                return { ...token, ...user, accessTokenExpires: Date.now() + 60 * 60 * 1000 }
             }
 
             // Return token early if not expired
             if (Date.now() < (token.accessTokenExpires as number)) {
-                return token;
+                return token
             }
 
             try {
                 const refreshedToken = await fetch(process.env.API_AUTH_REFRESH_TOKEN as string, {
-                    method: "POST",
+                    method: 'POST',
                     headers: {
-                        "Authorization": `Bearer ${token.accessToken}`,
-                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${token.accessToken}`,
+                        'Content-Type': 'application/json',
                     },
                     credentials: 'include' // Include cookies if using HTTP-only cookies
-                });
+                })
 
                 // Handle 401 specifically
                 if (refreshedToken.status === 401) {
-                    return { ...token, error: "TokenExpiredError" };
+                    return { ...token, error: 'TokenExpiredError' }
                 }
 
                 if (!refreshedToken.ok) {
-                    throw new Error(`Token refresh failed: ${refreshedToken.status}`);
+                    throw new Error(`Token refresh failed: ${refreshedToken.status}`)
                 }
 
-                const refreshedData = await refreshedToken.json();
+                const refreshedData = await refreshedToken.json()
                 return {
                     ...token,
                     accessToken: refreshedData.token,
                     accessTokenExpires: Date.now() + 60 * 60 * 1000
-                };
+                }
             } catch (error) {
-                return { ...token, error: "RefreshTokenError" };
+                return { ...token, error: 'RefreshTokenError' }
             }
         },
 
@@ -203,9 +203,9 @@ export const authOptions: NextAuthOptions = {
         },
     },
 
-    pages: { signIn: "/" },
+    pages: { signIn: '/' },
     session: {
-        strategy: "jwt",
+        strategy: 'jwt',
         maxAge: 24 * 60 * 60,
     },
     debug: false,

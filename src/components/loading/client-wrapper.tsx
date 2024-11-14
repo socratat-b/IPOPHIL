@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from "react"
-import { usePathname, useSearchParams } from "next/navigation"
-import { Loading } from "./loading"
+import { useEffect, useState } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { Loading } from './loading'
 
 export function ClientRouteLoadingWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()

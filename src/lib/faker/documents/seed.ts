@@ -1,15 +1,15 @@
 // src/lib/faker/data/seed.ts
-import * as fs from "fs";
-import * as path from "path";
-import { faker } from "@faker-js/faker";
+import * as fs from 'fs'
+import * as path from 'path'
+import { faker } from '@faker-js/faker'
 
-import { classifications, types, origin_offices, statuses } from "./data";
+import { classifications, types, origin_offices, statuses } from './data'
 
-// Filter out the "all" options only for faker data generation
-const classificationsForFaker = classifications.filter(c => c.value !== "all");
-const typesForFaker = types.filter(t => t.value !== "all");
-const origin_officesForFaker = origin_offices.filter(o => o.value !== "all");
-const statusesForFaker = statuses.filter(s => s.value !== "all");
+// Filter out the 'all' options only for faker data generation
+const classificationsForFaker = classifications.filter(c => c.value !== 'all')
+const typesForFaker = types.filter(t => t.value !== 'all')
+const origin_officesForFaker = origin_offices.filter(o => o.value !== 'all')
+const statusesForFaker = statuses.filter(s => s.value !== 'all')
 
 const documents = Array.from({ length: 100 }, () => ({
     id: `TASK-${faker.number.int({ min: 1000, max: 9999 })}`,
@@ -27,14 +27,14 @@ const documents = Array.from({ length: 100 }, () => ({
     receiving_office: faker.company.name(),
     date_release: faker.datatype.boolean() ? faker.date.recent().toISOString() : null,
     date_viewed: faker.datatype.boolean() ? faker.date.recent().toISOString() : null,
-}));
+}))
 
 fs.writeFileSync(
-    path.join(__dirname, "documents.json"),
+    path.join(__dirname, 'documents.json'),
     JSON.stringify(documents, null, 2)
-);
+)
 
-console.log("✅ Documents data generated.");
+console.log('✅ Documents data generated.')
 
 /**
  * mar note:

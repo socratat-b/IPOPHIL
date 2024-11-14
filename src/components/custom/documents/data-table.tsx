@@ -1,6 +1,6 @@
 'use client'
 
-import React from "react"
+import React from 'react'
 
 import {
     ColumnDef,
@@ -15,7 +15,7 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
-} from "@tanstack/react-table"
+} from '@tanstack/react-table'
 
 import {
     Table,
@@ -24,11 +24,11 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
+} from '@/components/ui/table'
 
-import { DataTablePagination } from "@/components/custom/table/data-table-pagination"
-import { DataTableToolbar } from "./data-table-toolbar"
-import { EmptyLottie } from "@/components/animation/EmptyLottie"
+import { DataTablePagination } from '@/components/custom/table/data-table-pagination'
+import { DataTableToolbar } from './data-table-toolbar'
+import { EmptyLottie } from '@/components/animation/EmptyLottie'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -40,7 +40,7 @@ const formatText = (text: string): string => {
     return text
         .replace(/_/g, ' ')
         .toLowerCase()
-        .replace(/^\w/, (c) => c.toUpperCase());
+        .replace(/^\w/, (c) => c.toUpperCase())
 }
 
 export function DataTable<TData, TValue>({
@@ -78,15 +78,15 @@ export function DataTable<TData, TValue>({
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
 
-    const ref = React.useRef(null);
+    const ref = React.useRef(null)
     React.useEffect(() => {
-        import("@lottiefiles/lottie-player");
+        import('@lottiefiles/lottie-player')
     })
 
     return (
-        <div className="space-y-4">
+        <div className='space-y-4'>
             <DataTableToolbar table={table} />
-            <div className="rounded-md border bg-popover shadow-md">
+            <div className='rounded-md border bg-popover shadow-md'>
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -111,7 +111,7 @@ export function DataTable<TData, TValue>({
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
+                                    data-state={row.getIsSelected() && 'selected'}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
@@ -129,14 +129,14 @@ export function DataTable<TData, TValue>({
                             <TableRow>
                                 <TableCell
                                     colSpan={columns.length}
-                                    className="h-24 text-center"
+                                    className='h-24 text-center'
                                 >
                                     <EmptyLottie
-                                        message="No Results Found"
+                                        message='No Results Found'
                                         description={
                                             columnFilters.length > 0
-                                                ? "Try adjusting your filters or search terms"
-                                                : "There are no items to display at the moment"
+                                                ? 'Try adjusting your filters or search terms'
+                                                : 'There are no items to display at the moment'
                                         }
                                     />
                                 </TableCell>

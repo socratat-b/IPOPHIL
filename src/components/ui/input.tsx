@@ -1,20 +1,20 @@
 'use client'
-import * as React from "react";
-import { cn } from "@/lib/utils";
-import { useMotionTemplate, useMotionValue, motion } from "framer-motion";
+import * as React from 'react'
+import { cn } from '@/lib/utils'
+import { useMotionTemplate, useMotionValue, motion } from 'framer-motion'
 
 const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className, type, ...props }, ref) => {
-    const radius = 100;
-    const [visible, setVisible] = React.useState(false);
+    const radius = 100
+    const [visible, setVisible] = React.useState(false)
 
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
+    const mouseX = useMotionValue(0)
+    const mouseY = useMotionValue(0)
 
     function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent<HTMLDivElement>) {
-      const { left, top } = currentTarget.getBoundingClientRect();
-      mouseX.set(clientX - left);
-      mouseY.set(clientY - top);
+      const { left, top } = currentTarget.getBoundingClientRect()
+      mouseX.set(clientX - left)
+      mouseY.set(clientY - top)
     }
 
     return (
@@ -22,7 +22,7 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
         style={{
           background: useMotionTemplate`
             radial-gradient(
-              ${visible ? radius + "px" : "0px"} circle at ${mouseX}px ${mouseY}px,
+              ${visible ? radius + 'px' : '0px'} circle at ${mouseX}px ${mouseY}px,
               var(--orange-500),
               transparent 80%
             )
@@ -31,7 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
-        className="p-[2px] rounded-lg transition duration-300 group/input"
+        className='p-[2px] rounded-lg transition duration-300 group/input'
       >
         <input
           type={type}
@@ -48,9 +48,9 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
           {...props}
         />
       </motion.div>
-    );
+    )
   }
-);
-Input.displayName = "Input";
+)
+Input.displayName = 'Input'
 
-export { Input };
+export { Input }

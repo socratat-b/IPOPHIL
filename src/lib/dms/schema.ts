@@ -1,36 +1,36 @@
-import { z } from "zod"
+import { z } from 'zod'
 
 // Enums definition in Zod
 export const userRoleEnum = z.enum([
-    "user",             // Regular system user
-    "admin"             // System administrator
+    'user',             // Regular system user
+    'admin'             // System administrator
 ])
 
 export const logActionEnum = z.enum([
-    "created",          // Document creation
-    "released",         // Document released to next agency
-    "received",         // Document received by agency
-    "completed",        // Document processing completed
-    "returned"          // Document returned to previous agency
+    'created',          // Document creation
+    'released',         // Document released to next agency
+    'received',         // Document received by agency
+    'completed',        // Document processing completed
+    'returned'          // Document returned to previous agency
 ])
 
 export const intransitStatusEnum = z.enum([
-    "incoming",         // Document is incoming to agency
-    "outgoing",         // Document is outgoing from agency
-    "process"           // Document is being processed
+    'incoming',         // Document is incoming to agency
+    'outgoing',         // Document is outgoing from agency
+    'process'           // Document is being processed
 ])
 
 export const docStatusEnum = z.enum([
-    "dispatch",         // Initial dispatch status
-    "intransit",        // Document is in transit
-    "completed",        // Document processing completed
-    "canceled"          // Document canceled/terminated
+    'dispatch',         // Initial dispatch status
+    'intransit',        // Document is in transit
+    'completed',        // Document processing completed
+    'canceled'          // Document canceled/terminated
 ])
 
 export const docClassificationEnum = z.enum([
-    "simple",           // Basic documents
-    "complex",          // Documents requiring multiple reviews
-    "highly_technical"  // Specialized technical documents
+    'simple',           // Basic documents
+    'complex',          // Documents requiring multiple reviews
+    'highly_technical'  // Specialized technical documents
 ])
 
 // TypeScript types inferred from Zod schemas
@@ -76,7 +76,7 @@ export const userSchema = z.object({
     middle_name: z.string().max(255).nullable().optional(),
     user_name: z.string().max(255).nullable().optional(),
     email: z.string().email().max(255).brand('unique'),
-    role: userRoleEnum.default("user"),
+    role: userRoleEnum.default('user'),
     title: z.string().max(255).nullable().optional(),
     type: z.string().max(255).nullable().optional(),
     avatar: z.string().nullable().optional(),
@@ -112,7 +112,7 @@ export const documentsSchema = z.object({
     tracking_code: z.string().length(8).nullable().brand('unique'),
     originating_agency_id: z.string().uuid(),
     current_agency_id: z.string().uuid(),
-    status: docStatusEnum.default("dispatch"),
+    status: docStatusEnum.default('dispatch'),
     is_active: z.boolean().default(true),
     viewed_at: z.string().datetime().nullable().optional(),
 }).merge(timestampFields)

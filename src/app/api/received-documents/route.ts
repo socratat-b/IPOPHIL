@@ -1,13 +1,13 @@
 // src\app\api\received-documents\route.ts
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../auth/[...nextauth]/route'
 
 export async function GET() {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await getServerSession(authOptions)
         if (!session?.user?.accessToken) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
         const res = await fetch('https://ipophl.quanby-staging.com/api/received-documents', {
@@ -16,17 +16,17 @@ export async function GET() {
                 'Content-Type': 'application/json',
             },
             cache: 'no-store'
-        });
+        })
 
         if (!res.ok) {
-            console.error('API Error:', await res.text());
-            return NextResponse.json({ error: 'Failed to fetch documents' }, { status: res.status });
+            console.error('API Error:', await res.text())
+            return NextResponse.json({ error: 'Failed to fetch documents' }, { status: res.status })
         }
 
-        const data = await res.json();
-        return NextResponse.json(data);
+        const data = await res.json()
+        return NextResponse.json(data)
     } catch (error) {
-        console.error('Server Error:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        console.error('Server Error:', error)
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }

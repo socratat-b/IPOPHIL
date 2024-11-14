@@ -1,10 +1,10 @@
-import { CodeConfig } from "@/lib/types";
+import { CodeConfig } from '@/lib/types'
 
-export const CODE_CONFIG: Record<"preview" | "cell", CodeConfig> = {
+export const CODE_CONFIG: Record<'preview' | 'cell', CodeConfig> = {
     preview: {
         QR: {
             size: 400,
-            level: "Q",
+            level: 'Q',
             marginSize: 20
         },
         Barcode: {
@@ -17,7 +17,7 @@ export const CODE_CONFIG: Record<"preview" | "cell", CodeConfig> = {
     cell: {
         QR: {
             size: 24,
-            level: "Q",
+            level: 'Q',
             marginSize: 0
         },
         Barcode: {
@@ -27,4 +27,4 @@ export const CODE_CONFIG: Record<"preview" | "cell", CodeConfig> = {
             margin: 0
         }
     }
-} as const;
+} as const

@@ -1,13 +1,13 @@
 // src/app/api/documents/route.ts
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../auth/[...nextauth]/route'
 
 export async function GET() {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await getServerSession(authOptions)
         if (!session?.user?.accessToken) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
         const res = await fetch('https://ipophl.quanby-staging.com/api/documents', {
@@ -16,18 +16,18 @@ export async function GET() {
                 'Content-Type': 'application/json',
             },
             cache: 'no-store'
-        });
+        })
 
         if (!res.ok) {
-            console.error('API Error:', await res.text());
-            return NextResponse.json({ error: 'Failed to fetch documents' }, { status: res.status });
+            console.error('API Error:', await res.text())
+            return NextResponse.json({ error: 'Failed to fetch documents' }, { status: res.status })
         }
 
-        const data = await res.json();
-        return NextResponse.json(data);
+        const data = await res.json()
+        return NextResponse.json(data)
     } catch (error) {
-        console.error('Server Error:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        console.error('Server Error:', error)
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }
 
@@ -36,31 +36,31 @@ export async function GET() {
  */
 export async function POST(req: Request) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await getServerSession(authOptions)
         if (!session?.user?.accessToken) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const body = await req.json();
-        console.log('Request body:', body);
+        const body = await req.json()
+        console.log('Request body:', body)
 
         // Structure the payload according to API requirements
         const documentPayload = {
             documents: [{
                 tracking_code: `DOC${Math.floor(Math.random() * 1000000)}`, // Generate random tracking code
-                status: "dispatch",
+                status: 'dispatch',
                 document_code: `DOC${Math.floor(Math.random() * 1000)}`,
                 document_name: body.title,
                 classification: body.classification,
                 document_type: body.type,
-                originating_agency: session.user.agency_id || "IPOPHL",
-                current_agency: session.user.agency_id || "IPOPHL",
-                remarks: "",
-                created_by: session.user.name || "System User"
+                originating_agency: session.user.agency_id || 'IPOPHL',
+                current_agency: session.user.agency_id || 'IPOPHL',
+                remarks: '',
+                created_by: session.user.name || 'System User'
             }]
-        };
+        }
 
-        console.log('Sending payload:', documentPayload);
+        console.log('Sending payload:', documentPayload)
 
         const res = await fetch('https://ipophl.quanby-staging.com/api/documents/bulk', {
             method: 'POST',
@@ -69,18 +69,18 @@ export async function POST(req: Request) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(documentPayload)
-        });
+        })
 
         if (!res.ok) {
-            const errorData = await res.text();
-            console.error('API Error:', errorData);
-            return NextResponse.json({ error: 'Failed to create document', details: errorData }, { status: res.status });
+            const errorData = await res.text()
+            console.error('API Error:', errorData)
+            return NextResponse.json({ error: 'Failed to create document', details: errorData }, { status: res.status })
         }
 
-        const data = await res.json();
-        return NextResponse.json(data);
+        const data = await res.json()
+        return NextResponse.json(data)
     } catch (error) {
-        console.error('Server Error:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        console.error('Server Error:', error)
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }
