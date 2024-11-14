@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState } from 'react'
 
 interface LoadingContextType {
   isLoading: boolean
@@ -9,7 +9,7 @@ interface LoadingContextType {
 
 const LoadingContext = createContext<LoadingContextType>({
   isLoading: false,
-  setIsLoading: () => {},
+  setIsLoading: () => { },
 })
 
 export function LoadingProvider({ children }: { children: React.ReactNode }) {

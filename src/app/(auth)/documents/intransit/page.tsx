@@ -1,60 +1,40 @@
-import { promises as fs } from "fs"
-import path from "path"
-import { Metadata } from "next"
-import { z } from "zod"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { DashboardHeader } from "@/components/custom/dashboard/header"
-import { documentsSchema } from "@/lib/faker/documents/schema"
-import { columns } from "@/components/custom/incoming-documents/columns"
-import { DataTable } from "@/components/custom/incoming-documents/data-table"
+'use client'
 
-export const metadata: Metadata = {
-    title: "DMS | Incoming Documents",
-    description: "IPOPHIL Incoming Documents",
-};
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { DashboardHeader } from '@/components/custom/dashboard/header'
+import { columns } from '@/components/custom/incoming-documents/columns'
+import { DataTable } from '@/components/custom/incoming-documents/data-table'
+import { useOutgoingDocuments, useReceivedDocuments } from '@/lib/services/documents'
 
-async function getTasks() {
-    const data = await fs.readFile(
-        path.join(process.cwd(), "src/lib/faker/documents/documents.json")
-    )
-
-    const tasks = JSON.parse(data.toString())
-
-    return z.array(documentsSchema).parse(tasks)
-}
-
-export default async function TaskPage() {
-    const allTasks = await getTasks()
-
-    // Filter tasks for each tab
-    const outgoingTasks = allTasks.filter(task => task.status === "outgoing")
-    const receivedTasks = allTasks.filter(task => task.status === "received")
+export default function DocumentsPage() {
+    const { documents: outgoingDocuments, isLoading: outgoingLoading } = useOutgoingDocuments()
+    const { documents: receivedDocuments, isLoading: receivedLoading } = useReceivedDocuments()
 
     return (
         <>
             <DashboardHeader
                 breadcrumbs={[
-                    { label: "Documents", href: "/documents" },
-                    { label: "Intransit", active: true },
+                    { label: 'Documents', href: '/documents' },
+                    { label: 'Intransit', active: true },
                 ]}
             />
 
-            <div className="flex flex-1 flex-col gap-4 p-4">
-                <Tabs defaultValue="outgoing" className="flex-1 flex flex-col">
-                    <TabsList className="grid grid-cols-2 w-max">
-                        <TabsTrigger value="outgoing">Outgoing Documents</TabsTrigger>
-                        <TabsTrigger value="received">Received Documents</TabsTrigger>
+            <div className='flex flex-1 flex-col gap-4 p-4'>
+                <Tabs defaultValue='outgoing' className='flex-1 flex flex-col'>
+                    <TabsList className='grid grid-cols-2 w-max'>
+                        <TabsTrigger value='outgoing'>Outgoing Documents</TabsTrigger>
+                        <TabsTrigger value='received'>Received Documents</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="outgoing" className="mt-4">
+                    <TabsContent value='outgoing' className='mt-4'>
                         <DataTable
-                            data={outgoingTasks}
+                            data={outgoingDocuments || []}
                             columns={columns}
                             selection={false}
                         />
                     </TabsContent>
-                    <TabsContent value="received" className="mt-4">
+                    <TabsContent value='received' className='mt-4'>
                         <DataTable
-                            data={receivedTasks}
+                            data={receivedDocuments || []}
                             columns={columns}
                             selection={false}
                         />

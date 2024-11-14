@@ -1,19 +1,19 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription, Form } from "@/components/ui/form"
-import { toast } from "sonner"
-import { Switch } from "@/components/ui/switch"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Checkbox } from "@/components/ui/checkbox"
+import Link from 'next/link'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Button } from '@/components/ui/button'
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription, Form } from '@/components/ui/form'
+import { toast } from 'sonner'
+import { Switch } from '@/components/ui/switch'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const notificationsFormSchema = z.object({
-    notification_type: z.enum(["all", "document", "system", "reminder"], {
-        required_error: "You need to select a notification type.",
+    notification_type: z.enum(['all', 'document', 'system', 'reminder'], {
+        required_error: 'You need to select a notification type.',
     }),
     priority_preferences: z.object({
         high: z.boolean().default(true),
@@ -31,7 +31,7 @@ const notificationsFormSchema = z.object({
 type NotificationsFormValues = z.infer<typeof notificationsFormSchema>
 
 const defaultValues: Partial<NotificationsFormValues> = {
-    notification_type: "all",
+    notification_type: 'all',
     priority_preferences: {
         high: true,
         medium: true,
@@ -52,10 +52,10 @@ export function NotificationsForm() {
     })
 
     function onSubmit(data: NotificationsFormValues) {
-        toast("Notification preferences updated:", {
+        toast('Notification preferences updated:', {
             description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+                <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
+                    <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
                 </pre>
             ),
         })
@@ -63,48 +63,48 @@ export function NotificationsForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
                 <FormField
                     control={form.control}
-                    name="notification_type"
+                    name='notification_type'
                     render={({ field }) => (
-                        <FormItem className="space-y-3">
+                        <FormItem className='space-y-3'>
                             <FormLabel>Show notifications for...</FormLabel>
                             <FormControl>
                                 <RadioGroup
                                     onValueChange={field.onChange}
                                     defaultValue={field.value}
-                                    className="flex flex-col space-y-1"
+                                    className='flex flex-col space-y-1'
                                 >
-                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormItem className='flex items-center space-x-3 space-y-0'>
                                         <FormControl>
-                                            <RadioGroupItem value="all" />
+                                            <RadioGroupItem value='all' />
                                         </FormControl>
-                                        <FormLabel className="font-normal">
+                                        <FormLabel className='font-normal'>
                                             All notifications
                                         </FormLabel>
                                     </FormItem>
-                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormItem className='flex items-center space-x-3 space-y-0'>
                                         <FormControl>
-                                            <RadioGroupItem value="document" />
+                                            <RadioGroupItem value='document' />
                                         </FormControl>
-                                        <FormLabel className="font-normal">
+                                        <FormLabel className='font-normal'>
                                             Document notifications only
                                         </FormLabel>
                                     </FormItem>
-                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormItem className='flex items-center space-x-3 space-y-0'>
                                         <FormControl>
-                                            <RadioGroupItem value="system" />
+                                            <RadioGroupItem value='system' />
                                         </FormControl>
-                                        <FormLabel className="font-normal">
+                                        <FormLabel className='font-normal'>
                                             System notifications only
                                         </FormLabel>
                                     </FormItem>
-                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormItem className='flex items-center space-x-3 space-y-0'>
                                         <FormControl>
-                                            <RadioGroupItem value="reminder" />
+                                            <RadioGroupItem value='reminder' />
                                         </FormControl>
-                                        <FormLabel className="font-normal">
+                                        <FormLabel className='font-normal'>
                                             Reminder notifications only
                                         </FormLabel>
                                     </FormItem>
@@ -116,15 +116,15 @@ export function NotificationsForm() {
                 />
 
                 <div>
-                    <h3 className="mb-4 text-lg font-medium">Priority Preferences</h3>
-                    <div className="space-y-4">
+                    <h3 className='mb-4 text-lg font-medium'>Priority Preferences</h3>
+                    <div className='space-y-4'>
                         <FormField
                             control={form.control}
-                            name="priority_preferences.high"
+                            name='priority_preferences.high'
                             render={({ field }) => (
-                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                    <div className="space-y-0.5">
-                                        <FormLabel className="text-base">
+                                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+                                    <div className='space-y-0.5'>
+                                        <FormLabel className='text-base'>
                                             High Priority
                                         </FormLabel>
                                         <FormDescription>
@@ -142,11 +142,11 @@ export function NotificationsForm() {
                         />
                         <FormField
                             control={form.control}
-                            name="priority_preferences.medium"
+                            name='priority_preferences.medium'
                             render={({ field }) => (
-                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                    <div className="space-y-0.5">
-                                        <FormLabel className="text-base">
+                                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+                                    <div className='space-y-0.5'>
+                                        <FormLabel className='text-base'>
                                             Medium Priority
                                         </FormLabel>
                                         <FormDescription>
@@ -164,11 +164,11 @@ export function NotificationsForm() {
                         />
                         <FormField
                             control={form.control}
-                            name="priority_preferences.low"
+                            name='priority_preferences.low'
                             render={({ field }) => (
-                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                    <div className="space-y-0.5">
-                                        <FormLabel className="text-base">
+                                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+                                    <div className='space-y-0.5'>
+                                        <FormLabel className='text-base'>
                                             Low Priority
                                         </FormLabel>
                                         <FormDescription>
@@ -188,15 +188,15 @@ export function NotificationsForm() {
                 </div>
 
                 <div>
-                    <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
-                    <div className="space-y-4">
+                    <h3 className='mb-4 text-lg font-medium'>Email Notifications</h3>
+                    <div className='space-y-4'>
                         <FormField
                             control={form.control}
-                            name="email_preferences.document_notifications"
+                            name='email_preferences.document_notifications'
                             render={({ field }) => (
-                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                    <div className="space-y-0.5">
-                                        <FormLabel className="text-base">
+                                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+                                    <div className='space-y-0.5'>
+                                        <FormLabel className='text-base'>
                                             Document Notifications
                                         </FormLabel>
                                         <FormDescription>
@@ -214,11 +214,11 @@ export function NotificationsForm() {
                         />
                         <FormField
                             control={form.control}
-                            name="email_preferences.system_notifications"
+                            name='email_preferences.system_notifications'
                             render={({ field }) => (
-                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                    <div className="space-y-0.5">
-                                        <FormLabel className="text-base">
+                                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+                                    <div className='space-y-0.5'>
+                                        <FormLabel className='text-base'>
                                             System Notifications
                                         </FormLabel>
                                         <FormDescription>
@@ -236,11 +236,11 @@ export function NotificationsForm() {
                         />
                         <FormField
                             control={form.control}
-                            name="email_preferences.reminder_notifications"
+                            name='email_preferences.reminder_notifications'
                             render={({ field }) => (
-                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                    <div className="space-y-0.5">
-                                        <FormLabel className="text-base">
+                                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+                                    <div className='space-y-0.5'>
+                                        <FormLabel className='text-base'>
                                             Reminder Notifications
                                         </FormLabel>
                                         <FormDescription>
@@ -261,28 +261,28 @@ export function NotificationsForm() {
 
                 <FormField
                     control={form.control}
-                    name="mobile_preferences"
+                    name='mobile_preferences'
                     render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormItem className='flex flex-row items-start space-x-3 space-y-0'>
                             <FormControl>
                                 <Checkbox
                                     checked={field.value}
                                     onCheckedChange={field.onChange}
                                 />
                             </FormControl>
-                            <div className="space-y-1 leading-none">
+                            <div className='space-y-1 leading-none'>
                                 <FormLabel>
                                     Enable mobile notifications
                                 </FormLabel>
                                 <FormDescription>
-                                    You can customize your mobile notification settings in the{" "}
-                                    <Link href="/settings/mobile">mobile settings</Link> page.
+                                    You can customize your mobile notification settings in the{' '}
+                                    <Link href='/settings/mobile'>mobile settings</Link> page.
                                 </FormDescription>
                             </div>
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Update notifications</Button>
+                <Button type='submit'>Update notifications</Button>
             </form>
         </Form>
     )

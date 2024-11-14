@@ -1,7 +1,7 @@
 // src\lib\types\filter.ts
-import type { DateRange } from "react-day-picker"
-import type { Document } from "@/lib/faker/documents/schema"
-import { FileType } from "@/lib/controls";
+import type { DateRange } from 'react-day-picker'
+import type { Document } from '@/lib/faker/documents/schema'
+import { FileType } from '@/lib/controls'
 
 export interface FilterValues {
     office: string

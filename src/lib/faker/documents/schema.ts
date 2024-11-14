@@ -1,5 +1,5 @@
 // src\lib\faker\documents\schema.ts
-import { z } from "zod";
+import { z } from 'zod'
 
 export const documentsSchema = z.object({
 
@@ -19,6 +19,6 @@ export const documentsSchema = z.object({
     receiving_office: z.string().optional(),
     date_release: z.string().nullable().optional(),
     date_viewed: z.string().nullable().optional(),
-});
+})
 
-export type Document = z.infer<typeof documentsSchema>;
+export type Document = z.infer<typeof documentsSchema>

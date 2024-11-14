@@ -1,4 +1,4 @@
-import * as z from "zod"
+import * as z from 'zod'
 
 export const displayFormSchema = z.object({
     mainItems: z.array(z.string()),

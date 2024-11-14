@@ -1,137 +1,111 @@
-"use client"
+'use client'
 
-import { ComponentProps, useMemo } from "react"
-import Image from "next/image"
-import { useNavigationStore } from "@/lib/stores/navigation"
-import { navigationConfig, transformToMainNavItem, transformToSecondaryNavItem } from "@/lib/config/navigation"
-import { useDocuments } from "@/lib/context/document-context"
-import { NavMainItem, NavSecondaryItem } from "@/lib/types/navigation"
-import { NavMain } from "./nav-main"
-import { NavSecondary } from "./nav-secondary"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { NavUser } from "./nav-user"
-
-type DocumentStatus = 'incoming' | 'recieved' | 'outgoing' | 'for_dispatch' | 'completed'
+import Image from 'next/image'
+import { toast } from 'sonner'
+import { NavMain } from './nav-main'
+import { signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { doc_status } from '@/lib/dms/data'
+import { Icons } from '@/components/ui/icons'
+import { NavSecondary } from './nav-secondary'
+import { Button } from '@/components/ui/button'
+import { useDocuments } from '@/lib/services/documents'
+import { ComponentProps, useMemo, useState } from 'react'
+import { useNavigationStore } from '@/lib/stores/navigation'
+import { NavMainItem, NavSecondaryItem } from '@/lib/types/navigation'
+import { navigationConfig, transformToMainNavItem, transformToSecondaryNavItem } from '@/lib/config/navigation'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 
 interface DocumentCounts {
-  incoming: number
-  received: number
-  outgoing: number
-  forDispatch: number
+  dispatch: number
+  intransit: number
   completed: number
+  received: number
   total: number
-}
-
-interface Document {
-  status: string
-  date_viewed?: string | null
 }
 
 type AppSidebarProps = ComponentProps<typeof Sidebar>
 
 export function AppSidebar({ ...props }: AppSidebarProps) {
-  const { documents } = useDocuments()
-  const {
-    visibleMainItems,
-    visibleSecondaryItems,
-    visibleSubItems,
-    showUserSection
-  } = useNavigationStore()
+  const { visibleMainItems, visibleSecondaryItems, visibleSubItems } = useNavigationStore()
+  const router = useRouter()
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const { documents: docs = [] } = useDocuments()
+
+  const closeLogout = () => setIsLogoutOpen(false)
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true)
+      await signOut({
+        redirect: false,
+        callbackUrl: '/'
+      })
+      router.push('/')
+      toast.success('Successfully logged out')
+    } catch (error) {
+      console.error('Logout failed:', error)
+      toast.error('Failed to logout. Please try again.')
+    } finally {
+      setIsLoggingOut(false)
+      closeLogout()
+    }
+  }
 
   const documentCounts = useMemo(() => {
-    const counts: DocumentCounts = {
-      incoming: 0,
-      received: 0,
-      outgoing: 0,
-      forDispatch: 0,
-      completed: 0,
-      total: 0
-    }
+    const counts = doc_status.reduce(
+      (acc, status) => ({
+        ...acc,
+        [status.value]: 0
+      }),
+      { received: 0, dispatch: 0, intransit: 0, completed: 0 } as DocumentCounts
+    )
 
-    documents.forEach((doc: Document) => {
+    docs.forEach((doc) => {
       if (!doc.date_viewed) {
-        const status = doc.status.toLowerCase() as DocumentStatus
-        switch (status) {
-          case 'incoming':
-            counts.incoming++
-            counts.total++
-            break
-          case 'recieved':
-            counts.received++
-            counts.total++
-            break
-          case 'outgoing':
-            counts.outgoing++
-            counts.total++
-            break
-          case 'for_dispatch':
-            counts.forDispatch++
-            counts.total++
-            break
-          case 'completed':
-            counts.completed++
-            counts.total++
-            break
+        const status = doc.status.toLowerCase()
+        const matchedStatus = doc_status.find((s) => s.value.toLowerCase() === status)
+
+        if (matchedStatus) {
+          counts[matchedStatus.value as keyof DocumentCounts]++
+        }
+
+        if (doc.is_received) {
+          counts.received++
         }
       }
     })
 
+    counts.total = counts.dispatch + counts.intransit + counts.completed + counts.received
     return counts
-  }, [documents])
+  }, [docs])
 
-  // Transform and filter main navigation items
   const visibleMainNav = useMemo<NavMainItem[]>(() => {
     return navigationConfig.mainNav
-      .filter(item => visibleMainItems.includes(item.id))
-      .map(item => {
+      .filter((item) => visibleMainItems.includes(item.id))
+      .map((item) => {
         const transformed = transformToMainNavItem(item)
 
         if (item.id === 'documents') {
-          transformed.notViewedCount = documentCounts.total - documentCounts.completed
+          transformed.notViewedCount = documentCounts.total
 
           if (transformed.items) {
             transformed.items = item.items
-              ?.filter(subItem => visibleSubItems[item.id]?.includes(subItem.id))
-              .map(subItem => {
-                const updatedSubItem = {
-                  title: subItem.title,
-                  url: subItem.url,
-                  notViewedCount: 0
-                }
-
-                // Map counts based on the original subItem.id
-                switch (subItem.id) {
-                  case 'dispatch':
-                    updatedSubItem.notViewedCount = documentCounts.forDispatch
-                    break
-                  case 'intransit':
-                    updatedSubItem.notViewedCount = documentCounts.outgoing
-                    break
-                  case 'received':
-                    updatedSubItem.notViewedCount = documentCounts.received
-                    break
-                  case 'completed':
-                    updatedSubItem.notViewedCount = documentCounts.completed
-                    break
-                }
-
-                return updatedSubItem
-              })
+              ?.filter((subItem) => visibleSubItems[item.id]?.includes(subItem.id))
+              .map((subItem) => ({
+                title: subItem.title,
+                url: subItem.url,
+                notViewedCount: documentCounts[subItem.id as keyof DocumentCounts] || 0
+              }))
           }
         }
 
         if (item.id === 'management' && transformed.items) {
           transformed.items = item.items
-            ?.filter(subItem => visibleSubItems[item.id]?.includes(subItem.id))
-            .map(subItem => ({
+            ?.filter((subItem) => visibleSubItems[item.id]?.includes(subItem.id))
+            .map((subItem) => ({
               title: subItem.title,
               url: subItem.url
             }))
@@ -141,32 +115,25 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       })
   }, [visibleMainItems, visibleSubItems, documentCounts])
 
-  // Transform and filter secondary navigation items
   const visibleSecondaryNav = useMemo<NavSecondaryItem[]>(() => {
     return navigationConfig.secondaryNav
-      .filter(item => visibleSecondaryItems.includes(item.id))
+      .filter((item) => visibleSecondaryItems.includes(item.id))
       .map(transformToSecondaryNavItem)
   }, [visibleSecondaryItems])
 
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar variant='inset' {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Image
-                    src="/logo.svg"
-                    alt="Logo"
-                    width={32}
-                    height={32}
-                    priority
-                  />
+            <SidebarMenuButton size='lg' asChild>
+              <a href='#'>
+                <div className='flex aspect-square size-8 items-center justify-center rounded-lg'>
+                  <Image src='/logo.svg' alt='Logo' width={32} height={32} priority />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">IPHOPHIL</span>
-                  <span className="truncate text-xs">DMS</span>
+                <div className='grid flex-1 text-left text-sm leading-tight'>
+                  <span className='truncate font-semibold'>IPHOPHIL</span>
+                  <span className='truncate text-xs'>DMS</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -176,20 +143,60 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 
       <SidebarContent>
         <NavMain items={visibleMainNav} />
-        <NavSecondary items={visibleSecondaryNav} className="mt-auto" />
+        <NavSecondary items={visibleSecondaryNav} className='mt-auto' />
       </SidebarContent>
 
-      {showUserSection && (
-        <SidebarFooter>
-          <NavUser
-            user={{
-              name: "user",
-              email: "user@gmail.com",
-              avatar: "/images/user-random-1.jpg",
-            }}
-          />
-        </SidebarFooter>
-      )}
+      <SidebarFooter>
+        <Dialog open={isLogoutOpen} onOpenChange={setIsLogoutOpen}>
+          <DialogTrigger asChild>
+            <div className='flex w-56 h-6 mb-2 hover:bg-sidebar-accent p-2 ml-2 rounded-md cursor-pointer'>
+              <button
+                className='text-red-600 flex justify-start text-sm items-center dark:text-red-400'
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? (
+                  <Icons.spinner className='mr-2 h-4 w-4 animate-spin' />
+                ) : (
+                  <Icons.logout className='mr-2 h-4 w-4' />
+                )}
+                {isLoggingOut ? 'Logging out...' : 'Log out'}
+              </button>
+            </div>
+          </DialogTrigger>
+          <DialogContent className='flex flex-col items-center justify-center text-center space-y-6 p-8 max-w-sm mx-auto rounded-lg'>
+            <DialogHeader className='flex flex-col items-center'>
+              <DialogTitle className='text-lg font-semibold'>Confirm Logout</DialogTitle>
+              <DialogDescription className='text-sm text-muted-foreground'>
+                Are you sure you want to log out?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className='flex justify-center space-x-4 mt-4'>
+              <Button
+                onClick={closeLogout}
+                variant='outline'
+                className='px-4 py-2 text-sm rounded-md'
+                disabled={isLoggingOut}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleLogout}
+                className='px-4 py-2 bg-red-600 text-sm text-white rounded-md hover:bg-red-700 disabled:bg-red-400'
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? (
+                  <>
+                    <Icons.spinner className='mr-2 h-4 w-4 animate-spin' />
+                    Logging out...
+                  </>
+                ) : (
+                  'Log out'
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </SidebarFooter>
     </Sidebar>
   )
 }

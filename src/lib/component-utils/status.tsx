@@ -1,14 +1,14 @@
-import { StepStatus } from "../types";
+import { StepStatus } from '../types'
 
-export const getStepVariant = (status: StepStatus): "default" | "secondary" | "destructive" | "outline" => {
+export const getStepVariant = (status: StepStatus): 'default' | 'secondary' | 'destructive' | 'outline' => {
     switch (status) {
         case 'completed':
-            return 'default';
+            return 'default'
         case 'current':
-            return 'secondary';
+            return 'secondary'
         case 'error':
-            return 'destructive';
+            return 'destructive'
         default:
-            return 'outline';
+            return 'outline'
     }
-};
+}
