@@ -16,9 +16,9 @@ import animationData2 from '../../public/animation/process.json'
 import animationData3 from '../../public/animation/store.json'
 
 type CarouselItem = {
-  title: string;
-  description: string;
-  animation: any;
+  title: string
+  description: string
+  animation: any
 }
 
 const carouselItems: CarouselItem[] = [
@@ -67,14 +67,14 @@ export default function AuthenticationPage() {
         <div className="absolute -bottom-1/2 -left-1/2 w-[1000px] h-[1000px] rounded-full bg-gradient-to-tr from-primary/5 to-primary/20 dark:from-background/10 dark:to-background/20 blur-3xl" />
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
         className="relative w-full max-w-6xl"
       >
         {/* Theme Toggle */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.5 }}
@@ -86,7 +86,7 @@ export default function AuthenticationPage() {
         <div className="backdrop-blur-xl bg-card/60 dark:bg-card/60 rounded-3xl shadow-2xl overflow-hidden border border-border/50 dark:border-border/50">
           <div className="flex flex-col lg:flex-row">
             {/* Left Side - Sign In Form */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
@@ -94,18 +94,18 @@ export default function AuthenticationPage() {
             >
               <div className="max-w-md mx-auto space-y-8">
                 {/* Logo Section */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                   className="flex items-center gap-4"
                 >
                   <div className="p-2 rounded-2xl bg-primary/10 backdrop-blur-sm">
-                    <Image 
-                      src="/logo.svg" 
-                      alt="IPOPHIL Logo" 
-                      width={40} 
-                      height={40} 
+                    <Image
+                      src="/logo.svg"
+                      alt="IPOPHIL Logo"
+                      width={40}
+                      height={40}
                       className="rounded-xl"
                     />
                   </div>
@@ -130,7 +130,7 @@ export default function AuthenticationPage() {
                 </motion.div>
 
                 {/* Welcome Text */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.5 }}
@@ -150,7 +150,7 @@ export default function AuthenticationPage() {
             </motion.div>
 
             {/* Right Side - Carousel */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.3 }}
@@ -158,7 +158,7 @@ export default function AuthenticationPage() {
             >
               <div className="relative z-10 space-y-8">
                 <div className="relative z-10 mt-8 lg:mt-0">
-                  <motion.h3 
+                  <motion.h3
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
@@ -208,11 +208,10 @@ export default function AuthenticationPage() {
                       {carouselItems.map((_, index) => (
                         <motion.button
                           key={index}
-                          className={`h-2 rounded-full transition-all ${
-                            currentSlide === index
-                              ? 'w-6 bg-primary'
-                              : 'w-2 bg-gray-300 dark:bg-gray-600'
-                          }`}
+                          className={`h-2 rounded-full transition-all ${currentSlide === index
+                            ? 'w-6 bg-primary'
+                            : 'w-2 bg-gray-300 dark:bg-gray-600'
+                            }`}
                           onClick={() => setCurrentSlide(index)}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
@@ -344,9 +343,8 @@ export default function AuthenticationPage() {
                     key={i}
                     className="absolute w-32 h-32 rounded-full"
                     style={{
-                      background: `radial-gradient(circle, ${
-                        theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'
-                      } 0%, transparent 70%)`,
+                      background: `radial-gradient(circle, ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'
+                        } 0%, transparent 70%)`,
                       left: `${20 + i * 30}%`,
                       top: `${30 + i * 20}%`,
                     }}
@@ -366,12 +364,11 @@ export default function AuthenticationPage() {
                 ))}
 
                 {/* Subtle Background Texture */}
-                <div 
+                <div
                   className="absolute inset-0 opacity-10"
                   style={{
-                    backgroundImage: `radial-gradient(circle at 20px 20px, ${
-                      theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'
-                    } 2px, transparent 0)`,
+                    backgroundImage: `radial-gradient(circle at 20px 20px, ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'
+                      } 2px, transparent 0)`,
                     backgroundSize: '40px 40px',
                   }}
                 />
