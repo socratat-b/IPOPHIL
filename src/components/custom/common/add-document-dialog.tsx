@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import {
     Dialog,
@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HelpScanCard } from "@/components/custom/common/help-scan-card";
 import { z } from "zod";
 import { useState } from "react";
+import { useDocuments } from "@/lib/services/documents";
 
 // Types
 type CreateDocumentData = z.infer<typeof createDocumentSchema>;
@@ -158,11 +159,18 @@ const ScanDocumentForm = ({ onSubmit, onClose, actionType }: {
 
 // Main Dialog Component
 export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAction, actionType }) => {
-    const handleCreateSubmit = (data: CreateDocumentData) => {
-        toast.success("Document Created", {
-            description: "Your document has been successfully created.",
-        });
-        onCloseAction();
+    const { createDocument } = useDocuments();
+
+    const handleCreateSubmit = async (data: CreateDocumentData) => {
+        try {
+            await createDocument(data);
+            toast.success("Document Created", {
+                description: "Your document has been successfully created.",
+            });
+            onCloseAction();
+        } catch (error) {
+            toast.error("Failed to create document");
+        }
     };
 
     const handleScanSubmit = (data: ScanDocumentData) => {

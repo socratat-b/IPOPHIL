@@ -1,30 +1,86 @@
+// src/app/api/documents/route.ts
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { documentsSchema } from '@/lib/faker/documents/schema';
-import { compareDesc } from 'date-fns';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../auth/[...nextauth]/route';
 
 export async function GET() {
     try {
-        // Read the documents.json file
-        const data = await fs.readFile(
-            path.join(process.cwd(), 'src/lib/faker/documents/documents.json')
-        );
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.accessToken) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
-        // Parse the data using the documentsSchema
-        const documents = documentsSchema.array().parse(JSON.parse(data.toString()));
-
-        // mar-note: only fetch the documents that has status and not null, it means it is not archived (for now)
-
-        // Sort the documents by date, latest to oldest
-        const sortedDocuments = documents.sort((a, b) => {
-            return compareDesc(new Date(a.date_created), new Date(b.date_created));
+        const res = await fetch('https://ipophl.quanby-staging.com/api/documents', {
+            headers: {
+                'Authorization': `Bearer ${session.user.accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            cache: 'no-store'
         });
 
-        // Return the sorted documents as a JSON response
-        return NextResponse.json(sortedDocuments);
+        if (!res.ok) {
+            console.error('API Error:', await res.text());
+            return NextResponse.json({ error: 'Failed to fetch documents' }, { status: res.status });
+        }
+
+        const data = await res.json();
+        return NextResponse.json(data);
     } catch (error) {
-        console.error('Error fetching documents:', error);
-        return NextResponse.json({ error: 'Error fetching documents' }, { status: 500 });
+        console.error('Server Error:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+/**
+ * For Fixing 
+ */
+export async function POST(req: Request) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.accessToken) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const body = await req.json();
+        console.log('Request body:', body);
+
+        // Structure the payload according to API requirements
+        const documentPayload = {
+            documents: [{
+                tracking_code: `DOC${Math.floor(Math.random() * 1000000)}`, // Generate random tracking code
+                status: "dispatch",
+                document_code: `DOC${Math.floor(Math.random() * 1000)}`,
+                document_name: body.title,
+                classification: body.classification,
+                document_type: body.type,
+                originating_agency: session.user.agency_id || "IPOPHL",
+                current_agency: session.user.agency_id || "IPOPHL",
+                remarks: "",
+                created_by: session.user.name || "System User"
+            }]
+        };
+
+        console.log('Sending payload:', documentPayload);
+
+        const res = await fetch('https://ipophl.quanby-staging.com/api/documents/bulk', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${session.user.accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(documentPayload)
+        });
+
+        if (!res.ok) {
+            const errorData = await res.text();
+            console.error('API Error:', errorData);
+            return NextResponse.json({ error: 'Failed to create document', details: errorData }, { status: res.status });
+        }
+
+        const data = await res.json();
+        return NextResponse.json(data);
+    } catch (error) {
+        console.error('Server Error:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

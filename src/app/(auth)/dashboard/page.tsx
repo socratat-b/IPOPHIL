@@ -2,15 +2,13 @@
 
 import RecentDocuments from "@/components/custom/dashboard/recent-documents"
 
-import type { JoinedDocument } from "@/lib/dms/joined-docs"
-
 import { LineChart, Line } from "recharts"
 import { useSession } from "next-auth/react"
 import { Icons } from "@/components/ui/icons"
 import { Stats, StatusCounts } from "@/lib/types"
+import { useDocuments } from "@/lib/services/documents"
 import { Overview } from "@/components/custom/dashboard/overview"
 import { useMemo, useEffect, useState, ComponentType } from "react"
-import { getJoinedDocuments } from "@/lib/services/joined-documents"
 import { DashboardHeader } from "@/components/custom/dashboard/header"
 import { AddDocumentButton } from "@/components/custom/common/add-document-button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -74,26 +72,7 @@ const StatCard = ({
 
 export default function Page() {
     const { data: session } = useSession()
-    const [documents, setDocuments] = useState<JoinedDocument[]>([])
-
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const docs = await getJoinedDocuments()
-
-                /**
-                 * mar: to view data.
-                 * console.table(docs)
-                 * */
-
-                setDocuments(docs)
-            } catch (error) {
-                console.error('Error fetching documents:', error)
-                setDocuments([])
-            }
-        }
-        fetchData()
-    }, [])
+    const { documents: docs = [] } = useDocuments()
 
     const stats = useMemo<Stats>(() => {
         const now = new Date()
@@ -116,7 +95,7 @@ export default function Page() {
             completed: 0,
         }
 
-        documents.forEach((doc) => {
+        docs.forEach((doc) => {
             const docDate = new Date(doc.date_created)
             const docMonth = docDate.getMonth()
             const docYear = docDate.getFullYear()
@@ -165,7 +144,7 @@ export default function Page() {
                 completed: getPercentageChange(currentCounts.completed, lastMonthCounts.completed),
             },
         }
-    }, [documents])
+    }, [docs])
 
     const chartData = useMemo(() => {
         const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
@@ -176,25 +155,25 @@ export default function Page() {
         const weeklyData = daysOfWeek.map(() => {
             const dateStr = currentDate.toISOString().split("T")[0]
             const dayData = {
-                incoming: documents.filter(
+                incoming: docs.filter(
                     (doc) =>
                         doc.status.toLowerCase() === "incoming" &&
                         doc.date_created &&
                         doc.date_created.split("T")[0] === dateStr
                 ).length,
-                recieved: documents.filter(
+                recieved: docs.filter(
                     (doc) =>
                         doc.status.toLowerCase() === "recieved" &&
                         doc.date_created &&
                         doc.date_created.split("T")[0] === dateStr
                 ).length,
-                outgoing: documents.filter(
+                outgoing: docs.filter(
                     (doc) =>
                         doc.status.toLowerCase() === "outgoing" &&
                         doc.date_created &&
                         doc.date_created.split("T")[0] === dateStr
                 ).length,
-                completed: documents.filter(
+                completed: docs.filter(
                     (doc) =>
                         doc.status.toLowerCase() === "completed" &&
                         doc.date_created &&
@@ -211,13 +190,13 @@ export default function Page() {
             outgoing: weeklyData.map((day) => ({ value: day.outgoing })),
             completed: weeklyData.map((day) => ({ value: day.completed })),
         }
-    }, [documents])
+    }, [docs])
 
     const recentDocs = useMemo(() => {
-        return [...documents]
+        return [...docs]
             .sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())
             .slice(0, 5)
-    }, [documents])
+    }, [docs])
 
     return (
         <>
@@ -266,14 +245,14 @@ export default function Page() {
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                             <Card className="col-span-4">
                                 <CardContent className="pl-2">
-                                    <Overview documents={documents} />
+                                    <Overview documents={docs} />
                                 </CardContent>
                             </Card>
                             <Card className="col-span-3">
                                 <CardHeader>
                                     <CardTitle>My Recent Documents</CardTitle>
                                     <CardDescription>
-                                        You have {documents.length} documents total.
+                                        You have {docs.length} documents total.
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>

@@ -1,82 +1,111 @@
-import { z } from "zod";
-import { JoinedDocument } from "../dms/joined-docs";
-import { doc_classification, doc_status } from "../dms/data";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+// src\lib\services\documents.ts
+import useSWR from 'swr';
+import { useSession } from 'next-auth/react';
+import { JoinedDocument, joinedDocumentSchema } from '@/lib/dms/joined-docs';
+import { CreateDocumentData } from '@/lib/validations/documents/create_documents';
 
-const createEnumFromData = (data: Array<{ value: string }>) =>
-    data.map(item => item.value) as [string, ...string[]];
+interface ApiDocument {
+    document_id: string;
+    tracking_code: string;
+    status: string;
+    document_code: string;
+    document_name: string;
+    classification: string;
+    document_type: string;
+    originating_agency: string;
+    current_agency: string;
+    released_by: string | null;
+    received_by: string | null;
+    released_from: string | null;
+    received_on: string | null;
+    released_from_id: string | null;
+    received_on_id: string | null;
+    created_by: string;
+    created_at: string;
+    updated_at: string;
+    viewed_at: string | null;
+}
 
-const documentApiResponseSchema = z.object({
-    document_id: z.string(),
-    tracking_code: z.string(),
-    document_code: z.string(),
-    document_name: z.string(),
-    classification: z.enum(createEnumFromData(doc_classification)),
-    document_type: z.string(),
-    originating_agency: z.string(),
-    current_agency: z.string(),
-    released_by: z.string().optional(),
-    received_by: z.string().optional(),
-    released_from: z.string().optional(),
-    released_from_id: z.string().optional(),
-    received_on_id: z.string().optional(),
-    created_by: z.string(),
-    created_at: z.string(),
-    updated_at: z.string(),
-    viewed_at: z.string().optional(),
-    status: z.enum(createEnumFromData(doc_status))
-});
+const transformDocument = (apiDoc: ApiDocument): JoinedDocument => {
+    const transformed = {
+        id: apiDoc.document_id,
+        code: apiDoc.tracking_code,
+        title: apiDoc.document_name,
+        classification: apiDoc.classification as any,
+        type: apiDoc.document_type,
+        created_by: apiDoc.created_by,
+        date_created: apiDoc.created_at,
+        origin_office: apiDoc.originating_agency,
+        status: apiDoc.status as any,
+        remarks: '',
+        released_by: apiDoc.released_by || undefined,
+        released_from: apiDoc.released_from || undefined,
+        receiving_office: apiDoc.current_agency,
+        is_received: !!apiDoc.received_by,
+        date_release: null,
+        date_viewed: apiDoc.viewed_at
+    };
 
-type DocumentApiResponse = z.infer<typeof documentApiResponseSchema>;
+    return joinedDocumentSchema.parse(transformed);
+};
 
 export function useDocuments() {
     const { data: session } = useSession();
-    const [documents, setDocuments] = useState<JoinedDocument[]>([]);
 
-    useEffect(() => {
-        const fetchDocs = async () => {
-            if (!session?.user?.accessToken) {
-                throw new Error("No active session");
-            }
-
-            const response = await fetch('https://ipophl.quanby-staging.com/api/documents', {
+    const { data, error, mutate } = useSWR<JoinedDocument[]>(
+        session?.user ? '/api/documents' : null,
+        async (url) => {
+            const res = await fetch(url, {
                 headers: {
-                    'Authorization': `Bearer ${session.user.accessToken}`,
                     'Content-Type': 'application/json',
-                }
+                },
             });
 
-            if (!response.ok) {
-                if (response.status === 401) {
-                    window.location.href = "/api/auth/signin";
-                    throw new Error("Session expired");
-                }
-                throw new Error(`Failed to fetch documents: ${response.status}`);
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.message || 'Failed to fetch documents');
             }
 
-            const data: DocumentApiResponse[] = await response.json();
-            return data.map(doc => ({
-                id: doc.document_id,
-                code: doc.tracking_code,
-                title: doc.document_name,
-                classification: doc.classification,
-                type: doc.document_type,
-                created_by: doc.created_by,
-                date_created: doc.created_at,
-                origin_office: doc.originating_agency,
-                status: doc.status,
-                released_by: doc.released_by,
-                released_from: doc.released_from,
-                receiving_office: doc.current_agency,
-                is_received: !!doc.received_by,
-                date_release: doc.updated_at,
-                date_viewed: doc.viewed_at
-            }));
-        };
+            const data = await res.json() as ApiDocument[];
+            return data.map(transformDocument);
+        },
+        {
+            revalidateOnFocus: false,
+            revalidateIfStale: false,
+            shouldRetryOnError: false,
+        }
+    );
 
-        fetchDocs();
-    }, [session?.user?.accessToken]);
+    /**
+     * For Fixing
+     */
 
-    return documents;
+    const createDocument = async (documentData: CreateDocumentData) => {
+        try {
+            const res = await fetch('/api/documents', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(documentData),
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to create document');
+            }
+
+            const newDoc = await res.json();
+            mutate();
+            return newDoc;
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    return {
+        documents: data,
+        error,
+        createDocument,
+        isLoading: !data && !error,
+    };
 }
