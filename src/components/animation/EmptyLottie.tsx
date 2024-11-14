@@ -14,7 +14,7 @@ export const EmptyLottie = ({
   message = "No Data Found",
   description = "There are no records to display at the moment",
   className = "w-60",
-  animationPath = "/animation/1.json"
+  animationPath = "/animation/empty-box.json"
 }: EmptyLottieProps) => {
   const ref = useRef(null);
 
