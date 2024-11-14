@@ -1,5 +1,5 @@
 // src\components\custom\documents\control\document-code-cell.tsx
-"use client"
+'use client'
 
 import React from "react";
 import { CodePreviewDialog } from "./code-preview-dialog";

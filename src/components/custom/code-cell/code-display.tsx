@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { QRCodeSVG } from "qrcode.react";
 import { CodeConfig, CodeDisplayProps } from "@/lib/types";

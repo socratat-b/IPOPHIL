@@ -1,3 +1,4 @@
+// src\lib\validations\documents\create_documents.ts
 import { z } from "zod";
 
 export const createDocumentSchema = z.object({
@@ -6,3 +7,5 @@ export const createDocumentSchema = z.object({
     type: z.string().min(1, "Type is required"),
     attachments: z.any().optional(),
 });
+
+export type CreateDocumentData = z.infer<typeof createDocumentSchema>;

@@ -1,5 +1,5 @@
 // src/app/(auth)/layout.tsx
-"use client"
+'use client'
 
 import { useEffect } from "react"
 import { Loader2 } from "lucide-react"

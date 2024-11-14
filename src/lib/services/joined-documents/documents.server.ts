@@ -1,4 +1,4 @@
-// src/lib/services/documents.server.ts
+// src\lib\services\joined-documents\documents.server.ts
 import path from 'path'
 import { promises as fs } from 'fs'
 import { z } from 'zod'
@@ -74,7 +74,7 @@ const getJoinedDocumentsFromDatabase = async () => {
         const joinedDocuments = documents.map(doc => {
             try {
                 // console.log('Joining document:', doc.document_id)
-                
+
                 const detail = details.find(d => d.detail_id === doc.detail_id)
                 if (!detail) {
                     // console.log(`No matching detail found for document ${doc.document_id}`)

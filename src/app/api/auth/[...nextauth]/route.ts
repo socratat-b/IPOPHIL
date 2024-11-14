@@ -151,11 +151,12 @@ export const authOptions: NextAuthOptions = {
          */
         async jwt({ token, user }) {
             if (user) {
-                token = { ...token, ...user, accessTokenExpires: Date.now() + 60 * 60 * 1000 }
+                return { ...token, ...user, accessTokenExpires: Date.now() + 60 * 60 * 1000 };
             }
 
+            // Return token early if not expired
             if (Date.now() < (token.accessTokenExpires as number)) {
-                return token
+                return token;
             }
 
             try {
@@ -165,19 +166,27 @@ export const authOptions: NextAuthOptions = {
                         "Authorization": `Bearer ${token.accessToken}`,
                         "Content-Type": "application/json",
                     },
-                })
+                    credentials: 'include' // Include cookies if using HTTP-only cookies
+                });
 
-                if (!refreshedToken.ok) throw new Error("Failed to refresh token")
+                // Handle 401 specifically
+                if (refreshedToken.status === 401) {
+                    return { ...token, error: "TokenExpiredError" };
+                }
 
-                const refreshedData = await refreshedToken.json()
-                token.accessToken = refreshedData.token
-                token.accessTokenExpires = Date.now() + 60 * 60 * 1000
+                if (!refreshedToken.ok) {
+                    throw new Error(`Token refresh failed: ${refreshedToken.status}`);
+                }
+
+                const refreshedData = await refreshedToken.json();
+                return {
+                    ...token,
+                    accessToken: refreshedData.token,
+                    accessTokenExpires: Date.now() + 60 * 60 * 1000
+                };
             } catch (error) {
-                console.error("Token refresh error:", error)
-                return { ...token, error: "RefreshTokenError" }
+                return { ...token, error: "RefreshTokenError" };
             }
-
-            return token
         },
 
         /**

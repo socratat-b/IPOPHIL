@@ -1,9 +1,6 @@
-"use client"
+'use client'
 
 import Image from "next/image"
-
-import type { JoinedDocument } from "@/lib/dms/joined-docs"
-
 import { toast } from "sonner"
 import { NavMain } from "./nav-main"
 import { signOut } from "next-auth/react"
@@ -13,9 +10,9 @@ import { Icons } from "@/components/ui/icons"
 import { NavSecondary } from "./nav-secondary"
 import { Button } from "@/components/ui/button"
 import { useNavigationStore } from "@/lib/stores/navigation"
-import { getJoinedDocuments } from "@/lib/services/joined-documents"
-import { ComponentProps, useMemo, useEffect, useState } from "react"
+import { ComponentProps, useMemo, useState } from "react"
 import { NavMainItem, NavSecondaryItem } from "@/lib/types/navigation"
+import { useDocuments } from "@/lib/services/documents"
 import { navigationConfig, transformToMainNavItem, transformToSecondaryNavItem } from "@/lib/config/navigation"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
@@ -31,11 +28,11 @@ interface DocumentCounts {
 type AppSidebarProps = ComponentProps<typeof Sidebar>
 
 export function AppSidebar({ ...props }: AppSidebarProps) {
-  const [documents, setDocuments] = useState<JoinedDocument[]>([])
-  const { visibleMainItems, visibleSecondaryItems, visibleSubItems, showUserSection } = useNavigationStore()
+  const { visibleMainItems, visibleSecondaryItems, visibleSubItems } = useNavigationStore()
   const router = useRouter()
   const [isLogoutOpen, setIsLogoutOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const { documents: docs = [] } = useDocuments();
 
   const closeLogout = () => setIsLogoutOpen(false)
 
@@ -44,7 +41,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       setIsLoggingOut(true)
       await signOut({
         redirect: false,
-        callbackUrl: "/",
+        callbackUrl: "/"
       })
       router.push("/")
       toast.success("Successfully logged out")
@@ -57,29 +54,16 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
     }
   }
 
-  useEffect(() => {
-    async function fetchDocuments() {
-      try {
-        const docs = await getJoinedDocuments()
-        setDocuments(docs)
-      } catch (error) {
-        console.error("Error fetching documents:", error)
-        setDocuments([])
-      }
-    }
-    fetchDocuments()
-  }, [])
-
   const documentCounts = useMemo(() => {
     const counts = doc_status.reduce(
       (acc, status) => ({
         ...acc,
-        [status.value]: 0,
+        [status.value]: 0
       }),
       { received: 0, dispatch: 0, intransit: 0, completed: 0 } as DocumentCounts
     )
 
-    documents.forEach((doc) => {
+    docs.forEach((doc) => {
       if (!doc.date_viewed) {
         const status = doc.status.toLowerCase()
         const matchedStatus = doc_status.find((s) => s.value.toLowerCase() === status)
@@ -95,9 +79,8 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
     })
 
     counts.total = counts.dispatch + counts.intransit + counts.completed + counts.received
-
     return counts
-  }, [documents])
+  }, [docs])
 
   const visibleMainNav = useMemo<NavMainItem[]>(() => {
     return navigationConfig.mainNav
@@ -114,7 +97,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
               .map((subItem) => ({
                 title: subItem.title,
                 url: subItem.url,
-                notViewedCount: documentCounts[subItem.id as keyof DocumentCounts] || 0,
+                notViewedCount: documentCounts[subItem.id as keyof DocumentCounts] || 0
               }))
           }
         }
@@ -124,7 +107,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
             ?.filter((subItem) => visibleSubItems[item.id]?.includes(subItem.id))
             .map((subItem) => ({
               title: subItem.title,
-              url: subItem.url,
+              url: subItem.url
             }))
         }
 
@@ -162,18 +145,6 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         <NavMain items={visibleMainNav} />
         <NavSecondary items={visibleSecondaryNav} className="mt-auto" />
       </SidebarContent>
-
-      {/* {showUserSection && (
-        <SidebarFooter>
-          <NavUser
-            user={{
-              name: "user",
-              email: "user@gmail.com",
-              avatar: "/images/user-random-1.jpg",
-            }}
-          />
-        </SidebarFooter>
-      )} */}
 
       <SidebarFooter>
         <Dialog open={isLogoutOpen} onOpenChange={setIsLogoutOpen}>
