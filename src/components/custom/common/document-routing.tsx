@@ -105,8 +105,12 @@ export default function DocumentRouting({ document }: DocumentRoutingProps) {
                                                     <TableCell className='w-[120px]'>{step.date ? format(parseISO(step.date), 'PPP') : 'N/A'}</TableCell>
                                                     <TableCell className='w-[150px]'>{step.title}</TableCell>
                                                     <TableCell className='w-[200px]'>{step.description}</TableCell>
-                                                    <TableCell className='min-w-[250px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim corporis delectus porro ut temporibus iusto iste obcaecati ducimus libero inventore!</TableCell>
-                                                    <TableCell className='w-[140px]'>
+                                                    <TableCell className='min-w-[250px]'>
+                                                        {step.status === 'completed' ? 
+                                                            `Document was successfully ${step.title.toLowerCase()} by ${step.user || 'Personnel'}.` : 
+                                                            `Awaiting ${step.title.toLowerCase()} action.`}
+                                                    </TableCell>
+                                                                                                        <TableCell className='w-[140px]'>
                                                         {step.status === 'current' && (
                                                             <div className='flex gap-2'>
                                                                 <Button size='sm' variant='default'>
