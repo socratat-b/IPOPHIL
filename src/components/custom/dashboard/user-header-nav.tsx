@@ -25,8 +25,10 @@ export function UserHeaderNav() {
       <DropdownMenuTrigger asChild>
         <Button variant={"ghost"} className="h-10 w-10 rounded-full border border-primary">
           <Avatar className="h-8 w-8">
-            <AvatarImage className="object-cover" src="images/user-random-1.jpg" alt="@shadcn" />
-            <AvatarFallback>SC</AvatarFallback>
+            <AvatarImage className="object-cover" src={session?.user.avatar ?? undefined} alt="@shadcn" />
+            <AvatarFallback>
+              {`${session?.user.first_name?.charAt(0) ?? ''}${session?.user.last_name?.charAt(0) ?? ''}`.trim()}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

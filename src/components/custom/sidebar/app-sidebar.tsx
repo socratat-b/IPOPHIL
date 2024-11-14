@@ -1,37 +1,24 @@
 "use client"
 
-import { ComponentProps, useMemo, useEffect, useState } from "react"
 import Image from "next/image"
-import { useNavigationStore } from "@/lib/stores/navigation"
-import { navigationConfig, transformToMainNavItem, transformToSecondaryNavItem } from "@/lib/config/navigation"
-import { NavMainItem, NavSecondaryItem } from "@/lib/types/navigation"
-import { NavMain } from "./nav-main"
-import { NavSecondary } from "./nav-secondary"
-import { useRouter } from "next/navigation"
-import { Icons } from "@/components/ui/icons"
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
 import type { JoinedDocument } from "@/lib/dms/joined-docs"
-import { getJoinedDocuments } from "@/lib/services/joined-documents"
+
+import { toast } from "sonner"
+import { NavMain } from "./nav-main"
+import { signOut } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { doc_status } from "@/lib/dms/data"
+import { Icons } from "@/components/ui/icons"
+import { NavSecondary } from "./nav-secondary"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog"
+import { useNavigationStore } from "@/lib/stores/navigation"
+import { getJoinedDocuments } from "@/lib/services/joined-documents"
+import { ComponentProps, useMemo, useEffect, useState } from "react"
+import { NavMainItem, NavSecondaryItem } from "@/lib/types/navigation"
+import { navigationConfig, transformToMainNavItem, transformToSecondaryNavItem } from "@/lib/config/navigation"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 
 interface DocumentCounts {
   dispatch: number
@@ -48,15 +35,26 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
   const { visibleMainItems, visibleSecondaryItems, visibleSubItems, showUserSection } = useNavigationStore()
   const router = useRouter()
   const [isLogoutOpen, setIsLogoutOpen] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const openLogout = () => setIsLogoutOpen(true)
   const closeLogout = () => setIsLogoutOpen(false)
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true)
+      await signOut({
+        redirect: false,
+        callbackUrl: "/",
+      })
       router.push("/")
+      toast.success("Successfully logged out")
     } catch (error) {
       console.error("Logout failed:", error)
+      toast.error("Failed to logout. Please try again.")
+    } finally {
+      setIsLoggingOut(false)
+      closeLogout()
     }
   }
 
@@ -178,38 +176,57 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         </SidebarFooter>
       )} */}
 
-      <div onClick={openLogout} className="flex w-56 h-6 mb-2 hover:bg-sidebar-accent p-2 ml-2 rounded-md cursor-pointer">
-        <button className="text-red-600 flex justify-start text-sm items-center dark:text-red-400">
-          <Icons.logout className="mr-2 h-4 w-4" />
-          Log out
-        </button>
-      </div>
-
-      <Dialog open={isLogoutOpen} onOpenChange={setIsLogoutOpen}>
-        <DialogContent className="flex flex-col items-center justify-center text-center space-y-6 p-8 max-w-sm mx-auto rounded-lg">
-          <DialogHeader className="flex flex-col items-center">
-            <DialogTitle className="text-lg font-semibold">Confirm Logout</DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              Are you sure you want to log out?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex justify-center space-x-4 mt-4">
-            <Button
-              onClick={closeLogout}
-              variant="outline"
-              className="px-4 py-2 text-sm rounded-md"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 text-sm text-white rounded-md hover:bg-red-700"
-            >
-              Log out
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <SidebarFooter>
+        <Dialog open={isLogoutOpen} onOpenChange={setIsLogoutOpen}>
+          <DialogTrigger asChild>
+            <div className="flex w-56 h-6 mb-2 hover:bg-sidebar-accent p-2 ml-2 rounded-md cursor-pointer">
+              <button
+                className="text-red-600 flex justify-start text-sm items-center dark:text-red-400"
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Icons.logout className="mr-2 h-4 w-4" />
+                )}
+                {isLoggingOut ? "Logging out..." : "Log out"}
+              </button>
+            </div>
+          </DialogTrigger>
+          <DialogContent className="flex flex-col items-center justify-center text-center space-y-6 p-8 max-w-sm mx-auto rounded-lg">
+            <DialogHeader className="flex flex-col items-center">
+              <DialogTitle className="text-lg font-semibold">Confirm Logout</DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground">
+                Are you sure you want to log out?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex justify-center space-x-4 mt-4">
+              <Button
+                onClick={closeLogout}
+                variant="outline"
+                className="px-4 py-2 text-sm rounded-md"
+                disabled={isLoggingOut}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-600 text-sm text-white rounded-md hover:bg-red-700 disabled:bg-red-400"
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? (
+                  <>
+                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                    Logging out...
+                  </>
+                ) : (
+                  "Log out"
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </SidebarFooter>
     </Sidebar>
   )
 }

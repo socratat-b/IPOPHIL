@@ -1,3 +1,4 @@
+// src/app/page.tsx
 "use client"
 
 import { useState, useEffect, useRef } from "react"
@@ -7,21 +8,16 @@ import { useTheme } from "next-themes"
 import { ThemeChange } from "@/components/custom/theme/theme-change"
 import SignIn from "@/components/custom/auth/sign-in"
 import dynamic from "next/dynamic"
+import { Loader2 } from "lucide-react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
-// Import Lottie without SSR
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false })
-// Import your animation data
 import animationData1 from '../../public/animation/secure.json'
 import animationData2 from '../../public/animation/process.json'
 import animationData3 from '../../public/animation/store.json'
 
-type CarouselItem = {
-  title: string
-  description: string
-  animation: any
-}
-
-const carouselItems: CarouselItem[] = [
+const carouselItems = [
   {
     title: "Centralized Document Hub",
     description: "Securely store, organize, and manage all your intellectual property documents in one place",
@@ -40,22 +36,40 @@ const carouselItems: CarouselItem[] = [
 ]
 
 export default function AuthenticationPage() {
+  // Hooks at the top level
   const [mounted, setMounted] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const { theme } = useTheme()
   const lottieRef = useRef(null)
+  const { status } = useSession()
+  const router = useRouter()
 
+  // All useEffect hooks grouped together
   useEffect(() => {
     setMounted(true)
   }, [])
 
   useEffect(() => {
+    if (status === 'authenticated') {
+      router.push('/dashboard')
+    }
+  }, [status, router])
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % carouselItems.length)
-    }, 10000) // Change slide every 5 seconds
-
+    }, 10000)
     return () => clearInterval(timer)
   }, [])
+
+  // Early returns after hooks
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    )
+  }
 
   if (!mounted) return null
 
