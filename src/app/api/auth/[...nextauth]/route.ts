@@ -51,7 +51,7 @@ declare module "next-auth/jwt" {
  * @throws {Error} - If the fetch fails or the response is invalid.
  */
 async function fetchProtectedUserDetails(accessToken: string): Promise<NextAuthUser> {
-    const response = await fetch("https://ipophl.quanby-staging.com/api/auth/protected", {
+    const response = await fetch(process.env.API_AUTH_PROTECTED as string, {
         method: "POST",
         headers: {
             "Authorization": `Bearer ${accessToken}`,
@@ -85,7 +85,7 @@ async function fetchProtectedUserDetails(accessToken: string): Promise<NextAuthU
  * @throws {Error} - If login fails or the server response is invalid.
  */
 async function loginUser(identifier: string, password: string): Promise<NextAuthUser | null> {
-    const response = await fetch("https://ipophl.quanby-staging.com/api/auth/login", {
+    const response = await fetch(process.env.API_AUTH_LOGIN as string, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -158,7 +158,7 @@ export const authOptions: NextAuthOptions = {
             }
 
             try {
-                const refreshedToken = await fetch("https://ipophl.quanby-staging.com/api/auth/refresh-token", {
+                const refreshedToken = await fetch(process.env.API_AUTH_REFRESH_TOKEN as string, {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${token.accessToken}`,
