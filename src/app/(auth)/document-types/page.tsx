@@ -1,26 +1,58 @@
-// src/app/(auth)/type_doc/page.tsx
-import type { Metadata } from "next"
-import { getDocumentTypes } from '@/lib/services/document-types'
-import { DashboardHeader } from "@/components/custom/dashboard/header"
+'use client'
+
+import { Skeleton } from "@/components/ui/skeleton"
+import { useDocumentTypes } from "@/lib/services/document-types"
 import { columns } from "@/components/custom/document-types/columns"
+import { DashboardHeader } from "@/components/custom/dashboard/header"
 import { DataTable } from "@/components/custom/document-types/data-table"
 
-export const metadata: Metadata = {
-    title: "DMS | Document Type",
-    description: "IPOPHIL Document Types",
-}
+export default function DocumentsPage() {
+    const { documentTypes, error, isLoading } = useDocumentTypes()
 
-export default async function DocumentTypesPage() {
-    const documentTypes = await getDocumentTypes()
+    if (isLoading) {
+        return (
+            <>
+                <DashboardHeader
+                    breadcrumbs={[
+                        { label: "Document Types", active: true },
+                    ]}
+                />
+                <div className="flex flex-1 flex-col gap-4 p-4">
+                    <Skeleton className="h-[500px] w-full" />
+                </div>
+            </>
+        )
+    }
+
+    if (error) {
+        return (
+            <>
+                <DashboardHeader
+                    breadcrumbs={[
+                        { label: "Document Types", active: true },
+
+                    ]}
+                />
+                <div className="flex flex-1 flex-col gap-4 p-4">
+                    <p className="text-red-500">Error loading documents. Please try again later.</p>
+                </div>
+            </>
+        )
+    }
 
     return (
         <>
-            <DashboardHeader />
-            <div className="flex flex-1 flex-col gap-4 p-4 pt-6">
+            <DashboardHeader
+                breadcrumbs={[
+                    { label: "Document Types", active: true },
+                ]}
+            />
+
+            <div className="flex flex-1 flex-col gap-4 p-4">
                 <DataTable
-                    data={documentTypes}
+                    data={documentTypes || []}
                     columns={columns}
-                    selection={false}
+                    selection={true}
                 />
             </div>
         </>

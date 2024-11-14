@@ -2,40 +2,19 @@ import useSWR from 'swr';
 import { useSession } from 'next-auth/react';
 import { JoinedDocument, joinedDocumentSchema } from '@/lib/dms/joined-docs';
 import { CreateDocumentData } from '@/lib/validations/documents/create_documents';
-
-interface ApiDocument {
-    document_id: string;
-    tracking_code: string;
-    status: string;
-    document_code: string;
-    document_name: string;
-    classification: string;
-    document_type: string;
-    originating_agency: string;
-    current_agency: string;
-    released_by: string | null;
-    received_by: string | null;
-    released_from: string | null;
-    received_on: string | null;
-    released_from_id: string | null;
-    received_on_id: string | null;
-    created_by: string;
-    created_at: string;
-    updated_at: string;
-    viewed_at: string | null;
-}
+import { ApiDocument } from '@/lib/types';
 
 const transformDocument = (apiDoc: ApiDocument): JoinedDocument => {
     const transformed = {
         id: apiDoc.document_id,
         code: apiDoc.tracking_code,
         title: apiDoc.document_name,
-        classification: apiDoc.classification as any,
+        classification: apiDoc.classification,
         type: apiDoc.document_type,
         created_by: apiDoc.created_by,
         date_created: apiDoc.created_at,
         origin_office: apiDoc.originating_agency,
-        status: apiDoc.status as any,
+        status: apiDoc.status,
         remarks: '',
         released_by: apiDoc.released_by || undefined,
         released_from: apiDoc.released_from || undefined,

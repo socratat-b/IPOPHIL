@@ -10,7 +10,7 @@ export async function GET() {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const res = await fetch('https://ipophl.quanby-staging.com/api/incoming-documentsincoming-documents', {
+        const res = await fetch('https://ipophl.quanby-staging.com/api/incoming-documents', {
             headers: {
                 'Authorization': `Bearer ${session.user.accessToken}`,
                 'Content-Type': 'application/json',
