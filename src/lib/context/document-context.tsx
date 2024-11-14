@@ -1,5 +1,5 @@
 // src/lib/context/document-context.tsx
-"use client"
+'use client'
 
 import { Document } from "@/lib/faker/documents/schema"
 import { createContext, useContext } from "react"

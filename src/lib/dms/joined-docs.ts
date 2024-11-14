@@ -1,3 +1,4 @@
+// src\lib\dms\joined-docs.ts
 import { z } from "zod"
 import { doc_classification, doc_status } from "./data"
 
@@ -19,7 +20,7 @@ export const joinedDocumentSchema = z.object({
     released_by: z.string().optional(),
     released_from: z.string().optional(),
     receiving_office: z.string().optional(),
-    is_received: z.boolean().optional(), 
+    is_received: z.boolean().optional(),
     date_release: z.string().nullable().optional(),
     date_viewed: z.string().nullable().optional(),
 });

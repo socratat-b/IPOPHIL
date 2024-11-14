@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
@@ -55,8 +55,8 @@ export function DataTableToolbar<TData>({ table, onAdd }: DataTableToolbarProps<
                                 {table.getColumn("active")?.getFilterValue() === true
                                     ? "Show Active"
                                     : table.getColumn("active")?.getFilterValue() === false
-                                    ? "Show Inactive"
-                                    : "Show All"}
+                                        ? "Show Inactive"
+                                        : "Show All"}
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">

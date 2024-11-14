@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { useState, useRef } from "react";
 import { Table } from "@tanstack/react-table";

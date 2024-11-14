@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
     Dialog,
@@ -130,7 +130,7 @@ const ScanDocumentForm = ({ onSubmit, onClose, actionType }: {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
-            <HelpScanCard onCodeChange={handleCodeChange} actionType={actionType}  />
+            <HelpScanCard onCodeChange={handleCodeChange} actionType={actionType} />
             {/* mockDocuments={[]} */}
 
             <div className="flex justify-end space-x-2">

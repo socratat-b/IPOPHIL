@@ -1,5 +1,5 @@
 // src/components/custom/sidebar/nav-secondary.tsx
-"use client"
+'use client'
 
 import { useEffect, useState } from "react"
 import { LucideIcon } from "lucide-react"

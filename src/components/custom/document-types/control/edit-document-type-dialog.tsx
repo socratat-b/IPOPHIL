@@ -1,5 +1,5 @@
 // src/components/custom/document-types/control/edit-document-type-dialog.tsx
-"use client";
+'use client';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
