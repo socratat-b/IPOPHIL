@@ -1,6 +1,7 @@
 'use client'
 
-import * as React from 'react'
+import React from 'react'
+
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -25,9 +26,9 @@ import {
     TableRow,
 } from '@/components/ui/table'
 
-import { DataTablePagination } from "@/components/custom/table/data-table-pagination"
-import { DataTableToolbar } from "./data-table-toolbar"
-import { EmptyLottie } from "@/components/animation/EmptyLottie"
+import { DataTablePagination } from '@/components/custom/table/data-table-pagination'
+import { DataTableToolbar } from './data-table-toolbar'
+import EmptyLottie from '@/components/animation/EmptyLottie'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -130,14 +131,14 @@ export function DataTable<TData, TValue>({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                           <EmptyLottie 
-                message="No Results Found"
-                description={
-                  columnFilters.length > 0
-                    ? "Try adjusting your filters or search terms"
-                    : "There are no items to display at the moment"
-                }
-            />
+                                    <EmptyLottie
+                                        message='No Results Found'
+                                        description={
+                                            columnFilters.length > 0
+                                                ? 'Try adjusting your filters or search terms'
+                                                : 'There are no items to display at the moment'
+                                        }
+                                    />
                                 </TableCell>
                             </TableRow>
                         )}

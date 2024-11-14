@@ -1,10 +1,12 @@
 'use client'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DashboardHeader } from '@/components/custom/dashboard/header'
-import { columns } from '@/components/custom/incoming-documents/columns'
-import { DataTable } from '@/components/custom/incoming-documents/data-table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useOutgoingDocuments, useReceivedDocuments } from '@/lib/services/documents'
+import { columns as recievedColumns } from '@/components/custom/recieved-documents/columns'
+import { columns as outgoingColumns } from '@/components/custom/outgoing-documents/columns'
+import { DataTable as OutgoingDataTable } from '@/components/custom/outgoing-documents/data-table'
+import { DataTable as RecievedDataTable } from '@/components/custom/recieved-documents/data-table'
 
 export default function DocumentsPage() {
     const { documents: outgoingDocuments, isLoading: outgoingLoading } = useOutgoingDocuments()
@@ -26,17 +28,17 @@ export default function DocumentsPage() {
                         <TabsTrigger value='received'>Received Documents</TabsTrigger>
                     </TabsList>
                     <TabsContent value='outgoing' className='mt-4'>
-                        <DataTable
+                        <OutgoingDataTable
                             data={outgoingDocuments || []}
-                            columns={columns}
+                            columns={outgoingColumns}
                             selection={false}
                         />
                     </TabsContent>
                     <TabsContent value='received' className='mt-4'>
-                        <DataTable
+                        <RecievedDataTable
                             data={receivedDocuments || []}
-                            columns={columns}
-                            selection={false}
+                            columns={recievedColumns}
+                            selection={true}
                         />
                     </TabsContent>
                 </Tabs>
