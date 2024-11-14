@@ -1,4 +1,4 @@
-// src/lib/services/documents.ts
+// src\lib\services\joined-documents\index.ts
 import { cache } from 'react'
 import { joinedDocumentSchema } from '@/lib/dms/joined-docs'
 

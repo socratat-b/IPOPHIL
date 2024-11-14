@@ -1,6 +1,5 @@
 "use client";
 
-import { User } from "@/lib/dms/schema";
 import { Icons } from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
 import { formatBadgeText } from "@/lib/controls";
@@ -10,8 +9,10 @@ import { user_role } from "@/lib/dms/data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DataTableColumnHeader } from "@/components/custom/table/data-table-column-header";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ExtendedUser } from "@/lib/dms/schema";
 
-export const columns: ColumnDef<User>[] = [
+
+export const columns: ColumnDef<ExtendedUser>[] = [
     {
         id: "profile",
         accessorFn: (row) => row,
@@ -121,7 +122,7 @@ export const columns: ColumnDef<User>[] = [
                                     <div className="flex items-center gap-1.5">
                                         <Icons.building className="h-3 w-3 text-blue-500" />
                                         <span className="text-sm text-muted-foreground">
-                                            Department {data.agency_id}
+                                            Department {data.agency_name}
                                         </span>
                                     </div>
                                 </div>
@@ -129,7 +130,7 @@ export const columns: ColumnDef<User>[] = [
                             <TooltipContent className="w-64">
                                 <div className="space-y-1.5">
                                     <p>{data.title}</p>
-                                    <p>Department: {data.agency_id}</p>
+                                    <p>Department: {data.agency_name}</p>
                                     <p>Employee ID: {data.user_id}</p>
                                 </div>
                             </TooltipContent>

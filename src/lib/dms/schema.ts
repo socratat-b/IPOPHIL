@@ -67,7 +67,6 @@ export const agencySchema = z.object({
 
 export type Agency = z.infer<typeof agencySchema>
 
-// src\lib\dms\schema.ts
 // User schema
 export const userSchema = z.object({
     user_id: z.string().uuid(),
@@ -84,7 +83,14 @@ export const userSchema = z.object({
     active: z.boolean().default(true),
 }).merge(timestampFields)
 
+// Extended user schema with nullable agency name
+export const extendedUserSchema = userSchema.extend({
+    agency_name: z.string().nullable(),
+})
+
+// Export types
 export type User = z.infer<typeof userSchema>
+export type ExtendedUser = z.infer<typeof extendedUserSchema>
 
 // Document Details schema
 export const documentDetailsSchema = z.object({
