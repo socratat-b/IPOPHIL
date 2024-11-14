@@ -4,24 +4,43 @@ import { NextResponse } from 'next/server'
 
 export default withAuth(
     function middleware(req) {
-        return NextResponse.next();
+        const token = req.nextauth.token
+        const isAuthPage = req.nextUrl.pathname === '/'
+
+        // Redirect authenticated users trying to access the root/login page
+        if (isAuthPage && token) {
+            return NextResponse.redirect(new URL('/dashboard', req.url))
+        }
+
+        // Redirect unauthenticated users trying to access protected routes
+        if (!isAuthPage && !token) {
+            return NextResponse.redirect(new URL('/', req.url))
+        }
+
+        return NextResponse.next()
     },
     {
         callbacks: {
             authorized: ({ token, req }) => {
-                // Allow access to session route without a token
-                return !!token || req.nextUrl.pathname === '/api/auth/session';
+                // Always allow access to root page and session endpoint
+                if (req.nextUrl.pathname === '/' ||
+                    req.nextUrl.pathname === '/api/auth/session') {
+                    return true
+                }
+                // Require token for all other routes
+                return !!token
             },
         },
         pages: {
             signIn: '/',
         },
     }
-);
+)
 
 export const config = {
     matcher: [
+        '/',
         '/dashboard/:path*',
-        '/api/((?!auth).*)',  // Protect API routes except auth routes
+        '/api/((?!auth).*)',
     ],
-};
+}
