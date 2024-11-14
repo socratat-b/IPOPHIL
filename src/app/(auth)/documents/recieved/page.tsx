@@ -1,10 +1,10 @@
 'use client'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import { columns } from '@/components/custom/recieved-documentsx/columns'
-import { DataTable } from '@/components/custom/recieved-documentsx/data-table'
-import { DashboardHeader } from '@/components/custom/dashboard/header'
 import { useReceivedDocuments } from '@/lib/services/documents'
+import { DashboardHeader } from '@/components/custom/dashboard/header'
+import { columns } from '@/components/custom/recieved-documents/columns'
+import { DataTable } from '@/components/custom/recieved-documents/data-table'
 
 export default function DocumentsPage() {
     const { documents, error, isLoading } = useReceivedDocuments()
