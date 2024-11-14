@@ -1,9 +1,9 @@
 // src\lib\faker\users\seed.ts
-import * as fs from "fs";
-import * as path from "path";
-import { faker } from "@faker-js/faker";
+import * as fs from 'fs'
+import * as path from 'path'
+import { faker } from '@faker-js/faker'
 
-import { user_status, user_types } from "./data";
+import { user_status, user_types } from './data'
 
 const users = Array.from({ length: 100 }, () => ({
     id: `${faker.number.int({ min: 1000, max: 9999 })}`,
@@ -19,14 +19,14 @@ const users = Array.from({ length: 100 }, () => ({
     profile_url: faker.image.avatar(),
     created_at: faker.date.past().toISOString(),
     updated_at: faker.date.recent().toISOString(),
-}));
+}))
 
 fs.writeFileSync(
-    path.join(__dirname, "users.json"),
+    path.join(__dirname, 'users.json'),
     JSON.stringify(users, null, 2)
-);
+)
 
-console.log("✅ Users data generated.");
+console.log('✅ Users data generated.')
 
 /**
  * mar note:

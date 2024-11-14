@@ -4,12 +4,12 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LucideIcon } from "lucide-react"
+import { LucideIcon } from 'lucide-react'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from '@/components/ui/collapsible'
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -20,7 +20,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar'
 import { Badge } from '@/components/ui/badge'
 import { Icons } from '@/components/ui/icons'
 import { type NavMainItem } from '@/lib/types/navigation'
@@ -67,7 +67,7 @@ export function NavMain({ items }: NavMainProps) {
                 >
                   <Link
                     href={item.url}
-                    className="flex items-center gap-2"
+                    className='flex items-center gap-2'
                   >
                     {ItemIcon && (
                       <ItemIcon className={`
@@ -77,7 +77,7 @@ export function NavMain({ items }: NavMainProps) {
                     )}
                     <span>{item.title}</span>
                     {item.notViewedCount !== undefined && item.notViewedCount > 0 && (
-                      <Badge variant="default" className="text-xs px-1.5 py-0.5">
+                      <Badge variant='default' className='text-xs px-1.5 py-0.5'>
                         {item.notViewedCount}
                       </Badge>
                     )}
@@ -95,14 +95,14 @@ export function NavMain({ items }: NavMainProps) {
                           ${hasActiveSubItem ? 'text-accent-foreground' : 'text-muted-foreground'}
                         `}
                       >
-                        <Icons.chevronRight className="w-4 h-4" />
-                        <span className="sr-only">Toggle</span>
+                        <Icons.chevronRight className='w-4 h-4' />
+                        <span className='sr-only'>Toggle</span>
                       </SidebarMenuAction>
                     </CollapsibleTrigger>
-                    <CollapsibleContent className="transition-all duration-200 ease-in-out">
+                    <CollapsibleContent className='transition-all duration-200 ease-in-out'>
                       <SidebarMenuSub>
                         {item.items.map((subItem) => {
-                          const isSubActive = pathname === subItem.url;
+                          const isSubActive = pathname === subItem.url
                           return (
                             <SidebarMenuSubItem key={subItem.title}>
                               <SidebarMenuSubButton
@@ -116,7 +116,7 @@ export function NavMain({ items }: NavMainProps) {
                                 <Link href={subItem.url}>
                                   <span>{subItem.title}</span>
                                   {subItem.notViewedCount !== undefined && subItem.notViewedCount > 0 && (
-                                    <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
+                                    <Badge variant='destructive' className='text-xs px-1.5 py-0.5'>
                                       {subItem.notViewedCount}
                                     </Badge>
                                   )}

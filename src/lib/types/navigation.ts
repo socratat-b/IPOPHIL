@@ -1,6 +1,6 @@
 // src/lib/types/navigation.ts
-import { type IconsType } from "@/components/ui/icons"
-import type { LucideIcon } from "lucide-react"
+import { type IconsType } from '@/components/ui/icons'
+import type { LucideIcon } from 'lucide-react'
 
 // Base navigation item interface
 export interface BaseNavigationItem {
@@ -13,14 +13,14 @@ export interface BaseNavigationItem {
 
 // Main navigation item with possible sub-items
 export interface NavigationItem extends BaseNavigationItem {
-    type: "main" | "secondary"
-    items?: Array<Omit<BaseNavigationItem, "iconName" | "type">>
+    type: 'main' | 'secondary'
+    items?: Array<Omit<BaseNavigationItem, 'iconName' | 'type'>>
 }
 
 // Type aliases for better readability
 export type NavConfig = NavigationItem
-export type NavMainConfig = NavigationItem & { type: "main" }
-export type NavSecondaryConfig = NavigationItem & { type: "secondary" }
+export type NavMainConfig = NavigationItem & { type: 'main' }
+export type NavSecondaryConfig = NavigationItem & { type: 'secondary' }
 
 // Transformed navigation item interfaces
 export interface NavMainItem {
@@ -49,6 +49,6 @@ export interface NavigationConfiguration {
 }
 
 // Type guard for items with sub-items
-export function hasSubItems(item: NavConfig): item is NavigationItem & { items: NonNullable<NavigationItem["items"]> } {
-    return "items" in item && Array.isArray(item.items) && item.items.length > 0
+export function hasSubItems(item: NavConfig): item is NavigationItem & { items: NonNullable<NavigationItem['items']> } {
+    return 'items' in item && Array.isArray(item.items) && item.items.length > 0
 }

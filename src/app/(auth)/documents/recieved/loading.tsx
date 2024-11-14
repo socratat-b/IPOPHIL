@@ -1,23 +1,23 @@
-import { Skeleton } from "@/components/ui/skeleton"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Skeleton } from '@/components/ui/skeleton'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 
 export default function Loading() {
-    const columns = 4;
+    const columns = 4
 
     return (
-        <div className="space-y-4 p-4">
+        <div className='space-y-4 p-4'>
             {/* Toolbar placeholder */}
-            <div className="mb-4">
-                <Skeleton className="h-8 w-1/3" />
+            <div className='mb-4'>
+                <Skeleton className='h-8 w-1/3' />
             </div>
 
-            <div className="rounded-md border">
+            <div className='rounded-md border'>
                 <Table>
                     <TableHeader>
                         <TableRow>
                             {Array.from({ length: columns }).map((_, index) => (
                                 <TableHead key={index}>
-                                    <Skeleton className="h-6 w-24" />
+                                    <Skeleton className='h-6 w-24' />
                                 </TableHead>
                             ))}
                         </TableRow>
@@ -27,7 +27,7 @@ export default function Loading() {
                             <TableRow key={rowIndex}>
                                 {Array.from({ length: columns }).map((_, colIndex) => (
                                     <TableCell key={colIndex}>
-                                        <Skeleton className="h-6 w-full" />
+                                        <Skeleton className='h-6 w-full' />
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -37,9 +37,9 @@ export default function Loading() {
             </div>
 
             {/* Pagination placeholder */}
-            <div className="mt-4 flex justify-between items-center">
-                <Skeleton className="h-8 w-32" />
-                <Skeleton className="h-8 w-24" />
+            <div className='mt-4 flex justify-between items-center'>
+                <Skeleton className='h-8 w-32' />
+                <Skeleton className='h-8 w-24' />
             </div>
         </div>
     )

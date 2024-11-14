@@ -1,6 +1,6 @@
 // src\lib\dms\joined-docs.ts
-import { z } from "zod"
-import { doc_classification, doc_status } from "./data"
+import { z } from 'zod'
+import { doc_classification, doc_status } from './data'
 
 // Helper to create enum from data array
 const createEnumFromData = (data: Array<{ value: string }>) =>
@@ -23,6 +23,6 @@ export const joinedDocumentSchema = z.object({
     is_received: z.boolean().optional(),
     date_release: z.string().nullable().optional(),
     date_viewed: z.string().nullable().optional(),
-});
+})
 
 export type JoinedDocument = z.infer<typeof joinedDocumentSchema>

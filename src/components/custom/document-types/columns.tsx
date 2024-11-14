@@ -1,19 +1,19 @@
 'use client'
 
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTableRowActions } from "./data-table-row-actions";
-import { Badge } from "@/components/ui/badge";
-import { DocumentType } from "@/lib/dms/schema";
-import { DataTableColumnHeader } from "../table/data-table-column-header";
+import { ColumnDef } from '@tanstack/react-table'
+import { DataTableRowActions } from './data-table-row-actions'
+import { Badge } from '@/components/ui/badge'
+import { DocumentType } from '@/lib/dms/schema'
+import { DataTableColumnHeader } from '../table/data-table-column-header'
 
 export const columns: ColumnDef<DocumentType>[] = [
     {
-        accessorKey: "name",
+        accessorKey: 'name',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Name" />
+            <DataTableColumnHeader column={column} title='Name' />
         ),
         cell: ({ row }) => (
-            <span className="font-medium">
+            <span className='font-medium'>
                 {row.original.name}
             </span>
         ),
@@ -21,46 +21,46 @@ export const columns: ColumnDef<DocumentType>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "description",
+        accessorKey: 'description',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Description" />
+            <DataTableColumnHeader column={column} title='Description' />
         ),
         cell: ({ row }) => (
-            <span className="text-muted-foreground">
-                {row.original.description || "No description"}
+            <span className='text-muted-foreground'>
+                {row.original.description || 'No description'}
             </span>
         ),
         enableSorting: false,
         enableHiding: true,
     },
     {
-        accessorKey: "active",
+        accessorKey: 'active',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Status" />
+            <DataTableColumnHeader column={column} title='Status' />
         ),
         cell: ({ row }) => {
-            const isActive = row.original.active;
+            const isActive = row.original.active
             return (
                 <Badge
-                    variant={isActive ? "default" : "secondary"}
-                    className="font-medium"
+                    variant={isActive ? 'default' : 'secondary'}
+                    className='font-medium'
                 >
-                    {isActive ? "Active" : "Inactive"}
+                    {isActive ? 'Active' : 'Inactive'}
                 </Badge>
-            );
+            )
         },
         enableSorting: true,
         enableHiding: true,
         filterFn: (row, id, value) => {
             // Only filter if value is not undefined (filter is active)
-            if (value === undefined) return true;
-            return row.getValue(id) === value;
+            if (value === undefined) return true
+            return row.getValue(id) === value
         },
     },
     {
-        id: "actions",
+        id: 'actions',
         cell: ({ row }) => <DataTableRowActions row={row} />,
         enableSorting: false,
         enableHiding: false,
     },
-];
+]

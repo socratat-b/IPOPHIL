@@ -6,8 +6,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Icons } from "@/components/ui/icons"
+} from '@/components/ui/dropdown-menu'
+import { Icons } from '@/components/ui/icons'
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -16,8 +16,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { LucideIcon } from "lucide-react"
+} from '@/components/ui/sidebar'
+import { LucideIcon } from 'lucide-react'
 
 export function NavProjects({
   projects,
@@ -31,7 +31,7 @@ export function NavProjects({
   const { isMobile } = useSidebar()
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup className='group-data-[collapsible=icon]:hidden'>
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
@@ -46,25 +46,25 @@ export function NavProjects({
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover>
                   <Icons.moreHorizontal />
-                  <span className="sr-only">More</span>
+                  <span className='sr-only'>More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-48"
-                side={isMobile ? "bottom" : "right"}
-                align={isMobile ? "end" : "start"}
+                className='w-48'
+                side={isMobile ? 'bottom' : 'right'}
+                align={isMobile ? 'end' : 'start'}
               >
                 <DropdownMenuItem>
-                  <Icons.folder className="text-muted-foreground" />
+                  <Icons.folder className='text-muted-foreground' />
                   <span>View Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Icons.share className="text-muted-foreground" />
+                  <Icons.share className='text-muted-foreground' />
                   <span>Share Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Icons.trash2 className="text-muted-foreground" />
+                  <Icons.trash2 className='text-muted-foreground' />
                   <span>Delete Project</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>

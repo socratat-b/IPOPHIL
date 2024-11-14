@@ -1,7 +1,7 @@
 // src/app/(auth)/documents/metadata.ts
-import { Metadata } from "next"
+import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: "DMS | Documents",
-    description: "IPOPHIL Documents",
-};
+    title: 'DMS | Documents',
+    description: 'IPOPHIL Documents',
+}

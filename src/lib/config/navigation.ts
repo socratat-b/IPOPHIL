@@ -1,13 +1,13 @@
 // src/lib/config/navigation.ts
-import { Icons } from "@/components/ui/icons"
-import type { LucideIcon } from "lucide-react"
+import { Icons } from '@/components/ui/icons'
+import type { LucideIcon } from 'lucide-react'
 import {
     type NavConfig,
     type NavMainItem,
     type NavSecondaryItem,
     type NavigationConfiguration,
     hasSubItems,
-} from "@/lib/types/navigation"
+} from '@/lib/types/navigation'
 
 // Helper function to transform config to main nav item
 export function transformToMainNavItem(item: NavConfig): NavMainItem {
@@ -50,82 +50,82 @@ export function transformToSecondaryNavItem(item: NavConfig): NavSecondaryItem {
 export const navigationConfig: NavigationConfiguration = {
     mainNav: [
         {
-            id: "dashboard",
-            type: "main",
-            title: "Dashboard",
-            url: "/dashboard",
-            iconName: "layoutDashboard",
+            id: 'dashboard',
+            type: 'main',
+            title: 'Dashboard',
+            url: '/dashboard',
+            iconName: 'layoutDashboard',
         },
         {
-            id: "documents",
-            type: "main",
-            title: "Documents",
-            url: "/documents",
-            iconName: "folder",
+            id: 'documents',
+            type: 'main',
+            title: 'Documents',
+            url: '/documents',
+            iconName: 'folder',
             items: [
                 {
-                    id: "dispatch",
-                    title: "For Dispatch",
-                    url: "/documents/dispatch",
+                    id: 'dispatch',
+                    title: 'For Dispatch',
+                    url: '/documents/dispatch',
                 },
                 {
-                    id: "intransit",
-                    title: "Intransit",
-                    url: "/documents/intransit",
+                    id: 'intransit',
+                    title: 'Intransit',
+                    url: '/documents/intransit',
                 },
                 {
-                    id: "received",
-                    title: "Received",
-                    url: "/documents/recieved",
+                    id: 'received',
+                    title: 'Received',
+                    url: '/documents/recieved',
                 },
                 {
-                    id: "completed",
-                    title: "Completed",
-                    url: "/documents/completed",
+                    id: 'completed',
+                    title: 'Completed',
+                    url: '/documents/completed',
                 },
             ],
         },
         {
-            id: "management",
-            type: "main",
-            title: "Management",
-            url: "/users",
-            iconName: "settings",
+            id: 'management',
+            type: 'main',
+            title: 'Management',
+            url: '/users',
+            iconName: 'settings',
             items: [
                 {
-                    id: "users",
-                    title: "Users",
-                    url: "/users",
+                    id: 'users',
+                    title: 'Users',
+                    url: '/users',
                 },
                 {
-                    id: "types",
-                    title: "Type",
-                    url: "/document-types",
+                    id: 'types',
+                    title: 'Type',
+                    url: '/document-types',
                 },
             ],
         },
         {
-            id: "reports",
-            type: "main",
-            title: "Reports",
-            url: "/reports",
-            iconName: "fileText",
+            id: 'reports',
+            type: 'main',
+            title: 'Reports',
+            url: '/reports',
+            iconName: 'fileText',
         },
     ],
     secondaryNav: [
         {
-            id: "support",
-            type: "secondary",
-            title: "Customer Support",
-            url: "/support",
-            iconName: "helpCircle",
+            id: 'support',
+            type: 'secondary',
+            title: 'Customer Support',
+            url: '/support',
+            iconName: 'helpCircle',
         },
         {
-            id: "feedback",
-            type: "secondary",
-            title: "Send Feedback",
-            url: "/feedback",
-            iconName: "messageSquare",
+            id: 'feedback',
+            type: 'secondary',
+            title: 'Send Feedback',
+            url: '/feedback',
+            iconName: 'messageSquare',
         },
     ],
 } as const

@@ -77,12 +77,12 @@ enum doc_classification {
 
 ```typescript
 {
-    type_id: string;           // UUID
-    name: string;              // Unique document type name
-    description: string;       // Optional description
-    active: boolean;           // Activity status
-    created_at: string;        // ISO date string
-    updated_at: string;        // ISO date string
+    type_id: string           // UUID
+    name: string              // Unique document type name
+    description: string       // Optional description
+    active: boolean           // Activity status
+    created_at: string        // ISO date string
+    updated_at: string        // ISO date string
 }
 ```
 
@@ -90,13 +90,13 @@ enum doc_classification {
 
 ```typescript
 {
-    agency_id: string;         // UUID
-    name: string;             // Agency name
-    code: string;             // Unique 6-character code
-    active: boolean;          // Activity status
-    created_by: string;       // UUID of creator
-    created_at: string;       // ISO date string
-    updated_at: string;       // ISO date string
+    agency_id: string         // UUID
+    name: string             // Agency name
+    code: string             // Unique 6-character code
+    active: boolean          // Activity status
+    created_by: string       // UUID of creator
+    created_at: string       // ISO date string
+    updated_at: string       // ISO date string
 }
 ```
 
@@ -104,20 +104,20 @@ enum doc_classification {
 
 ```typescript
 {
-    user_id: string;           // UUID
-    agency_id: string;         // Reference to agency
-    first_name: string;
-    last_name: string;
-    middle_name?: string;      // Optional
-    user_name?: string;        // Optional
-    email: string;             // Unique email
-    role: user_role;
-    title?: string;            // Optional
-    type?: string;             // Optional
-    avatar?: string;           // Optional
-    active: boolean;
-    created_at: string;
-    updated_at: string;
+    user_id: string           // UUID
+    agency_id: string         // Reference to agency
+    first_name: string
+    last_name: string
+    middle_name?: string      // Optional
+    user_name?: string        // Optional
+    email: string             // Unique email
+    role: user_role
+    title?: string            // Optional
+    type?: string             // Optional
+    avatar?: string           // Optional
+    active: boolean
+    created_at: string
+    updated_at: string
 }
 ```
 
@@ -125,15 +125,15 @@ enum doc_classification {
 
 ```typescript
 {
-    detail_id: string;         // UUID
-    document_code: string;     // Unique code
-    document_name: string;
-    classification: doc_classification;
-    type_id: string;          // Reference to document type
-    created_by: string;       // Reference to user
-    archived_at?: string;     // Optional ISO date
-    created_at: string;
-    updated_at: string;
+    detail_id: string         // UUID
+    document_code: string     // Unique code
+    document_name: string
+    classification: doc_classification
+    type_id: string          // Reference to document type
+    created_by: string       // Reference to user
+    archived_at?: string     // Optional ISO date
+    created_at: string
+    updated_at: string
 }
 ```
 
@@ -141,16 +141,16 @@ enum doc_classification {
 
 ```typescript
 {
-    document_id: string;        // UUID
-    detail_id: string;         // Reference to document details
-    tracking_code: string;     // Unique 8-character code
-    originating_agency_id: string;
-    current_agency_id: string;
-    status: doc_status;
-    is_active: boolean;
-    viewed_at: string;
-    created_at: string;
-    updated_at: string;
+    document_id: string        // UUID
+    detail_id: string         // Reference to document details
+    tracking_code: string     // Unique 8-character code
+    originating_agency_id: string
+    current_agency_id: string
+    status: doc_status
+    is_active: boolean
+    viewed_at: string
+    created_at: string
+    updated_at: string
 }
 ```
 
@@ -158,12 +158,12 @@ enum doc_classification {
 
 ```typescript
 {
-    route_id: string;          // UUID
-    document_id: string;       // Reference to document
-    sequence_number: number;   // Positive integer
-    from_agency_id: string;    // Reference to agency
-    to_agency_id: string;      // Reference to agency
-    created_at: string;        // ISO date string
+    route_id: string          // UUID
+    document_id: string       // Reference to document
+    sequence_number: number   // Positive integer
+    from_agency_id: string    // Reference to agency
+    to_agency_id: string      // Reference to agency
+    created_at: string        // ISO date string
 }
 ```
 
@@ -171,14 +171,14 @@ enum doc_classification {
 
 ```typescript
 {
-    transit_id: string;        // UUID
-    document_id: string;       // Reference to document
-    status: intransit_status;
-    from_agency_id: string;    // Reference to agency
-    to_agency_id: string;      // Reference to agency
-    initiated_at: string;      // ISO date string
-    completed_at?: string;     // Optional ISO date
-    active: boolean;
+    transit_id: string        // UUID
+    document_id: string       // Reference to document
+    status: intransit_status
+    from_agency_id: string    // Reference to agency
+    to_agency_id: string      // Reference to agency
+    initiated_at: string      // ISO date string
+    completed_at?: string     // Optional ISO date
+    active: boolean
 }
 ```
 
@@ -186,16 +186,16 @@ enum doc_classification {
 
 ```typescript
 {
-    log_id: string;            // UUID
-    document_id: string;       // Reference to document
-    transit_id?: string;       // Optional reference to transit
-    action: log_action;
-    from_agency_id?: string;   // Optional reference to agency
-    to_agency_id?: string;     // Optional reference to agency
-    performed_by: string;      // Reference to user
-    received_by?: string;      // Optional receiver name
-    remarks?: string;          // Optional remarks
-    performed_at: string;      // ISO date string
+    log_id: string            // UUID
+    document_id: string       // Reference to document
+    transit_id?: string       // Optional reference to transit
+    action: log_action
+    from_agency_id?: string   // Optional reference to agency
+    to_agency_id?: string     // Optional reference to agency
+    performed_by: string      // Reference to user
+    received_by?: string      // Optional receiver name
+    remarks?: string          // Optional remarks
+    performed_at: string      // ISO date string
 }
 ```
 
@@ -203,10 +203,10 @@ enum doc_classification {
 
 ```typescript
 {
-    feedback_id: string;       // UUID
-    user_id: string;          // Reference to user
-    feedback_text: string;     // Feedback content
-    created_at: string;       // ISO date string
+    feedback_id: string       // UUID
+    user_id: string          // Reference to user
+    feedback_text: string     // Feedback content
+    created_at: string       // ISO date string
 }
 ```
 
@@ -222,13 +222,13 @@ pnpm install
 
 ```json
 {
-  "dependencies": {
-    "@faker-js/faker": "^8.0.0",
-    "zod": "^3.21.4"
+  'dependencies': {
+    '@faker-js/faker': '^8.0.0',
+    'zod': '^3.21.4'
   },
-  "devDependencies": {
-    "@types/node": "^18.0.0",
-    "typescript": "^5.0.0"
+  'devDependencies': {
+    '@types/node': '^18.0.0',
+    'typescript': '^5.0.0'
   }
 }
 ```
@@ -277,14 +277,14 @@ This command:
 
 ```json
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "module": "CommonJS",
-    "outDir": "dist/seed",
-    "noEmit": false
+  'extends': './tsconfig.json',
+  'compilerOptions': {
+    'module': 'CommonJS',
+    'outDir': 'dist/seed',
+    'noEmit': false
   },
-  "include": ["src/lib/faker/**/*.ts"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  'include': ['src/lib/faker/**/*.ts'],
+  'exclude': ['node_modules', '**/*.test.ts']
 }
 ```
 
@@ -296,11 +296,11 @@ Edit the counts in saveGeneratedData:
 
 ```typescript
 const saveGeneratedData = () => {
-    const documentTypes = generateDocumentTypes(10);
-    const agencies = generateAgencies(10);
-    const users = generateUsers(agencies, 50);
+    const documentTypes = generateDocumentTypes(10)
+    const agencies = generateAgencies(10)
+    const users = generateUsers(agencies, 50)
     // ... etc
-};
+}
 ```
 
 ### Adding New Data Types

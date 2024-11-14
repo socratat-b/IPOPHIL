@@ -1,2 +1,2 @@
-export * from '@/lib/stores/navigation';
+export * from '@/lib/stores/navigation'
 
