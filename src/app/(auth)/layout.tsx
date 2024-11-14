@@ -1,12 +1,12 @@
 // src/app/(auth)/layout.tsx
 "use client"
 
-import { AppSidebar } from "@/components/custom/sidebar/app-sidebar"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
+import { AppSidebar } from "@/components/custom/sidebar/app-sidebar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
 type ChildrenProps = {
     children: React.ReactNode
