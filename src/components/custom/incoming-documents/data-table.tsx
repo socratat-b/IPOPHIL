@@ -25,8 +25,9 @@ import {
     TableRow,
 } from '@/components/ui/table'
 
-import { DataTablePagination } from '@/components/custom/table/data-table-pagination'
-import { DataTableToolbar } from './data-table-toolbar'
+import { DataTablePagination } from "@/components/custom/table/data-table-pagination"
+import { DataTableToolbar } from "./data-table-toolbar"
+import { EmptyLottie } from "@/components/animation/EmptyLottie"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -129,18 +130,14 @@ export function DataTable<TData, TValue>({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    <lottie-player
-                                        id='no result found'
-                                        ref={ref}
-                                        autoplay
-                                        controls={false}
-                                        loop
-                                        mode='normal'
-                                        src={'animation/1.json'}
-                                        className='w-80 mx-auto'
-                                        title='No Result Found'
-                                    >
-                                    </lottie-player>
+                                       <EmptyLottie 
+                message="No Results Found"
+                description={
+                  columnFilters.length > 0
+                    ? "Try adjusting your filters or search terms"
+                    : "There are no items to display at the moment"
+                }
+            />
                                 </TableCell>
                             </TableRow>
                         )}

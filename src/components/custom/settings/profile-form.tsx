@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
-
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
@@ -12,6 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { Plus, LinkIcon, Loader2, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 
 const profileFormSchema = z.object({
     username: z
@@ -39,137 +40,175 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
 
-// This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {
     bio: 'I own a computer.',
     urls: [
-        { value: 'https://meow-meow-meow.com' },
-        { value: 'http://meow-meow-meow.com/meow' },
+        { value: 'https://example.com' },
+        { value: 'https://example.com/blog' },
     ],
 }
 
 export function ProfileForm() {
+    const [isSubmitting, setIsSubmitting] = useState(false)
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileFormSchema),
         defaultValues,
         mode: 'onChange',
     })
 
-    const { fields, append } = useFieldArray({
+    const { fields, append, remove } = useFieldArray({
         name: 'urls',
         control: form.control,
     })
 
-    function onSubmit(data: ProfileFormValues) {
-        toast('You submitted the following values:', {
-            description: (
-                <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-                    <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-        })
+    async function onSubmit(data: ProfileFormValues) {
+        setIsSubmitting(true)
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1000))
+            toast.success('Profile updated successfully!')
+        } catch (error) {
+            toast.error('Failed to update profile')
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
                     control={form.control}
-                    name='username'
+                    name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel className="text-base font-medium">Username</FormLabel>
                             <FormControl>
-                                <Input placeholder='Username' {...field} />
+                                <Input 
+                                    placeholder="Enter username" 
+                                    {...field}
+                                    className="transition-all focus:ring-2 focus:ring-primary"
+                                />
                             </FormControl>
                             <FormDescription>
-                                This is your public display name. It can be your real name or a
-                                pseudonym. You can only change this once every 30 days.
+                                Your public display name. Limited to one change every 30 days.
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
+
                 <FormField
                     control={form.control}
-                    name='email'
+                    name="email"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel className="text-base font-medium">Email</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder='Select a verified email to display' />
+                                    <SelectTrigger className="transition-all focus:ring-2 focus:ring-primary">
+                                        <SelectValue placeholder="Select verified email" />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                                    <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                                    <SelectItem value='m@support.com'>m@support.com</SelectItem>
+                                    <SelectItem value="m@example.com">m@example.com</SelectItem>
+                                    <SelectItem value="m@google.com">m@google.com</SelectItem>
+                                    <SelectItem value="m@support.com">m@support.com</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormDescription>
-                                You can manage verified email addresses in your{' '}
-                                <Link href='/examples/forms'>email settings</Link>.
+                                Manage emails in your{' '}
+                                <Link href="/settings/account" className="text-primary hover:underline">
+                                    email settings
+                                </Link>
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
+
                 <FormField
                     control={form.control}
-                    name='bio'
+                    name="bio"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Bio</FormLabel>
+                            <FormLabel className="text-base font-medium">Bio</FormLabel>
                             <FormControl>
                                 <Textarea
-                                    placeholder='Tell us a little bit about yourself'
-                                    className='resize-none'
+                                    placeholder="Tell us about yourself..."
+                                    className="resize-none min-h-[120px] transition-all focus:ring-2 focus:ring-primary"
                                     {...field}
                                 />
                             </FormControl>
                             <FormDescription>
-                                You can <span>@mention</span> other users and organizations to
-                                link to them.
+                                Write a brief description about yourself. You can use @mentions.
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <div>
-                    {fields.map((field, index) => (
-                        <FormField
-                            control={form.control}
-                            key={field.id}
-                            name={`urls.${index}.value`}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className={cn(index !== 0 && 'sr-only')}>
-                                        URLs
-                                    </FormLabel>
-                                    <FormDescription className={cn(index !== 0 && 'sr-only')}>
-                                        Add links to your website, blog, or social media profiles.
-                                    </FormDescription>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    ))}
-                    <Button
-                        type='button'
-                        variant={'outline'}
-                        size='sm'
-                        className='mt-2'
-                        onClick={() => append({ value: '' })}
+
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <FormLabel className="text-base font-medium">URLs</FormLabel>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => append({ value: '' })}
+                            className="flex items-center gap-2 hover:bg-primary/10"
+                        >
+                            <Plus className="h-4 w-4" />
+                            Add URL
+                        </Button>
+                    </div>
+
+                    <div className="space-y-4">
+                        {fields.map((field, index) => (
+                            <FormField
+                                control={form.control}
+                                key={field.id}
+                                name={`urls.${index}.value`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <div className="flex items-center gap-2">
+                                            <div className="relative flex-1">
+                                                <LinkIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="https://example.com"
+                                                        className="pl-9 transition-all focus:ring-2 focus:ring-primary"
+                                                    />
+                                                </FormControl>
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => remove(index)}
+                                                className="hover:bg-destructive/10 hover:text-destructive"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex justify-end pt-4">
+                    <Button 
+                        type="submit" 
+                        className="min-w-[120px]"
+                        disabled={isSubmitting}
                     >
-                        Add URL
+                        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isSubmitting ? 'Saving...' : 'Save Changes'}
                     </Button>
                 </div>
-                <Button type='submit'>Update profile</Button>
             </form>
         </Form>
     )
