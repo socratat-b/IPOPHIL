@@ -20,7 +20,7 @@ export function ThemeChange() {
             <Tooltip delayDuration={50}>
                 <TooltipTrigger asChild>
                     <Button
-                        className="switch rounded-sm w-8 h-8 bg-background mr-2"
+                        className="switch rounded-sm w-8 h-8 bg-transparent mr-2"
                         variant={"outline"}
                         size="icon"
                         id="switch"

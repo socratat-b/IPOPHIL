@@ -60,10 +60,10 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 
   const router = useRouter()
 
-  const [isLogoutOpen, setIsModalOpen] = useState(false); 
+  const [isLogoutOpen, setLogoutOpen] = useState(false); 
 
-  const openLogout = () => setIsModalOpen(true);
-  const closeLogout = () => setIsModalOpen(false);
+  const openLogout = () => setLogoutOpen(true);
+  const closeLogout = () => setLogoutOpen(false);
 
   const handleLogout = async () => {
     try {
