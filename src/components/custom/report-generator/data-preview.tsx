@@ -8,6 +8,7 @@ import { formatBadgeText } from '@/lib/controls/helper'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import EmptyLottie from '@/components/animation/EmptyLottie'
 
 export const DataPreview: React.FC<DataPreviewProps> = ({
     filteredData,
@@ -145,18 +146,11 @@ export const DataPreview: React.FC<DataPreviewProps> = ({
                                     ) : (
                                         <TableRow>
                                             <TableCell colSpan={5} className='h-24 text-center'>
-                                                <lottie-player
-                                                    id='no result found'
-                                                    ref={ref}
-                                                    autoplay
-                                                    controls={false}
-                                                    loop
-                                                    mode='normal'
-                                                    src={'animation/empty-box.json'}
+                                            <EmptyLottie 
+                                                    message="No Result Found" 
+                                                    description="Try adjusting your filters or search criteria."
                                                     className='w-1/2 mx-auto'
-                                                    title='No Result Found'
-                                                >
-                                                </lottie-player>
+                                                />
                                             </TableCell>
                                         </TableRow>
                                     )}

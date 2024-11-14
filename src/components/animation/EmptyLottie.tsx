@@ -15,7 +15,7 @@ const EmptyLottie = forwardRef<HTMLDivElement, EmptyLottieProps>(({
   message = 'No Data Found',
   description = 'There are no records to display at the moment',
   className = 'w-60',
-  animationPath = '/animation/1.json'
+  animationPath = '/animation/empty-box.json'
 }, ref) => {
   const [lottieLoaded, setLottieLoaded] = useState(false);
 

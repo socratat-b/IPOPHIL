@@ -27,7 +27,7 @@ import {
 
 import { DataTablePagination } from "@/components/custom/table/data-table-pagination"
 import { DataTableToolbar } from "./data-table-toolbar"
-import { EmptyLottie } from "@/components/animation/EmptyLottie"
+import EmptyLottie from "@/components/animation/EmptyLottie"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
