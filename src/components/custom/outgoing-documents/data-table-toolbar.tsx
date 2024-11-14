@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from '@/components/custom/table/data-table-view-options'
 import { doc_type_samples, doc_status, doc_classification } from '@/lib/dms/data'
 import { DataTableFacetedFilter } from '@/components/custom/table/data-table-faceted-filter'
-import { ExportAllDocument } from './control/export-document'
 import { AddDocumentButton } from '../common/add-document-button'
 import { Icons } from '@/components/ui/icons'
 
@@ -91,9 +90,6 @@ export function DataTableToolbar<TData>({
                 )}
             </div>
             <div className='flex items-center space-x-2'>
-                <ExportAllDocument table={table} />
-                <AddDocumentButton title='Receive' actionType={'Receive'} />
-                <AddDocumentButton actionType='Create' />
                 <DataTableViewOptions table={table} />
             </div>
         </div>
