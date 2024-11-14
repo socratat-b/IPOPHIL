@@ -1,4 +1,3 @@
-// src\lib\services\documents.ts
 import useSWR from 'swr';
 import { useSession } from 'next-auth/react';
 import { JoinedDocument, joinedDocumentSchema } from '@/lib/dms/joined-docs';
@@ -76,10 +75,6 @@ export function useDocuments() {
         }
     );
 
-    /**
-     * For Fixing
-     */
-
     const createDocument = async (documentData: CreateDocumentData) => {
         try {
             const res = await fetch('/api/documents', {
@@ -106,6 +101,111 @@ export function useDocuments() {
         documents: data,
         error,
         createDocument,
+        isLoading: !data && !error,
+    };
+}
+
+export function useIncomingDocuments() {
+    const { data: session } = useSession();
+
+    const { data, error, mutate } = useSWR<JoinedDocument[]>(
+        session?.user ? '/api/incoming-documents' : null,
+        async (url) => {
+            const res = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.message || 'Failed to fetch incoming documents');
+            }
+
+            const data = await res.json() as ApiDocument[];
+            return data.map(transformDocument);
+        },
+        {
+            revalidateOnFocus: false,
+            revalidateIfStale: false,
+            shouldRetryOnError: false,
+        }
+    );
+
+    return {
+        documents: data,
+        error,
+        mutate,
+        isLoading: !data && !error,
+    };
+}
+
+export function useOutgoingDocuments() {
+    const { data: session } = useSession();
+
+    const { data, error, mutate } = useSWR<JoinedDocument[]>(
+        session?.user ? '/api/outgoing-documents' : null,
+        async (url) => {
+            const res = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.message || 'Failed to fetch outgoing documents');
+            }
+
+            const data = await res.json() as ApiDocument[];
+            return data.map(transformDocument);
+        },
+        {
+            revalidateOnFocus: false,
+            revalidateIfStale: false,
+            shouldRetryOnError: false,
+        }
+    );
+
+    return {
+        documents: data,
+        error,
+        mutate,
+        isLoading: !data && !error,
+    };
+}
+
+export function useReceivedDocuments() {
+    const { data: session } = useSession();
+
+    const { data, error, mutate } = useSWR<JoinedDocument[]>(
+        session?.user ? '/api/received-documents' : null,
+        async (url) => {
+            const res = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.message || 'Failed to fetch received documents');
+            }
+
+            const data = await res.json() as ApiDocument[];
+            return data.map(transformDocument);
+        },
+        {
+            revalidateOnFocus: false,
+            revalidateIfStale: false,
+            shouldRetryOnError: false,
+        }
+    );
+
+    return {
+        documents: data,
+        error,
+        mutate,
         isLoading: !data && !error,
     };
 }
