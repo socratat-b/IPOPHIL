@@ -4,29 +4,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
-import { ModeMenu } from "../theme/theme-button"
 import { Icons } from "@/components/ui/icons"
+import { useSession } from "next-auth/react"
 
 export function UserHeaderNav() {
-
+  const { data: session } = useSession()
   const router = useRouter()
 
-  const handleLogout = async () => {
-    try {
-      /**
-        * mar-note:
-        *    Add any logout logic here (e.g., clearing cookies, local storage, etc.)
-        *    For example:
-        *    await signOut() // if using next-auth
-        *    or
-        *    localStorage.removeItem('token')
-        *    or your custom logout logic
-        */
-      router.push('/')
-    } catch (error) {
-      console.error('Logout failed:', error)
-    }
-  }
+  // commented for now: 
+  // const handleLogout = async () => {
+  //   try {
+  //     signOut({ callbackUrl: "/" })
+  //   } catch (error) {
+  //     console.error('Logout failed:', error)
+  //   }
+  // }
 
   return (
     <DropdownMenu>
@@ -41,9 +33,11 @@ export function UserHeaderNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">user</p>
+            <p className="text-sm font-medium leading-none">
+              {`${session?.user.first_name ?? ''} ${session?.user.middle_name ?? ''}. ${session?.user.last_name ?? ''}`.trim()}
+            </p>
             <p className="text-xs leading-none text-muted-foreground">
-              user@gmail.com
+              {session?.user.email}
             </p>
           </div>
         </DropdownMenuLabel>
