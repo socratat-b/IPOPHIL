@@ -37,7 +37,6 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
   const [isLogoutOpen, setIsLogoutOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  const openLogout = () => setIsLogoutOpen(true)
   const closeLogout = () => setIsLogoutOpen(false)
 
   const handleLogout = async () => {
