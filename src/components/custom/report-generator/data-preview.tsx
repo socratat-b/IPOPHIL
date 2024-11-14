@@ -152,7 +152,7 @@ export const DataPreview: React.FC<DataPreviewProps> = ({
                                                     controls={false}
                                                     loop
                                                     mode='normal'
-                                                    src={'animation/1.json'}
+                                                    src={'animation/empty-box.json'}
                                                     className='w-1/2 mx-auto'
                                                     title='No Result Found'
                                                 >

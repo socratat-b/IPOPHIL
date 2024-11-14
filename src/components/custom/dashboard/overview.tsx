@@ -49,42 +49,57 @@ export function Overview({ documents }: OverviewProps) {
     }, [])
 
     const data: ChartDataItem[] = documents.reduce((acc: ChartDataItem[], doc) => {
-        const status = doc.status.charAt(0).toUpperCase() + doc.status.slice(1)
-        const existingStatus = acc.find(item => item.name === status)
-
+        const status = doc.status.charAt(0).toUpperCase() + doc.status.slice(1);
+        const existingStatus = acc.find(item => item.name === status);
+    
         if (existingStatus) {
-            existingStatus.value++
+            existingStatus.value++;
         } else {
+            // Hardcode colors for each status here
             acc.push({
                 name: status,
                 value: 1,
-                color: getStatusColor(status),
-                percentage: 0
-            })
+                color:
+                    status === 'Incoming' ? 'hsl(var(--chart-2))' :
+                    status === 'Received' ? '#34D399' :
+                    status === 'Outgoing' ? 'hsl(var(--chart-3))' :
+                    status === 'Completed' ? 'hsl(var(--chart-4))' :
+                    status === 'For_dispatch' ? '#818CF8' :
+                    status === 'Dispatch' ? 'hsl(var(--chart-1))' :
+                    status === 'Intransit' ? 'hsl(var(--chart-4))' :
+                    'hsl(var(--primary))', // Default color if status doesn't match any known statuses
+                percentage: 0,
+            });
         }
-        return acc
-    }, [])
-
-    const total = documents.length
+        return acc;
+    }, []);
+    
+    const total = documents.length;
     data.forEach(item => {
-        item.percentage = Number(((item.value / total) * 100).toFixed(1))
-    })
+        item.percentage = Number(((item.value / total) * 100).toFixed(1));
+    });
 
-    function getStatusColor(status: string): string {
-        const colors: Record<string, string> = {
-            Incoming: '#818CF8',
-            Received: '#34D399',
-            Outgoing: '#F472B6',
-            Completed: '#60A5FA',
-            For_dispatch: '#FBBF24'
-        }
-        return colors[status] || '#94A3B8'
-    }
+    // function getStatusColor(status: string): string {
+    //     const colors: Record<string, string> = {
+    //         Incoming: '#818CF8',
+    //         Received: '#34D399',
+    //         Outgoing: '#F472B6',
+    //         Completed: '#60A5FA',
+    //         For_dispatch: '#FBBF24'
+    //     }
+    //     return colors[status] || '#94A3B8'
+    // }
 
     const chartColors = {
         pie: data.map(item => item.color),
-        bar: ['#818CF8', '#34D399', '#F472B6', '#60A5FA', '#FBBF24'],
-        line: '#6366F1'
+         bar: [
+            'hsl(var(--chart-1))',
+            'hsl(var(--chart-4))',
+            'hsl(var(--chart-3))',
+            'hsl(var(--chart-2))',
+            'hsl(var(--chart-5))'
+        ],
+        line: 'hsl(var(--primary))'
     }
 
     const CustomTooltip = ({ active, payload }: TooltipProps) => {
@@ -93,25 +108,25 @@ export function Overview({ documents }: OverviewProps) {
             const Icon = getIconForStatus(data.name)
             return (
                 <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className='bg-white p-3 rounded-lg shadow-lg border border-gray-100'
-                    style={{
-                        transform: 'translateY(100%)',
-                        marginLeft: '10px',
-                        zIndex: 50, // Higher zIndex for the tooltip
-                        position: 'relative', // Position relative for stacking
-                    }}
-                >
-                    <div className='flex items-center gap-2 mb- '>
-                        <Icon className='w-4 h-4' style={{ color: data.color }} />
-                        <span className='font-semibold text-gray-800'>{data.name}</span>
-                    </div>
-                    <div className='text-sm text-gray-600'>
-                        <div>Count: {data.value}</div>
-                        <div>Percentage: {data.percentage}%</div>
-                    </div>
-                </motion.div>
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className='bg-popover p-3 rounded-lg shadow-lg border border-border'
+                style={{
+                    transform: 'translateY(100%)',
+                    marginLeft: '10px',
+                    zIndex: 50, // Higher zIndex for the tooltip
+                    position: 'relative', // Position relative for stacking
+                }}
+            >
+                <div className='flex items-center gap-2 mb-2'>
+                    <Icon className='w-4 h-4' style={{ color: data.color }} />
+                    <span className='font-semibold text-popover-foreground'>{data.name}</span>
+                </div>
+                <div className='text-sm text-muted-foreground'>
+                    <div>Count: {data.value}</div>
+                    <div>Percentage: {data.percentage}%</div>
+                </div>
+            </motion.div>
             )
         }
         return null
@@ -121,10 +136,10 @@ export function Overview({ documents }: OverviewProps) {
         <div className='w-full pt-6'>
             <div className='flex justify-between items-center mb-2'>
                 <div className='space-y-1'>
-                    <motion.h2
+                <motion.h2
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className='text-l font-bold text-gray-800 tracking-tight pl-4'
+                        className='text-l font-bold text-foreground tracking-tight pl-4'
                     >
                         Document Status Overview
                     </motion.h2>
@@ -132,7 +147,7 @@ export function Overview({ documents }: OverviewProps) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.2 }}
-                        className='text-sm text-gray-500 pl-4'
+                        className='text-sm text-muted-foreground pl-4'
                     >
                         Total Documents: {total}
                     </motion.p>
@@ -301,7 +316,7 @@ export function Overview({ documents }: OverviewProps) {
                                 top: '50%',
                                 left: '50%',
                                 transform: 'translate(-50%, -50%)',
-                                zIndex: 0,
+                                zIndex: 1,
                             }}
                         />
 
