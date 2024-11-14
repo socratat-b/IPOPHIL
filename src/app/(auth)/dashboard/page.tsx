@@ -1,27 +1,29 @@
 "use client"
 
-import React, { useMemo, useEffect, useState, ComponentType } from "react"
 import RecentDocuments from "@/components/custom/dashboard/recent-documents"
 
+import type { JoinedDocument } from "@/lib/dms/joined-docs"
+
 import { LineChart, Line } from "recharts"
+import { useSession } from "next-auth/react"
 import { Icons } from "@/components/ui/icons"
 import { Stats, StatusCounts } from "@/lib/types"
-import type { JoinedDocument } from "@/lib/dms/joined-docs"
 import { Overview } from "@/components/custom/dashboard/overview"
+import { useMemo, useEffect, useState, ComponentType } from "react"
 import { getJoinedDocuments } from "@/lib/services/joined-documents"
 import { DashboardHeader } from "@/components/custom/dashboard/header"
 import { AddDocumentButton } from "@/components/custom/common/add-document-button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {
-    const [isMounted, setIsMounted] = useState(false);
+    const [isMounted, setIsMounted] = useState(false)
 
     useEffect(() => {
-        setIsMounted(true);
-    }, []);
+        setIsMounted(true)
+    }, [])
 
     if (!isMounted) {
-        return <div className="h-[40px]" />;
+        return <div className="h-[40px]" />
     }
 
     return (
@@ -36,8 +38,8 @@ const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {
                 />
             </LineChart>
         </div>
-    );
-};
+    )
+}
 
 const StatCard = ({
     title,
@@ -46,11 +48,11 @@ const StatCard = ({
     change,
     data,
 }: {
-    title: string;
-    icon: ComponentType<{ className?: string }>;
-    count: number;
-    change: number;
-    data: Array<{ value: number }>;
+    title: string
+    icon: ComponentType<{ className?: string }>
+    count: number
+    change: number
+    data: Array<{ value: number }>
 }) => (
     <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -68,10 +70,11 @@ const StatCard = ({
             </div>
         </CardContent>
     </Card>
-);
+)
 
 export default function Page() {
-    const [documents, setDocuments] = useState<JoinedDocument[]>([]);
+    const { data: session } = useSession()
+    const [documents, setDocuments] = useState<JoinedDocument[]>([])
 
     useEffect(() => {
         async function fetchData() {
@@ -89,13 +92,13 @@ export default function Page() {
                 setDocuments([])
             }
         }
-        fetchData();
-    }, []);
+        fetchData()
+    }, [])
 
     const stats = useMemo<Stats>(() => {
-        const now = new Date();
-        const currentMonth = now.getMonth();
-        const currentYear = now.getFullYear();
+        const now = new Date()
+        const currentMonth = now.getMonth()
+        const currentYear = now.getFullYear()
 
         const currentCounts: StatusCounts = {
             incoming: 0,
@@ -103,7 +106,7 @@ export default function Page() {
             outgoing: 0,
             forDispatch: 0,
             completed: 0,
-        };
+        }
 
         const lastMonthCounts: StatusCounts = {
             incoming: 0,
@@ -111,12 +114,12 @@ export default function Page() {
             outgoing: 0,
             forDispatch: 0,
             completed: 0,
-        };
+        }
 
         documents.forEach((doc) => {
-            const docDate = new Date(doc.date_created);
-            const docMonth = docDate.getMonth();
-            const docYear = docDate.getFullYear();
+            const docDate = new Date(doc.date_created)
+            const docMonth = docDate.getMonth()
+            const docYear = docDate.getFullYear()
 
             const counts =
                 docMonth === currentMonth && docYear === currentYear
@@ -124,34 +127,34 @@ export default function Page() {
                     : docMonth === (currentMonth - 1 + 12) % 12 &&
                         (docMonth === 11 ? docYear === currentYear - 1 : docYear === currentYear)
                         ? lastMonthCounts
-                        : null;
+                        : null
 
             if (counts) {
-                const status = doc.status.toLowerCase();
+                const status = doc.status.toLowerCase()
                 switch (status) {
                     case "incoming":
-                        counts.incoming++;
-                        break;
+                        counts.incoming++
+                        break
                     case "recieved":
-                        counts.recieved++;
-                        break;
+                        counts.recieved++
+                        break
                     case "outgoing":
-                        counts.outgoing++;
-                        break;
+                        counts.outgoing++
+                        break
                     case "for_dispatch":
-                        counts.forDispatch++;
-                        break;
+                        counts.forDispatch++
+                        break
                     case "completed":
-                        counts.completed++;
-                        break;
+                        counts.completed++
+                        break
                 }
             }
-        });
+        })
 
         const getPercentageChange = (current: number, previous: number): number => {
-            if (previous === 0) return current > 0 ? 100 : 0;
-            return Number(((current - previous) / previous * 100).toFixed(1));
-        };
+            if (previous === 0) return current > 0 ? 100 : 0
+            return Number(((current - previous) / previous * 100).toFixed(1))
+        }
 
         return {
             current: currentCounts,
@@ -161,17 +164,17 @@ export default function Page() {
                 outgoing: getPercentageChange(currentCounts.outgoing, lastMonthCounts.outgoing),
                 completed: getPercentageChange(currentCounts.completed, lastMonthCounts.completed),
             },
-        };
-    }, [documents]);
+        }
+    }, [documents])
 
     const chartData = useMemo(() => {
-        const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-        const today = new Date();
-        let currentDate = new Date(today);
-        currentDate.setDate(currentDate.getDate() - 4);
+        const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+        const today = new Date()
+        let currentDate = new Date(today)
+        currentDate.setDate(currentDate.getDate() - 4)
 
         const weeklyData = daysOfWeek.map(() => {
-            const dateStr = currentDate.toISOString().split("T")[0];
+            const dateStr = currentDate.toISOString().split("T")[0]
             const dayData = {
                 incoming: documents.filter(
                     (doc) =>
@@ -197,28 +200,28 @@ export default function Page() {
                         doc.date_created &&
                         doc.date_created.split("T")[0] === dateStr
                 ).length,
-            };
-            currentDate.setDate(currentDate.getDate() + 1);
-            return dayData;
-        });
+            }
+            currentDate.setDate(currentDate.getDate() + 1)
+            return dayData
+        })
 
         return {
             incoming: weeklyData.map((day) => ({ value: day.incoming })),
             recieved: weeklyData.map((day) => ({ value: day.recieved })),
             outgoing: weeklyData.map((day) => ({ value: day.outgoing })),
             completed: weeklyData.map((day) => ({ value: day.completed })),
-        };
-    }, [documents]);
+        }
+    }, [documents])
 
     const recentDocs = useMemo(() => {
         return [...documents]
             .sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime())
-            .slice(0, 5);
-    }, [documents]);
+            .slice(0, 5)
+    }, [documents])
 
     return (
         <>
-            <DashboardHeader />
+            <DashboardHeader userName={session?.user.first_name} />
             <div className="flex flex-1 flex-col gap-4 p-4">
                 <div className="hidden flex-col md:flex">
                     <div className="flex-1 space-y-4">
@@ -282,5 +285,5 @@ export default function Page() {
                 </div>
             </div>
         </>
-    );
+    )
 }

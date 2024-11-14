@@ -1,3 +1,4 @@
+// src\app\_error.tsx
 import { NextPageContext } from 'next'
 import Link from 'next/link'
 

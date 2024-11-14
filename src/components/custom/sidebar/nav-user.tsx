@@ -27,6 +27,7 @@ import { ModeMenu } from "../theme/theme-button"
 
 import { useRouter } from "next/navigation"
 import { Icons } from "@/components/ui/icons"
+import { signOut } from "next-auth/react"
 
 export function NavUser({
   user,
@@ -42,16 +43,7 @@ export function NavUser({
 
   const handleLogout = async () => {
     try {
-      /**
-        * mar-note:
-        *    Add any logout logic here (e.g., clearing cookies, local storage, etc.)
-        *    For example:
-        *    await signOut() // if using next-auth
-        *    or
-        *    localStorage.removeItem('token')
-        *    or your custom logout logic
-        */
-      router.push('/')
+      signOut({ callbackUrl: "/" })
     } catch (error) {
       console.error('Logout failed:', error)
     }
