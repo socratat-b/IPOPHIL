@@ -10,6 +10,7 @@ import { formatBadgeText, formatBadgeTextAllCaps } from '@/lib/controls'
 import { DataTableColumnHeader } from '../table/data-table-column-header'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Checkbox } from '@/components/ui/checkbox'
+import DocumentCodeCell from '../code-cell/document-code-cell'
 
 export const columns: ColumnDef<Document>[] = [
     {
@@ -36,17 +37,17 @@ export const columns: ColumnDef<Document>[] = [
         enableSorting: false,
         enableHiding: false,
     },
-    // {
-    //     id: 'print-code',
-    //     header: ({ column }) => (
-    //         <DataTableColumnHeader column={column} title='Scan' />
-    //     ),
-    //     cell: ({ row }) => {
-    //         const data = row.original
-    //         return <DocumentCodeCell code={data.code} />
-    //     },
-    //     enableSorting: false,
-    // },
+    {
+        id: 'print-code',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Scan' />
+        ),
+        cell: ({ row }) => {
+            const data = row.original
+            return <DocumentCodeCell code={data.code} />
+        },
+        enableSorting: false,
+    },
     {
         id: 'document',
         accessorFn: (row) => row,
