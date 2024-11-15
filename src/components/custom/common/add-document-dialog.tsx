@@ -22,6 +22,7 @@ import { useDocuments } from '@/lib/services/documents'
 import { useDocumentTypes } from '@/lib/services/document-types'
 import { doc_classification } from '@/lib/dms/data'
 import Image from 'next/image'
+import { useState } from 'react'
 
 // Types
 type CreateDocumentData = z.infer<typeof createDocumentSchema>
