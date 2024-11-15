@@ -1,26 +1,61 @@
-import type { Metadata } from 'next'
+'use client'
+
+import { Skeleton } from '@/components/ui/skeleton'
+import { useDispatchDocuments } from '@/lib/services/documents'
 import { DashboardHeader } from '@/components/custom/dashboard/header'
+import { columns } from '@/components/custom/disptach-documents/columns'
+import { DataTable } from '@/components/custom/disptach-documents/data-table'
 
-export const metadata: Metadata = {
-    title: 'DMS | Dispatched Documents',
-    description: 'IPOPHIL Dispatched Documents',
-}
+export default function DocumentsPage() {
+    const { documents, error, isLoading } = useDispatchDocuments()
 
-export default function Page() {
+    if (isLoading) {
+        return (
+            <>
+                <DashboardHeader
+                    breadcrumbs={[
+                        { label: 'Documents', href: '/documents' },
+                        { label: 'For Disptach', active: true },
+                    ]}
+                />
+                <div className='flex flex-1 flex-col gap-4 p-4'>
+                    <Skeleton className='h-[500px] w-full' />
+                </div>
+            </>
+        )
+    }
+
+    if (error) {
+        return (
+            <>
+                <DashboardHeader
+                    breadcrumbs={[
+                        { label: 'Documents', href: '/documents' },
+                        { label: 'For Disptach', active: true },
+                    ]}
+                />
+                <div className='flex flex-1 flex-col gap-4 p-4'>
+                    <p className='text-red-500'>Error loading documents. Please try again later.</p>
+                </div>
+            </>
+        )
+    }
+
     return (
         <>
             <DashboardHeader
                 breadcrumbs={[
-                    { label: 'Dispatched', href: '/Dispatched', active: true },
+                    { label: 'Documents', href: '/documents' },
+                    { label: 'For Disptach', active: true },
                 ]}
             />
-            <div className='flex flex-1 flex-col gap-4 p-4 pt-6'>
-                Dispatched
-                <div className='grid auto-rows-min gap-4 md:grid-cols-3'>
-                    <div className='aspect-video rounded-xl bg-muted/50' />
-                    <div className='aspect-video rounded-xl bg-muted/50' />
-                    <div className='aspect-video rounded-xl bg-muted/50' />
-                </div>
+
+            <div className='flex flex-1 flex-col gap-4 p-4'>
+                <DataTable
+                    data={documents || []}
+                    columns={columns}
+                    selection={true}
+                />
             </div>
         </>
     )
