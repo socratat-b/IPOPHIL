@@ -61,9 +61,9 @@ export function DataTableRowActions<TData>({
     }
 
     // Function to change document status
-    const handleStatusChange = (newStatus: string) => {
-        toast.info(`Status change to ${newStatus} coming soon`)
-    }
+    // const handleStatusChange = (newStatus: string) => {
+    //     toast.info(`Status change to ${newStatus} coming soon`)
+    // }
 
     // Function to delete document
     const handleDelete = () => {
@@ -109,7 +109,7 @@ export function DataTableRowActions<TData>({
                         Release
                     </DropdownMenuItem>
 
-                    <DropdownMenuSeparator />
+                    {/* <DropdownMenuSeparator />
 
                     <DropdownMenuSub>
                         <DropdownMenuSubTrigger onClick={(e) => e.stopPropagation()}>
@@ -132,7 +132,7 @@ export function DataTableRowActions<TData>({
                         </DropdownMenuSubContent>
                     </DropdownMenuSub>
 
-                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator /> */}
 
                     <DropdownMenuItem
                         onClick={(e) => handleAction(e, handleDelete)}

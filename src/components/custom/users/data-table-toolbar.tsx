@@ -7,6 +7,7 @@ import { DataTableViewOptions } from '@/components/custom/table/data-table-view-
 import { user_status, user_role } from '@/lib/dms/data'
 import { DataTableFacetedFilter } from '@/components/custom/table/data-table-faceted-filter'
 import { Icons } from '@/components/ui/icons'
+import { AddUserButton } from './control/add-user-button'
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -58,6 +59,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
                     </Button>
                 )}
             </div>
+            <AddUserButton actionType={'Create'} />
             <DataTableViewOptions table={table} />
         </div>
     )
