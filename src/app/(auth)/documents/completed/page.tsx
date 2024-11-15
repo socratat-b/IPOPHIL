@@ -1,7 +1,7 @@
 'use client'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import { useCompletedDocuments, useDispatchDocuments } from '@/lib/services/documents'
+import { useCompletedDocuments } from '@/lib/services/documents'
 import { DashboardHeader } from '@/components/custom/dashboard/header'
 import { columns } from '@/components/custom/completed-documents/columns'
 import { DataTable } from '@/components/custom/completed-documents/data-table'

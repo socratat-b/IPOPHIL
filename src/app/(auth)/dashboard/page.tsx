@@ -149,7 +149,7 @@ export default function Page() {
     const chartData = useMemo(() => {
         const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
         const today = new Date()
-        let currentDate = new Date(today)
+        const currentDate = new Date(today)
         currentDate.setDate(currentDate.getDate() - 4)
 
         const weeklyData = daysOfWeek.map(() => {

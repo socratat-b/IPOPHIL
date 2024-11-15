@@ -142,14 +142,14 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onCloseAction }) =
 
                     {/* Agency */}
                     <div>
-                        <label htmlFor='agency_id' className='block mb-1'>Agency *</label>
+                        <label htmlFor='agency_id' className='block mb-1'>Bureau/Office/Unit *</label>
                         <Controller
                             name="agency_id"
                             control={form.control}
                             render={({ field }) => (
                                 <Select onValueChange={field.onChange} value={field.value}>
                                     <SelectTrigger className='w-full'>
-                                        <SelectValue placeholder='Select an agency' />
+                                        <SelectValue placeholder='Select an Bureau/Office/Unit' />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {/* Replace with your agency data */}

@@ -30,9 +30,12 @@ declare module 'next-auth' {
     }
 
     /**
-     * Extending the User interface to include NextAuthUser structure.
+     * mar note:
+     * If you want to extend the User interface to include NextAuthUser structure.
+     * 
+     * use this:
+     * interface User extends NextAuthUser {}
      */
-    interface User extends NextAuthUser { }
 }
 
 declare module 'next-auth/jwt' {
@@ -166,7 +169,7 @@ export const authOptions: NextAuthOptions = {
                         'Authorization': `Bearer ${token.accessToken}`,
                         'Content-Type': 'application/json',
                     },
-                    credentials: 'include' // Include cookies if using HTTP-only cookies
+                    credentials: 'include'
                 })
 
                 // Handle 401 specifically
@@ -185,6 +188,7 @@ export const authOptions: NextAuthOptions = {
                     accessTokenExpires: Date.now() + 60 * 60 * 1000
                 }
             } catch (error) {
+                console.error('Error refreshing token:', error)
                 return { ...token, error: 'RefreshTokenError' }
             }
         },

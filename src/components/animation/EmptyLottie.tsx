@@ -1,7 +1,6 @@
-// src\components\animation\EmptyLottie.tsx
 'use client'
 
-import React, { useRef, useEffect, forwardRef, useState } from 'react'
+import React, { useEffect, forwardRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
 interface EmptyLottieProps {
@@ -16,7 +15,7 @@ const EmptyLottie = forwardRef<HTMLDivElement, EmptyLottieProps>(({
   description = 'There are no records to display at the moment',
   className = 'w-60',
   animationPath = '/animation/empty-box.json'
-}, ref) => {
+}, ref) => { // Use the ref parameter
   const [lottieLoaded, setLottieLoaded] = useState(false);
 
   useEffect(() => {
@@ -25,6 +24,7 @@ const EmptyLottie = forwardRef<HTMLDivElement, EmptyLottieProps>(({
 
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -56,5 +56,8 @@ const EmptyLottie = forwardRef<HTMLDivElement, EmptyLottieProps>(({
     </motion.div>
   );
 });
+
+// mar-note: for debugging purposes set displayName
+EmptyLottie.displayName = 'EmptyLottie';
 
 export default EmptyLottie;
