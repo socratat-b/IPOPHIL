@@ -198,7 +198,7 @@ const ScanDocumentForm = ({ onSubmit, onClose, actionType }: {
                     </ol>
                     <div className='flex justify-center mt-6'>
                         <Image 
-                            src="/images/scanner.png" 
+                            src="/images/scan.png" 
                             alt="Scanner" 
                             width={150} 
                             height={150}
