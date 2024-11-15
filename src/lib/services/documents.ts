@@ -188,3 +188,72 @@ export function useReceivedDocuments() {
         isLoading: !data && !error,
     }
 }
+
+export function useDispatchDocuments() {
+    const { data: session } = useSession()
+
+    const { data, error, mutate } = useSWR<JoinedDocument[]>(
+        session?.user ? '/api/dispatch-documents' : null,
+        async (url) => {
+            const res = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+
+            if (!res.ok) {
+                const error = await res.json()
+                throw new Error(error.message || 'Failed to fetch received documents')
+            }
+
+            const data = await res.json() as ApiDocument[]
+            return data.map(transformDocument)
+        },
+        {
+            revalidateOnFocus: false,
+            revalidateIfStale: false,
+            shouldRetryOnError: false,
+        }
+    )
+
+    return {
+        documents: data,
+        error,
+        mutate,
+        isLoading: !data && !error,
+    }
+}
+
+export function useCompletedDocuments() {
+    const { data: session } = useSession()
+    const { data, error, mutate } = useSWR<JoinedDocument[]>(
+        session?.user ? '/api/completed-documents' : null,
+        async (url) => {
+            const res = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+
+            if (!res.ok) {
+                const error = await res.json()
+                throw new Error(error.message || 'Failed to fetch received documents')
+            }
+
+            const data = await res.json() as ApiDocument[]
+            return data.map(transformDocument)
+        },
+        {
+            revalidateOnFocus: false,
+            revalidateIfStale: false,
+            shouldRetryOnError: false,
+        }
+    )
+
+    return {
+        documents: data,
+        error,
+        mutate,
+        isLoading: !data && !error,
+    }
+}

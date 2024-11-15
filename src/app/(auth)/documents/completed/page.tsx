@@ -1,26 +1,61 @@
-import type { Metadata } from 'next'
+'use client'
+
+import { Skeleton } from '@/components/ui/skeleton'
+import { useCompletedDocuments, useDispatchDocuments } from '@/lib/services/documents'
 import { DashboardHeader } from '@/components/custom/dashboard/header'
+import { columns } from '@/components/custom/completed-documents/columns'
+import { DataTable } from '@/components/custom/completed-documents/data-table'
 
-export const metadata: Metadata = {
-    title: 'DMS | Completed Documents',
-    description: 'IPOPHIL Completed Documents',
-}
+export default function DocumentsPage() {
+    const { documents, error, isLoading } = useCompletedDocuments()
 
-export default function Page() {
+    if (isLoading) {
+        return (
+            <>
+                <DashboardHeader
+                    breadcrumbs={[
+                        { label: 'Documents', href: '/documents' },
+                        { label: 'Completed', active: true },
+                    ]}
+                />
+                <div className='flex flex-1 flex-col gap-4 p-4'>
+                    <Skeleton className='h-[500px] w-full' />
+                </div>
+            </>
+        )
+    }
+
+    if (error) {
+        return (
+            <>
+                <DashboardHeader
+                    breadcrumbs={[
+                        { label: 'Documents', href: '/documents' },
+                        { label: 'Completed', active: true },
+                    ]}
+                />
+                <div className='flex flex-1 flex-col gap-4 p-4'>
+                    <p className='text-red-500'>Error loading documents. Please try again later.</p>
+                </div>
+            </>
+        )
+    }
+
     return (
         <>
             <DashboardHeader
                 breadcrumbs={[
-                    { label: 'Completed', href: '/completed', active: true },
+                    { label: 'Documents', href: '/documents' },
+                    { label: 'Completed', active: true },
                 ]}
             />
-            <div className='flex flex-1 flex-col gap-4 p-4 pt-6'>
-                Completed
-                <div className='grid auto-rows-min gap-4 md:grid-cols-3'>
-                    <div className='aspect-video rounded-xl bg-muted/50' />
-                    <div className='aspect-video rounded-xl bg-muted/50' />
-                    <div className='aspect-video rounded-xl bg-muted/50' />
-                </div>
+
+            <div className='flex flex-1 flex-col gap-4 p-4'>
+                <DataTable
+                    data={documents || []}
+                    columns={columns}
+                    selection={true}
+                />
             </div>
         </>
     )
