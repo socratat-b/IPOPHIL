@@ -12,6 +12,10 @@ export default function DocumentsPage() {
     const { documents: outgoingDocuments, isLoading: outgoingLoading } = useOutgoingDocuments()
     const { documents: receivedDocuments, isLoading: receivedLoading } = useReceivedDocuments()
 
+    if (outgoingLoading || receivedLoading) {
+        return <div>Loading...</div>
+    }
+
     return (
         <>
             <DashboardHeader

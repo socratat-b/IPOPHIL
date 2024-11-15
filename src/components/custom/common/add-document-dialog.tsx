@@ -197,10 +197,10 @@ const ScanDocumentForm = ({ onSubmit, onClose, actionType }: {
                         <li>If the scanner fails to detect the code, manually input the code into the input box.</li>
                     </ol>
                     <div className='flex justify-center mt-6'>
-                        <Image 
-                            src="/images/scan.png" 
-                            alt="Scanner" 
-                            width={150} 
+                        <Image
+                            src="/images/scan.png"
+                            alt="Scanner"
+                            width={150}
                             height={150}
                             className='opacity-50'
                         />
@@ -224,8 +224,8 @@ const ScanDocumentForm = ({ onSubmit, onClose, actionType }: {
                             placeholder="Enter document code"
                             className='flex-1'
                         />
-                        <Button 
-                            onClick={handleScan} 
+                        <Button
+                            onClick={handleScan}
                             disabled={isLoading}
                             variant='default'
                         >
@@ -258,10 +258,10 @@ const ScanDocumentForm = ({ onSubmit, onClose, actionType }: {
                                 </div>
                                 <div>
                                     <label className='text-sm font-medium'>Date Created</label>
-                                    <Input 
-                                        value={new Date(documentDetails.date_created).toLocaleDateString()} 
-                                        readOnly 
-                                        className='mt-1' 
+                                    <Input
+                                        value={new Date(documentDetails.date_created).toLocaleDateString()}
+                                        readOnly
+                                        className='mt-1'
                                     />
                                 </div>
                             </div>

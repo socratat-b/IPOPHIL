@@ -132,8 +132,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                   <Image src='/logo.svg' alt='Logo' width={32} height={32} priority />
                 </div>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
-                  <span className='truncate font-semibold'>IPHOPHIL</span>
-                  <span className='truncate text-xs'>DMS</span>
+                  <span className='truncate font-semibold'>IPOPHL</span>
                 </div>
               </a>
             </SidebarMenuButton>
