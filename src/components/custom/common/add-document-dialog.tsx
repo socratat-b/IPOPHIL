@@ -16,10 +16,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { createDocumentSchema } from '@/lib/validations/documents/create_documents'
 import { scanDocumentSchema } from '@/lib/validations/documents/scan_documents'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { HelpScanCard } from '@/components/custom/common/help-scan-card'
+import { QrCode } from 'lucide-react'
 import { z } from 'zod'
 import { useState } from 'react'
 import { useDocuments } from '@/lib/services/documents'
+import Image from 'next/image'
 
 // Types
 type CreateDocumentData = z.infer<typeof createDocumentSchema>
@@ -121,39 +122,150 @@ const ScanDocumentForm = ({ onSubmit, onClose, actionType }: {
     onClose: () => void
     actionType: ActionType
 }) => {
+    const { documents = [] } = useDocuments()
+    const [documentCode, setDocumentCode] = useState('')
+    const [documentDetails, setDocumentDetails] = useState<any>(null)
+    const [isLoading, setIsLoading] = useState(false)
     const { handleSubmit, setValue } = useForm<ScanDocumentData>({
         resolver: zodResolver(scanDocumentSchema),
     })
 
-    const handleCodeChange = (code: string) => {
-        setValue('code', code) // Update form value with scanned code
+    const handleScan = async () => {
+        setIsLoading(true)
+        setValue('code', documentCode)
+
+        try {
+            // Find document in existing documents
+            const foundDoc = documents.find(doc => doc.code === documentCode)
+            if (foundDoc) {
+                setDocumentDetails(foundDoc)
+                toast.success('Document found')
+            } else {
+                setDocumentDetails(null)
+                toast.error('Document not found')
+            }
+        } catch (error) {
+            toast.error('Error scanning document')
+            setDocumentDetails(null)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col space-y-4'>
-            <HelpScanCard onCodeChange={handleCodeChange} actionType={actionType} />
-            {/* mockDocuments={[]} */}
+        <div className='grid grid-cols-2 gap-6 p-4'>
+            {/* Left Side - Scanning Instructions */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Scanning Instructions</CardTitle>
+                </CardHeader>
+                <CardContent className='space-y-4'>
+                    <p className='text-sm text-muted-foreground'>
+                        Follow these steps to scan the document's QR or Barcode using a dedicated scanner.
+                    </p>
+                    <ol className='text-sm list-decimal list-inside space-y-2'>
+                        <li>Click the scan button next to the input box on the right.</li>
+                        <li>Place the document's QR code or barcode under the scanner.</li>
+                        <li>Wait for the scanner to automatically detect and fill the code in the input box. The preview
+                            of the document or document details will be seen on the preview panel if the scanning is
+                            successful.</li>
+                        <li>If the scanner fails to detect the code, manually input the code into the input box.</li>
+                    </ol>
+                    <div className='flex justify-center mt-6'>
+                        <Image 
+                            src="/images/scanner.png" 
+                            alt="Scanner" 
+                            width={150} 
+                            height={150}
+                            className='opacity-50'
+                        />
+                    </div>
+                </CardContent>
+            </Card>
 
-            <div className='flex justify-end space-x-2'>
-                <Button
-                    type='submit'
-                    variant='default'
-                    onClick={() => {
-                        toast.success(`Document ${actionType}`, {
-                            description: `Your document has been successfully ${actionType.toLowerCase()}d.`,
-                        })
-                        onClose() // Close the dialog after showing success
-                    }}
-                >
-                    Proceed
-                </Button>
-                <DialogClose asChild>
-                    <Button variant='secondary' onClick={onClose}>
-                        Cancel
+            {/* Right Side - Document Preview Panel */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className='flex items-center gap-2'>
+                        <QrCode className='w-5 h-5' />
+                        Document Preview Panel
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className='space-y-4'>
+                    <div className='flex gap-2'>
+                        <Input
+                            value={documentCode}
+                            onChange={(e) => setDocumentCode(e.target.value)}
+                            placeholder="Enter document code"
+                            className='flex-1'
+                        />
+                        <Button 
+                            onClick={handleScan} 
+                            disabled={isLoading}
+                            variant='default'
+                        >
+                            {isLoading ? "Scanning..." : "Scan"}
+                        </Button>
+                    </div>
+
+                    {documentDetails && (
+                        <div className='space-y-4'>
+                            <div className='grid grid-cols-2 gap-4'>
+                                <div>
+                                    <label className='text-sm font-medium'>Origin Office</label>
+                                    <Input value={documentDetails.origin_office} readOnly className='mt-1' />
+                                </div>
+                                <div>
+                                    <label className='text-sm font-medium'>Subject/Title</label>
+                                    <Input value={documentDetails.title} readOnly className='mt-1' />
+                                </div>
+                                <div>
+                                    <label className='text-sm font-medium'>Classification</label>
+                                    <Input value={documentDetails.classification} readOnly className='mt-1' />
+                                </div>
+                                <div>
+                                    <label className='text-sm font-medium'>Type</label>
+                                    <Input value={documentDetails.type} readOnly className='mt-1' />
+                                </div>
+                                <div>
+                                    <label className='text-sm font-medium'>Created By</label>
+                                    <Input value={documentDetails.created_by} readOnly className='mt-1' />
+                                </div>
+                                <div>
+                                    <label className='text-sm font-medium'>Date Created</label>
+                                    <Input 
+                                        value={new Date(documentDetails.date_created).toLocaleDateString()} 
+                                        readOnly 
+                                        className='mt-1' 
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+
+            {/* Bottom Action Buttons */}
+            <div className='col-span-2 flex justify-end space-x-2'>
+                {documentDetails && (
+                    <Button
+                        onClick={() => {
+                            onSubmit({ code: documentCode })
+                            toast.success(`Document ${actionType}d`, {
+                                description: `Document has been successfully ${actionType.toLowerCase()}d.`
+                            })
+                            onClose()
+                        }}
+                        variant='default'
+                    >
+                        Proceed
                     </Button>
-                </DialogClose>
+                )}
+                <Button variant='secondary' onClick={onClose}>
+                    Cancel
+                </Button>
             </div>
-        </form>
+        </div>
     )
 }
 
@@ -180,7 +292,6 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAct
             })
             return
         }
-        // Display a message on code entry the final success is handled by Proceed button
         toast.info(`Document ${actionType}`, {
             description: `Document details have been populated. Review the information before proceeding.`,
         })
@@ -188,13 +299,10 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAct
 
     return (
         <Dialog open onOpenChange={(isOpen) => !isOpen && onCloseAction()}>
-            <DialogContent className='w-full max-w-3xl bg-white rounded-lg shadow-lg' aria-describedby='dialog-description'>
+            <DialogContent className='w-full max-w-4xl bg-white rounded-lg shadow-lg'>
                 <DialogHeader>
-                    <DialogTitle>{`${actionType} Document`}</DialogTitle>
+                    <DialogTitle>{actionType} Document</DialogTitle>
                 </DialogHeader>
-                <div id='dialog-description' className='sr-only'>
-                    {actionType} a document by entering details or scanning the QR code.
-                </div>
 
                 {actionType === 'Create' ? (
                     <CreateDocumentForm onSubmit={handleCreateSubmit} onClose={onCloseAction} />
@@ -205,3 +313,5 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAct
         </Dialog>
     )
 }
+
+export default AddDocumentDialog
