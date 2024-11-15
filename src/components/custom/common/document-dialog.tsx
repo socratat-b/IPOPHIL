@@ -7,6 +7,7 @@ import DocumentRouting from './document-routing'
 import { Separator } from '@/components/ui/separator'
 import DocumentMetadata from './document-metadata'
 
+
 interface DocumentDialogProps {
     item: Document | null
     open: boolean

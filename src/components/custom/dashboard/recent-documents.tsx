@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { format, parseISO } from 'date-fns'
-import { FolderIcon, ChevronRight, ShieldAlert } from 'lucide-react'
+import { FolderIcon, ShieldAlert } from 'lucide-react'
 import { formatBadgeText, getStatusVariant } from '@/lib/controls'
 import { DocumentDialog } from '../common/document-dialog'
 
@@ -16,6 +16,12 @@ interface RecentDocumentsProps {
 const RecentDocuments: React.FC<RecentDocumentsProps> = ({ documents }) => {
     const [selectedItem, setSelectedItem] = useState<Document | null>(null)
     const [hoveredId, setHoveredId] = useState<string | null>(null)
+
+    // Filter out duplicate documents by `title` and `code`
+    const uniqueDocuments = documents.filter(
+        (doc, index, self) =>
+            index === self.findIndex((d) => d.title === doc.title && d.code === doc.code)
+    )
 
     const handleCardClick = (doc: Document) => {
         setSelectedItem(doc)
@@ -37,8 +43,8 @@ const RecentDocuments: React.FC<RecentDocumentsProps> = ({ documents }) => {
     return (
         <>
             <div className='space-y-3'>
-                {documents.map((doc, index) => (
-                    <TooltipProvider key={doc.id} delayDuration={300}>
+                {uniqueDocuments.map((doc, index) => (
+                    <TooltipProvider key={`${doc.id}-${index}`} delayDuration={300}>
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Card
@@ -94,10 +100,9 @@ const RecentDocuments: React.FC<RecentDocumentsProps> = ({ documents }) => {
                             </TooltipTrigger>
                             <TooltipContent
                                 side='top'
-                                align='end' // Aligns the tooltip to the right
+                                align='end'
                                 className={`px-3 py-2 flex items-center gap-2 font-medium ${getClassificationColor(doc.classification)}`}
                             >
-
                                 <ShieldAlert className='h-4 w-4' />
                                 <p className='text-sm capitalize'>{doc.classification || 'Public'}</p>
                             </TooltipContent>
