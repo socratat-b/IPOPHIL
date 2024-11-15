@@ -1,3 +1,4 @@
+//src/components/custom/common/document-metadata.tsx
 import { format, parseISO } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
 import { Icons } from '@/components/ui/icons'
@@ -7,6 +8,7 @@ import { Document } from '@/lib/faker/documents/schema'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import DocumentCodeCell from '../code-cell/document-code-cell'
 
 type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline'
 
@@ -172,6 +174,20 @@ const DocumentMetadata = ({ item }: { item: Document }) => (
                             tooltip='Office designated to receive the document'
                         />
                     )}
+                    {item.code && (
+                        <div className='col-span-1 md:col-span-2 flex flex-col items-start'>
+                            <MetadataItem
+                                icon={Icons.media}
+                                label='Document Codes'
+                                value='View Codes'
+                                tooltip='Click to view QR code and Barcode'
+                            />
+                            <div className='ml-11 flex space-x-4'>
+                                <DocumentCodeCell code={item.code} />
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             </ScrollArea>
         </CardContent>
