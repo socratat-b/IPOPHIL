@@ -3,10 +3,10 @@
 import { DashboardHeader } from '@/components/custom/dashboard/header'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useOutgoingDocuments, useReceivedDocuments } from '@/lib/services/documents'
-import { columns as recievedColumns } from '@/components/custom/recieved-documents/columns'
+import { columns as incomingColumns } from '@/components/custom/incoming-documents/columns'
 import { columns as outgoingColumns } from '@/components/custom/outgoing-documents/columns'
 import { DataTable as OutgoingDataTable } from '@/components/custom/outgoing-documents/data-table'
-import { DataTable as RecievedDataTable } from '@/components/custom/recieved-documents/data-table'
+import { DataTable as IncomingDataTable } from '@/components/custom/incoming-documents/data-table'
 
 export default function DocumentsPage() {
     const { documents: outgoingDocuments, isLoading: outgoingLoading } = useOutgoingDocuments()
@@ -25,7 +25,7 @@ export default function DocumentsPage() {
                 <Tabs defaultValue='outgoing' className='flex-1 flex flex-col'>
                     <TabsList className='grid grid-cols-2 w-max'>
                         <TabsTrigger value='outgoing'>Outgoing Documents</TabsTrigger>
-                        <TabsTrigger value='received'>Received Documents</TabsTrigger>
+                        <TabsTrigger value='incoming'>Incoming Documents</TabsTrigger>
                     </TabsList>
                     <TabsContent value='outgoing' className='mt-4'>
                         <OutgoingDataTable
@@ -34,10 +34,10 @@ export default function DocumentsPage() {
                             selection={false}
                         />
                     </TabsContent>
-                    <TabsContent value='received' className='mt-4'>
-                        <RecievedDataTable
+                    <TabsContent value='incoming' className='mt-4'>
+                        <IncomingDataTable
                             data={receivedDocuments || []}
-                            columns={recievedColumns}
+                            columns={incomingColumns}
                             selection={true}
                         />
                     </TabsContent>
