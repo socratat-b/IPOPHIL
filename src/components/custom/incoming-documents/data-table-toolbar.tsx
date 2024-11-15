@@ -8,6 +8,7 @@ import { DataTableViewOptions } from '@/components/custom/table/data-table-view-
 import { types } from '@/lib/faker/documents/data'
 import { DataTableFacetedFilter } from '@/components/custom/table/data-table-faceted-filter'
 import { AddDocumentButton } from '../common/add-document-button'
+import { doc_classification, doc_type_samples } from '@/lib/dms/data'
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -19,7 +20,11 @@ export function DataTableToolbar<TData>({ table, onAdd }: DataTableToolbarProps<
 
     const formatLabel = (label: string) => label.replace(/[_-]/g, ' ')
 
-    const filteredTypes = types.filter(type => type.value !== 'all')
+    // Filter out the 'all' option from each array and ensure proper typing
+    const filteredTypes = doc_type_samples.filter(type => type.value !== 'all')
+    const filteredClassifications = doc_classification.filter(
+        classification => classification.value !== 'all'
+    )
 
     return (
         <div className='flex items-center justify-between'>
@@ -39,7 +44,16 @@ export function DataTableToolbar<TData>({ table, onAdd }: DataTableToolbarProps<
                         options={filteredTypes.map((type) => ({
                             value: type.value,
                             label: formatLabel(type.label),
-                            icon: type.icon,
+                        }))}
+                    />
+                )}
+                {table.getColumn('classification') && (
+                    <DataTableFacetedFilter
+                        column={table.getColumn('classification')}
+                        title='Classification'
+                        options={filteredClassifications.map((classification) => ({
+                            label: formatLabel(classification.label),
+                            value: classification.value,
                         }))}
                     />
                 )}
