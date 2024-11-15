@@ -46,17 +46,6 @@ export function DataTableToolbar<TData>({
                     />
                 </div>
 
-                {table.getColumn('status') && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn('status')}
-                        title='Status'
-                        options={filteredStatuses.map((status) => ({
-                            label: formatLabel(status.label),
-                            value: status.value,
-                            // icon: status.icon,
-                        }))}
-                    />
-                )}
                 {table.getColumn('type') && (
                     <DataTableFacetedFilter
                         column={table.getColumn('type')}

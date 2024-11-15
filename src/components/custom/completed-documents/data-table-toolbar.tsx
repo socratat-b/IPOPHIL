@@ -1,12 +1,14 @@
-import { Cross2Icon } from '@radix-ui/react-icons'
+'use client'
+
+import { Input } from '@/components/ui/input'
+import { Icons } from '@/components/ui/icons'
 import { Table } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { DataTableViewOptions } from '@/components/custom/table/data-table-view-options'
-import { doc_type_samples, doc_status, doc_classification } from '@/lib/dms/data'
-import { DataTableFacetedFilter } from '@/components/custom/table/data-table-faceted-filter'
+import { Cross2Icon } from '@radix-ui/react-icons'
 import { AddDocumentButton } from '../common/add-document-button'
-import { Icons } from '@/components/ui/icons'
+import { doc_type_samples, doc_classification } from '@/lib/dms/data'
+import { DataTableViewOptions } from '@/components/custom/table/data-table-view-options'
+import { DataTableFacetedFilter } from '@/components/custom/table/data-table-faceted-filter'
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -22,7 +24,6 @@ export function DataTableToolbar<TData>({
     const formatLabel = (label: string) => label.replace(/[_-]/g, ' ')
 
     // Filter out the 'all' option from each array and ensure proper typing
-    const filteredStatuses = doc_status.filter(status => status.value !== 'all')
     const filteredTypes = doc_type_samples.filter(type => type.value !== 'all')
     const filteredClassifications = doc_classification.filter(
         classification => classification.value !== 'all'
@@ -46,17 +47,6 @@ export function DataTableToolbar<TData>({
                     />
                 </div>
 
-                {table.getColumn('status') && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn('status')}
-                        title='Status'
-                        options={filteredStatuses.map((status) => ({
-                            label: formatLabel(status.label),
-                            value: status.value,
-                            // icon: status.icon,
-                        }))}
-                    />
-                )}
                 {table.getColumn('type') && (
                     <DataTableFacetedFilter
                         column={table.getColumn('type')}
