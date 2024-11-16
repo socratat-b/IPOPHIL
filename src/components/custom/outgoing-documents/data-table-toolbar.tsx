@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from '@/components/custom/table/data-table-view-options'
 import { types } from '@/lib/faker/documents/data'
 import { DataTableFacetedFilter } from '@/components/custom/table/data-table-faceted-filter'
-import { AddDocumentButton } from '../common/add-document-button'
+import { AddDocumentButton } from '../common/add-document/add-document-button'
 import { doc_type_samples, doc_classification } from '@/lib/dms/data'
 
 interface DataTableToolbarProps<TData> {

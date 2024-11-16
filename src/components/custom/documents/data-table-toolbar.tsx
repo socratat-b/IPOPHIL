@@ -6,7 +6,7 @@ import { DataTableViewOptions } from '@/components/custom/table/data-table-view-
 import { doc_type_samples, doc_status, doc_classification } from '@/lib/dms/data'
 import { DataTableFacetedFilter } from '@/components/custom/table/data-table-faceted-filter'
 import { ExportAllDocument } from './control/export-document'
-import { AddDocumentButton } from '../common/add-document-button'
+import { AddDocumentButton } from '../common/add-document/add-document-button'
 import { Icons } from '@/components/ui/icons'
 
 interface DataTableToolbarProps<TData> {
