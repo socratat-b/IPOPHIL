@@ -10,7 +10,7 @@ import { useDocuments } from '@/lib/services/documents'
 import { Overview } from '@/components/custom/dashboard/overview'
 import { useMemo, useEffect, useState, ComponentType } from 'react'
 import { DashboardHeader } from '@/components/custom/dashboard/header'
-import { AddDocumentButton } from '@/components/custom/common/add-document-button'
+import { AddDocumentButton } from '@/components/custom/common/add-document/add-document-button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {

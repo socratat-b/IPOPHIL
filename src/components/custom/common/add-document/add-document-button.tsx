@@ -1,8 +1,8 @@
-// src/components/custom/common/add-document-button.tsx
+// src\components\custom\common\add-document\add-document-button.tsx
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { AddDocumentDialog } from '@/components/custom/common/add-document-dialog'
 import { Icons } from '@/components/ui/icons'
+import { Button } from '@/components/ui/button'
+import { AddDocumentDialog } from '@/components/custom/common/add-document/add-document-dialog'
 
 interface AddDocumentButtonProps {
     title?: string
