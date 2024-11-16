@@ -80,7 +80,3 @@ The component uses React's `useState` hook to manage the dialog's open/close sta
 ### 5. **Styling and Theming**
 
 The component leverages the `@/components/ui` library for styling, ensuring a consistent look and feel across your application. You can easily customize the appearance by modifying the `variant` and `className` props.
-
-## Conclusion
-
-The `AddDocument` component is a robust and flexible solution for managing document creation, receiving, and releasing. By following the provided examples and good practices, even developers with limited experience can effectively integrate and customize this component to meet their application's needs.
