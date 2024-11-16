@@ -1,13 +1,14 @@
+// src\components\custom\dashboard\recent-documents.tsx
 import { useState } from 'react'
-import { Document } from '@/lib/faker/documents/schema'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { format, parseISO } from 'date-fns'
+import { Badge } from '@/components/ui/badge'
 import { FolderIcon, ShieldAlert } from 'lucide-react'
-import { formatBadgeText, getStatusVariant } from '@/lib/controls'
+import { Document } from '@/lib/faker/documents/schema'
+import { Card, CardContent } from '@/components/ui/card'
 import { DocumentDialog } from '../common/document-dialog'
+import { formatBadgeText, getStatusVariant } from '@/lib/controls'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 interface RecentDocumentsProps {
     documents: Document[]

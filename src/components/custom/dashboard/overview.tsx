@@ -1,26 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ResponsiveContainer } from 'recharts'
+// src\components\custom\dashboard\overview.tsx
+'use client'
+
+import Image from 'next/image'
+
+import { useState, useRef, useEffect } from 'react'
 import { Document } from '@/lib/faker/documents/schema'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ChartPie, BarChart3, LineChart as LineIcon, CheckCircle, Package, Send, Check } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
+import { ChartPie, BarChart3, LineChart as LineIcon } from 'lucide-react'
+import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, ResponsiveContainer } from 'recharts'
+import { CustomTooltip } from './custom-tooltip'
+import { ChartDataItem } from '@/lib/types'
+import { getIconForStatus, getStatusColor } from '@/lib/component-utils/chart'
 
 interface OverviewProps {
     documents: Document[]
-}
-
-interface ChartDataItem {
-    name: string
-    value: number
-    color: string
-    percentage: number
-}
-
-interface TooltipProps {
-    active?: boolean
-    payload?: Array<{
-        payload: ChartDataItem
-    }>
 }
 
 export function Overview({ documents }: OverviewProps) {
@@ -51,48 +45,28 @@ export function Overview({ documents }: OverviewProps) {
     const data: ChartDataItem[] = documents.reduce((acc: ChartDataItem[], doc) => {
         const status = doc.status.charAt(0).toUpperCase() + doc.status.slice(1);
         const existingStatus = acc.find(item => item.name === status);
-    
+
         if (existingStatus) {
             existingStatus.value++;
         } else {
-            // Hardcode colors for each status here
             acc.push({
                 name: status,
                 value: 1,
-                color:
-                    status === 'Incoming' ? 'hsl(var(--chart-2))' :
-                    status === 'Received' ? '#34D399' :
-                    status === 'Outgoing' ? 'hsl(var(--chart-3))' :
-                    status === 'Completed' ? 'hsl(var(--chart-4))' :
-                    status === 'For_dispatch' ? '#818CF8' :
-                    status === 'Dispatch' ? 'hsl(var(--chart-1))' :
-                    status === 'Intransit' ? 'hsl(var(--chart-4))' :
-                    'hsl(var(--primary))', // Default color if status doesn't match any known statuses
+                color: getStatusColor(status),
                 percentage: 0,
             });
         }
         return acc;
     }, []);
-    
+
     const total = documents.length;
     data.forEach(item => {
         item.percentage = Number(((item.value / total) * 100).toFixed(1));
     });
 
-    // function getStatusColor(status: string): string {
-    //     const colors: Record<string, string> = {
-    //         Incoming: '#818CF8',
-    //         Received: '#34D399',
-    //         Outgoing: '#F472B6',
-    //         Completed: '#60A5FA',
-    //         For_dispatch: '#FBBF24'
-    //     }
-    //     return colors[status] || '#94A3B8'
-    // }
-
     const chartColors = {
         pie: data.map(item => item.color),
-         bar: [
+        bar: [
             'hsl(var(--chart-1))',
             'hsl(var(--chart-4))',
             'hsl(var(--chart-3))',
@@ -102,41 +76,11 @@ export function Overview({ documents }: OverviewProps) {
         line: 'hsl(var(--primary))'
     }
 
-    const CustomTooltip = ({ active, payload }: TooltipProps) => {
-        if (active && payload && payload.length) {
-            const data = payload[0].payload
-            const Icon = getIconForStatus(data.name)
-            return (
-                <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className='bg-popover p-3 rounded-lg shadow-lg border border-border'
-                style={{
-                    transform: 'translateY(100%)',
-                    marginLeft: '10px',
-                    zIndex: 50, // Higher zIndex for the tooltip
-                    position: 'relative', // Position relative for stacking
-                }}
-            >
-                <div className='flex items-center gap-2 mb-2'>
-                    <Icon className='w-4 h-4' style={{ color: data.color }} />
-                    <span className='font-semibold text-popover-foreground'>{data.name}</span>
-                </div>
-                <div className='text-sm text-muted-foreground'>
-                    <div>Count: {data.value}</div>
-                    <div>Percentage: {data.percentage}%</div>
-                </div>
-            </motion.div>
-            )
-        }
-        return null
-    }
-
     return (
         <div className='w-full pt-6'>
             <div className='flex justify-between items-center mb-2'>
                 <div className='space-y-1'>
-                <motion.h2
+                    <motion.h2
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         className='text-l font-bold text-foreground tracking-tight pl-4'
@@ -308,10 +252,12 @@ export function Overview({ documents }: OverviewProps) {
                         </ResponsiveContainer>
                     )}
                     {chartType === 'Pie Chart' && (
-                        <img
-                            src='/images/cube.png'
+                        <Image
+                            src={'/images/cube.png'}
                             alt='Center Logo'
-                            className='absolute w-20 h-20'
+                            className='absolute'
+                            height={50}
+                            width={50}
                             style={{
                                 top: '50%',
                                 left: '50%',
@@ -349,15 +295,4 @@ export function Overview({ documents }: OverviewProps) {
             </motion.div>
         </div>
     )
-
-    function getIconForStatus(status: string): React.ElementType {
-        const icons: Record<string, React.ElementType> = {
-            Incoming: Package,
-            Received: CheckCircle,
-            Outgoing: Send,
-            Completed: Check,
-            For_dispatch: BarChart3
-        }
-        return icons[status] || CheckCircle
-    }
 }

@@ -1,74 +1,17 @@
+// src\app\(auth)\dashboard\page.tsx
 'use client'
 
-import RecentDocuments from '@/components/custom/dashboard/recent-documents'
-
-import { LineChart, Line } from 'recharts'
 import { useSession } from 'next-auth/react'
-import { Icons } from '@/components/ui/icons'
-import { Stats, StatusCounts } from '@/lib/types'
 import { useDocuments } from '@/lib/services/documents'
-import { Overview } from '@/components/custom/dashboard/overview'
-import { useMemo, useEffect, useState, ComponentType } from 'react'
+import { useMemo } from 'react'
 import { DashboardHeader } from '@/components/custom/dashboard/header'
 import { AddDocumentButton } from '@/components/custom/common/add-document/add-document-button'
+import { StatCard } from '@/components/custom/dashboard/stat-card'
+import { Overview } from '@/components/custom/dashboard/overview'
+import { Icons } from '@/components/ui/icons'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-
-const SparklineChart = ({ data }: { data: Array<{ value: number }> }) => {
-    const [isMounted, setIsMounted] = useState(false)
-
-    useEffect(() => {
-        setIsMounted(true)
-    }, [])
-
-    if (!isMounted) {
-        return <div className='h-[40px]' />
-    }
-
-    return (
-        <div className='h-[40px] mt-3'>
-            <LineChart data={data} width={200} height={40}>
-                <Line
-                    type='monotone'
-                    dataKey='value'
-                    stroke='hsl(var(--primary))'
-                    strokeWidth={2}
-                    dot={{ r: 2, fill: '#fff' }}
-                />
-            </LineChart>
-        </div>
-    )
-}
-
-const StatCard = ({
-    title,
-    icon: Icon,
-    count,
-    change,
-    data,
-}: {
-    title: string
-    icon: ComponentType<{ className?: string }>
-    count: number
-    change: number
-    data: Array<{ value: number }>
-}) => (
-    <Card>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>{title}</CardTitle>
-            <Icon className='h-4 w-4 text-muted-foreground' />
-        </CardHeader>
-        <CardContent>
-            <div className='text-3xl font-bold pl-2'>{count}</div>
-            <p className='text-xs text-muted-foreground pl-2'>
-                {change > 0 ? '+' : ''}
-                {change}% from last month
-            </p>
-            <div className='flex justify-center'>
-                <SparklineChart data={data} />
-            </div>
-        </CardContent>
-    </Card>
-)
+import RecentDocuments from '@/components/custom/dashboard/recent-documents'
+import { Stats, StatusCounts } from '@/lib/types'
 
 export default function Page() {
     const { data: session } = useSession()
