@@ -1,13 +1,15 @@
-import { Metadata } from "next"
-import { Separator } from '@/components/ui/separator'
-import { AccountForm } from '@/components/custom/settings/account-form'
+// src\app\(auth)\settings\account\page.tsx
+import { Metadata } from "next";
+import { Suspense } from 'react';
+import { Separator } from '@/components/ui/separator';
+import { AccountForm } from "@/components/custom/settings/account-form";
 
 export const metadata: Metadata = {
     title: 'DMS | Account Setting',
     description: 'User Notifications',
 }
 
-export default function Page() {
+export default function AccountSettingsPage() {
     return (
         <div className='space-y-6'>
             <div>
@@ -18,7 +20,9 @@ export default function Page() {
                 </p>
             </div>
             <Separator />
-            <AccountForm />
+            <Suspense fallback={<div>Loading...</div>}>
+                <AccountForm />
+            </Suspense>
         </div>
-    )
+    );
 }

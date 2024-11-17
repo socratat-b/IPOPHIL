@@ -1,62 +1,38 @@
 // src/app/api/users/route.ts
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { getCachedUsers } from '@/lib/services/users'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth/config'
 
 export async function GET() {
     try {
         const session = await getServerSession(authOptions)
-
-        if (!session) {
-            return NextResponse.json(
-                { error: 'Unauthorized' },
-                { status: 401 }
-            )
+        if (!session?.user?.accessToken) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const users = await getCachedUsers()
-        return NextResponse.json(users)
+        const baseUrl = process.env.API_BASE_URL
+        if (!baseUrl) {
+            console.error('API_BASE_URL is not defined in environment variables')
+            return NextResponse.json({ error: 'API base URL not configured' }, { status: 500 })
+        }
 
+        const res = await fetch(`${baseUrl}/users`, {
+            headers: {
+                'Authorization': `Bearer ${session.user.accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            cache: 'no-store'
+        })
+
+        if (!res.ok) {
+            console.error('API Error:', await res.text())
+            return NextResponse.json({ error: 'Failed to fetch users' }, { status: res.status })
+        }
+
+        const data = await res.json()
+        return NextResponse.json(data)
     } catch (error) {
-        console.error('API error:', error)
-
-        // Handle specific errors
-        if (error instanceof Error) {
-            if (error.message === 'Authentication required') {
-                return NextResponse.json(
-                    { error: 'Authentication required' },
-                    { status: 401 }
-                )
-            }
-
-            if (error.message.includes('API error: 403')) {
-                return NextResponse.json(
-                    { error: 'Access forbidden' },
-                    { status: 403 }
-                )
-            }
-        }
-
-        // Generic error response
-        return NextResponse.json(
-            { error: error instanceof Error ? error.message : 'Unknown error' },
-            { status: 500 }
-        )
+        console.error('Server Error:', error)
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
-}
-
-// Optional: Add CORS headers for API routes
-export const runtime = 'edge'
-export const dynamic = 'force-dynamic'
-
-export async function OPTIONS() {
-    return new Response(null, {
-        status: 204,
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        },
-    })
 }

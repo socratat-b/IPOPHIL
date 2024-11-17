@@ -1,3 +1,4 @@
+// src\lib\services\document-types.ts
 import useSWR from 'swr'
 import { useSession } from 'next-auth/react'
 import { DocumentType } from '@/lib/dms/schema'

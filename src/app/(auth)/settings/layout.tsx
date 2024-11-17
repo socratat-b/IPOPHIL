@@ -1,3 +1,4 @@
+// src\app\(auth)\settings\layout.tsx
 import { Metadata } from 'next'
 import { Separator } from '@/components/ui/separator'
 import { SidebarNav } from '@/components/custom/settings/side-bar-nav'

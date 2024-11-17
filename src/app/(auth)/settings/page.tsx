@@ -1,3 +1,4 @@
+// src\app\(auth)\settings\page.tsx
 import { Separator } from '@/components/ui/separator'
 import { ProfileForm } from '@/components/custom/settings/profile-form'
 

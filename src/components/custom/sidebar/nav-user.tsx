@@ -23,7 +23,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 
-import { ModeMenu } from '../theme/theme-button'
+import { ThemeMenu } from '../theme/theme-button'
 
 import { useRouter } from 'next/navigation'
 import { Icons } from '@/components/ui/icons'
@@ -108,7 +108,7 @@ export function NavUser({
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <ModeMenu />
+            <ThemeMenu />
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleLogout}
