@@ -1,4 +1,3 @@
-// src/app/(auth)/users/page.tsx
 import { Metadata } from 'next'
 import { getUsers } from '@/lib/services/users'
 import { DashboardHeader } from '@/components/custom/dashboard/header'
@@ -6,8 +5,8 @@ import { DataTable } from '@/components/custom/users/data-table'
 import { columns } from '@/components/custom/users/columns'
 
 export const metadata: Metadata = {
-    title: 'DMS | Users',
-    description: 'IPOPHIL Users',
+    title: 'DMS | Manage Users',
+    description: 'IPOPHIL Documents',
 }
 
 export default async function UserPage() {

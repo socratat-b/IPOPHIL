@@ -1,12 +1,5 @@
-import type { Metadata } from 'next'
-
 import { Separator } from '@/components/ui/separator'
 import { ProfileForm } from '@/components/custom/settings/profile-form'
-
-export const metadata: Metadata = {
-    title: 'DMS | Settings',
-    description: 'DMS Settings',
-}
 
 export default function Page() {
     return (

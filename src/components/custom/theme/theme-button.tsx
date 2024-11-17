@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes'
 import { DropdownMenuItem } from '../../ui/dropdown-menu'
 import { Icons } from '@/components/ui/icons'
 
-export function ModeMenu() {
+export function ThemeMenu() {
     const { setTheme, theme } = useTheme()
 
     return (

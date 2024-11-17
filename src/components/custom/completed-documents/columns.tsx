@@ -10,7 +10,7 @@ import { formatBadgeText, formatBadgeTextAllCaps } from '@/lib/controls'
 import { DataTableColumnHeader } from '../table/data-table-column-header'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Checkbox } from '@/components/ui/checkbox'
-import DocumentCodeCell from '../code-cell/document-code-cell'
+import DocumentCodeCell from '../common/code-cell/document-code-cell'
 
 export const columns: ColumnDef<Document>[] = [
     {

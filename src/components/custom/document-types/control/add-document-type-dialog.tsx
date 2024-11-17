@@ -1,21 +1,15 @@
 'use client'
 
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogClose,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { toast } from 'sonner'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { HelpScanCard } from '@/components/custom/common/help-scan-card'
 import { z } from 'zod'
+import { toast } from 'sonner'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { HelpScanCard } from '@/components/custom/common/help-scan-card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog'
 
 // Schema
 const createDocumentTypeSchema = z.object({
@@ -103,7 +97,7 @@ const ScanDocumentTypeForm = ({ onSubmit, onClose, actionType }: {
     onClose: () => void
     actionType: ActionType
 }) => {
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm<ScanDocumentTypeData>({
+    const { handleSubmit, setValue, formState: { errors } } = useForm<ScanDocumentTypeData>({
         resolver: zodResolver(scanDocumentTypeSchema),
     })
 
@@ -145,6 +139,7 @@ const ScanDocumentTypeForm = ({ onSubmit, onClose, actionType }: {
 
 export const AddDocumentTypeDialog: React.FC<AddDocumentTypeDialogProps> = ({ onCloseAction, actionType }) => {
     const handleCreateSubmit = (data: CreateDocumentTypeData) => {
+        console.table(data)
         toast.success('Document Type Created', {
             description: 'Your document type has been successfully created.',
             action: { label: 'Undo', onClick: () => console.log('Undo') },
@@ -153,6 +148,7 @@ export const AddDocumentTypeDialog: React.FC<AddDocumentTypeDialogProps> = ({ on
     }
 
     const handleScanSubmit = (data: ScanDocumentTypeData) => {
+        console.table(data)
         toast.success(`Document Type ${actionType}d`, {
             description: `Your document type has been successfully ${actionType.toLowerCase()}d.`,
         })

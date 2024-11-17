@@ -34,7 +34,7 @@ const ContactInfo = () => {
             <Mail className="h-5 w-5 text-primary mt-1" />
             <div className="space-y-1">
               <Label className="text-base font-medium">Email</Label>
-              <a 
+              <a
                 href="mailto:support@example.com"
                 className="text-sm text-primary hover:underline flex items-center gap-1"
               >
@@ -48,7 +48,7 @@ const ContactInfo = () => {
             <Phone className="h-5 w-5 text-primary mt-1" />
             <div className="space-y-1">
               <Label className="text-base font-medium">Phone</Label>
-              <a 
+              <a
                 href="tel:1-800-SUPPORT"
                 className="text-sm text-primary hover:underline flex items-center gap-1"
               >
@@ -92,7 +92,9 @@ const FeedbackForm = ({ onSubmit }: { onSubmit: () => void }) => {
       onSubmit()
       setFeedback('')
     } catch (error) {
-      toast.error('Failed to submit feedback')
+      toast.error('Failed to submit feedback', {
+        description: error instanceof Error ? error.message : String(error),
+      })
     } finally {
       setIsSubmitting(false)
     }

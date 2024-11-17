@@ -10,7 +10,13 @@ export async function GET() {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const res = await fetch('https://ipophl.quanby-staging.com/api/documents', {
+        const baseUrl = process.env.API_BASE_URL
+        if (!baseUrl) {
+            console.error('API_BASE_URL is not defined in environment variables')
+            return NextResponse.json({ error: 'API base URL not configured' }, { status: 500 })
+        }
+
+        const res = await fetch(`${baseUrl}/documents`, {
             headers: {
                 'Authorization': `Bearer ${session.user.accessToken}`,
                 'Content-Type': 'application/json',

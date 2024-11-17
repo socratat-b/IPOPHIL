@@ -1,7 +1,7 @@
 // src\components\custom\common\add-document\add-document-dialog.tsx
 import { toast } from 'sonner'
 import { ActionType } from '@/lib/types'
-import { useDocuments } from '@/lib/services/documents'
+// import { useDocuments } from '@/lib/services/documents'
 import { ScanDocumentForm } from './scan-document-form'
 import { CreateDocumentForm } from './create-document-form'
 import { ScanDocumentData } from '@/lib/validations/documents/scan_documents'
@@ -14,9 +14,10 @@ interface AddDocumentDialogProps {
 }
 
 export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAction, actionType }) => {
-    const { createDocument } = useDocuments()
+    // const { createDocument } = useDocuments()
 
     const handleCreateSubmit = async (data: CreateDocumentData) => {
+        console.table(data)
         toast.success('Document Created', {
             description: 'Your document has been successfully added.',
         })
@@ -46,7 +47,7 @@ export const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ onCloseAct
 
     return (
         <Dialog open onOpenChange={(isOpen) => !isOpen && onCloseAction()}>
-            <DialogContent className='w-full max-w-4xl bg-white rounded-lg shadow-lg'>
+            <DialogContent className='w-full max-w-4xl rounded-lg shadow-lg'>
                 <DialogHeader>
                     <DialogTitle>{actionType} Document</DialogTitle>
                 </DialogHeader>

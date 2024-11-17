@@ -15,7 +15,7 @@ const EmptyLottie = forwardRef<HTMLDivElement, EmptyLottieProps>(({
   description = 'There are no records to display at the moment',
   className = 'w-60',
   animationPath = '/animation/empty-box.json'
-}, ref) => { // Use the ref parameter
+}, ref) => {
   const [lottieLoaded, setLottieLoaded] = useState(false);
 
   useEffect(() => {

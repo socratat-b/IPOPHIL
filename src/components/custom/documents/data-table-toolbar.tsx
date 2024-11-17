@@ -16,7 +16,7 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbar<TData>({
     table,
-    onAdd,
+    // onAdd,
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
 

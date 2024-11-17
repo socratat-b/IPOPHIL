@@ -8,7 +8,7 @@ import { formatBadgeText } from '@/lib/controls/helper'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import EmptyLottie from '@/components/animation/EmptyLottie'
+import EmptyLottie from '@/components/custom/animation/empty-lottie'
 
 export const DataPreview: React.FC<DataPreviewProps> = ({
     filteredData,
@@ -21,7 +21,6 @@ export const DataPreview: React.FC<DataPreviewProps> = ({
         ? filteredData
         : filteredData.slice(0, parseInt(rowLimit))
 
-    const ref = React.useRef(null)
     React.useEffect(() => {
         import('@lottiefiles/lottie-player')
     })
@@ -146,8 +145,8 @@ export const DataPreview: React.FC<DataPreviewProps> = ({
                                     ) : (
                                         <TableRow>
                                             <TableCell colSpan={5} className='h-24 text-center'>
-                                            <EmptyLottie 
-                                                    message="No Result Found" 
+                                                <EmptyLottie
+                                                    message="No Result Found"
                                                     description="Try adjusting your filters or search criteria."
                                                     className='w-1/2 mx-auto'
                                                 />

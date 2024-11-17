@@ -37,7 +37,7 @@ export default function SignIn() {
       }
 
       const result = await signIn('credentials', {
-        identifier: email,  // Use identifier as per the updated auth configuration
+        identifier: email,
         password: password,
         redirect: false,
       })
