@@ -1,10 +1,9 @@
-import type { Metadata } from 'next'
-
+import { Metadata } from "next"
 import { Separator } from '@/components/ui/separator'
 import { AccountForm } from '@/components/custom/settings/account-form'
 
 export const metadata: Metadata = {
-    title: 'DMS | Notifications',
+    title: 'DMS | Account Setting',
     description: 'User Notifications',
 }
 

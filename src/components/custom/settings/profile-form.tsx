@@ -4,8 +4,6 @@ import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { Plus, LinkIcon, Loader2, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 const profileFormSchema = z.object({
     username: z
@@ -62,12 +61,15 @@ export function ProfileForm() {
     })
 
     async function onSubmit(data: ProfileFormValues) {
+        console.table(data)
         setIsSubmitting(true)
         try {
             await new Promise(resolve => setTimeout(resolve, 1000))
             toast.success('Profile updated successfully!')
         } catch (error) {
-            toast.error('Failed to update profile')
+            toast.error('Failed to update profile', {
+                description: error instanceof Error ? error.message : String(error),
+            })
         } finally {
             setIsSubmitting(false)
         }
@@ -83,8 +85,8 @@ export function ProfileForm() {
                         <FormItem>
                             <FormLabel className="text-base font-medium">Username</FormLabel>
                             <FormControl>
-                                <Input 
-                                    placeholder="Enter username" 
+                                <Input
+                                    placeholder="Enter username"
                                     {...field}
                                     className="transition-all focus:ring-2 focus:ring-primary"
                                 />
@@ -200,8 +202,8 @@ export function ProfileForm() {
                 </div>
 
                 <div className="flex justify-end pt-4">
-                    <Button 
-                        type="submit" 
+                    <Button
+                        type="submit"
                         className="min-w-[120px]"
                         disabled={isSubmitting}
                     >

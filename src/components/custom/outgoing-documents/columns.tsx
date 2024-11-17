@@ -6,7 +6,7 @@ import { DataTableRowActions } from './data-table-row-actions'
 import { Document } from '@/lib/faker/documents/schema'
 import { Badge } from '@/components/ui/badge'
 import { classifications } from '@/lib/faker/documents/data'
-import DocumentCodeCell from '../code-cell/document-code-cell'
+import DocumentCodeCell from '../common/code-cell/document-code-cell'
 
 export const columns: ColumnDef<Document>[] = [
     {

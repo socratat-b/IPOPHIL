@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -44,7 +46,9 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onCloseAction }) =
             })
             onCloseAction()
         } catch (error) {
-            toast.error('Failed to create user')
+            toast.error('Failed to create user', {
+                description: error instanceof Error ? error.message : String(error),
+            })
         }
     }
 
@@ -225,7 +229,7 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onCloseAction }) =
                         <div className="flex items-center gap-4">
                             <div className="relative w-16 h-16 rounded-full overflow-hidden border border-gray-200">
                                 {avatarPreview ? (
-                                    <img
+                                    <Image
                                         src={avatarPreview}
                                         alt="Avatar preview"
                                         className="w-full h-full object-cover"

@@ -28,7 +28,7 @@ import {
 
 import { DataTablePagination } from "@/components/custom/table/data-table-pagination"
 import { DataTableToolbar } from "./data-table-toolbar"
-import EmptyLottie from '@/components/animation/EmptyLottie'
+import EmptyLottie from '@/components/custom/animation/empty-lottie'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -78,7 +78,6 @@ export function DataTable<TData, TValue>({
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
 
-    const ref = React.useRef(null)
     React.useEffect(() => {
         import('@lottiefiles/lottie-player')
     })

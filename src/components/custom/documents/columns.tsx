@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { classifications, statuses } from '@/lib/faker/documents/data'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Document } from '@/lib/faker/documents/schema'
-import DocumentCodeCell from '../code-cell/document-code-cell'
+import DocumentCodeCell from '../common/code-cell/document-code-cell'
 import { Icons } from '@/components/ui/icons'
 import {
     Tooltip,

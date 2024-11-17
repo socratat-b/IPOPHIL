@@ -3,7 +3,7 @@ import { Table } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from '@/components/custom/table/data-table-view-options'
-import { doc_type_samples, doc_status, doc_classification } from '@/lib/dms/data'
+import { doc_type_samples, doc_classification } from '@/lib/dms/data'
 import { DataTableFacetedFilter } from '@/components/custom/table/data-table-faceted-filter'
 import { AddDocumentButton } from '../common/add-document/add-document-button'
 import { Icons } from '@/components/ui/icons'
@@ -22,7 +22,6 @@ export function DataTableToolbar<TData>({
     const formatLabel = (label: string) => label.replace(/[_-]/g, ' ')
 
     // Filter out the 'all' option from each array and ensure proper typing
-    const filteredStatuses = doc_status.filter(status => status.value !== 'all')
     const filteredTypes = doc_type_samples.filter(type => type.value !== 'all')
     const filteredClassifications = doc_classification.filter(
         classification => classification.value !== 'all'

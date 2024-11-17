@@ -1,17 +1,17 @@
 // src\app\(auth)\dashboard\page.tsx
 'use client'
 
-import { useSession } from 'next-auth/react'
-import { useDocuments } from '@/lib/services/documents'
 import { useMemo } from 'react'
-import { DashboardHeader } from '@/components/custom/dashboard/header'
-import { AddDocumentButton } from '@/components/custom/common/add-document/add-document-button'
-import { StatCard } from '@/components/custom/dashboard/stat-card'
-import { Overview } from '@/components/custom/dashboard/overview'
+import { useSession } from 'next-auth/react'
 import { Icons } from '@/components/ui/icons'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import RecentDocuments from '@/components/custom/dashboard/recent-documents'
 import { Stats, StatusCounts } from '@/lib/types'
+import { useDocuments } from '@/lib/services/documents'
+import { Overview } from '@/components/custom/dashboard/overview'
+import { StatCard } from '@/components/custom/dashboard/stat-card'
+import { DashboardHeader } from '@/components/custom/dashboard/header'
+import RecentDocuments from '@/components/custom/dashboard/recent-documents'
+import { AddDocumentButton } from '@/components/custom/common/add-document/add-document-button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function Page() {
     const { data: session } = useSession()

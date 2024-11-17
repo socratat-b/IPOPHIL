@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command"
-import EmptyLottie from "@/components/animation/EmptyLottie"
+import EmptyLottie from "@/components/custom/animation/empty-lottie"
 
 interface DataTableFacetedFilterProps<TData, TValue> {
     column?: Column<TData, TValue>
@@ -28,7 +28,6 @@ export function DataTableFacetedFilter<TData, TValue>({
     const facets = column?.getFacetedUniqueValues()
     const selectedValues = new Set(column?.getFilterValue() as string[])
 
-    const ref = React.useRef(null);
     React.useEffect(() => {
         import("@lottiefiles/lottie-player");
     })
@@ -79,7 +78,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     <CommandInput placeholder={title} />
                     <CommandList>
                         <CommandEmpty>
-                        <EmptyLottie 
+                            <EmptyLottie
                                 message="No Options Found"
                                 description="No matching options available."
                                 className='w-1/2 mx-auto'

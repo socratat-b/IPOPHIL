@@ -1,14 +1,14 @@
 // src/lib/services/users.ts
 import { compareDesc } from 'date-fns'
 import { unstable_cache } from 'next/cache'
-import { extendedUserSchema, type ExtendedUser } from '@/lib/dms/schema'
+import { extendedUserSchema, User, type ExtendedUser } from '@/lib/dms/schema'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { z } from 'zod'
 
 const CACHE_TAG = 'users'
 const REVALIDATE_TIME = 3600
-const API_URL = 'https://ipophl.quanby-staging.com/api'
+const API_URL = process.env.API_BASE_URL
 
 export const getUsers = async (): Promise<ExtendedUser[]> => {
     try {
@@ -34,14 +34,14 @@ export const getUsers = async (): Promise<ExtendedUser[]> => {
         const data = await response.json()
 
         // Parse the response data with the extended schema
-        const users = extendedUserSchema.array().parse(data.map((user: any) => ({
-            ...user,
-            // Ensure agency_name is explicitly set as null if not present
-            agency_name: user.agency_name ?? null,
-            created_at: new Date(user.created_at).toISOString(),
-            updated_at: user.updated_at ? new Date(user.updated_at).toISOString() : null,
-            deleted_at: user.deleted_at ? new Date(user.deleted_at).toISOString() : null,
-        })))
+        const users = extendedUserSchema.array().parse(
+            data.map((user: User & { agency_name?: string | null }) => ({
+                ...user,
+                agency_name: user.agency_name ?? null,
+                created_at: new Date(user.created_at).toISOString(),
+                updated_at: user.updated_at ? new Date(user.updated_at).toISOString() : null,
+            }))
+        )
 
         return users.sort((a, b) => compareDesc(
             new Date(a.created_at),

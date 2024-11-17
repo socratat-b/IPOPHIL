@@ -1,11 +1,10 @@
-import type { Metadata } from 'next'
-
+import { Metadata } from "next"
 import { Separator } from '@/components/ui/separator'
 import { SidebarDisplayForm } from '@/components/custom/settings/display-form'
 
 export const metadata: Metadata = {
-    title: 'DMS | Display Settings',
-    description: 'Customize display settings',
+    title: 'DMS | Display Setting',
+    description: 'User Notifications',
 }
 
 export default function DisplaySettingsPage() {
