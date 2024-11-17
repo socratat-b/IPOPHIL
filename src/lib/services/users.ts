@@ -1,69 +1,66 @@
-// src/lib/services/users.ts
+'use client'
+
+import useSWR from 'swr/immutable'
+import { useSession } from 'next-auth/react'
 import { compareDesc } from 'date-fns'
-import { unstable_cache } from 'next/cache'
-import { extendedUserSchema, User, type ExtendedUser } from '@/lib/dms/schema'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { z } from 'zod'
+import { extendedUserSchema } from '../dms/schema'
 
-const CACHE_TAG = 'users'
-const REVALIDATE_TIME = 3600
-const API_URL = process.env.API_BASE_URL
+export type ExtendedUser = z.infer<typeof extendedUserSchema>
 
-export const getUsers = async (): Promise<ExtendedUser[]> => {
-    try {
-        const session = await getServerSession(authOptions)
-        if (!session?.user?.accessToken) {
-            throw new Error('Authentication required')
+export function useUsers() {
+    const { data: session } = useSession()
+
+    const { data, error, mutate } = useSWR<ExtendedUser[]>(
+        session?.user ? '/api/users' : null,
+        async (url) => {
+            try {
+                const res = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+
+                if (!res.ok) {
+                    const errorData = await res.json()
+                    throw new Error(errorData.message || 'Failed to fetch users')
+                }
+
+                const data = await res.json()
+
+                // Parse and validate the response data
+                const users = extendedUserSchema.array().parse(
+                    data.map((user: ExtendedUser) => ({
+                        ...user,
+                        agency_name: user.agency_name ?? null,
+                        created_at: new Date(user.created_at).toISOString(),
+                        updated_at: user.updated_at ? new Date(user.updated_at).toISOString() : null,
+                    }))
+                )
+
+                // Sort users by creation date
+                return users.sort((a, b) => compareDesc(
+                    new Date(a.created_at),
+                    new Date(b.created_at)
+                ))
+            } catch (error) {
+                if (error instanceof z.ZodError) {
+                    console.error('Validation error:', JSON.stringify(error.errors, null, 2))
+                }
+                throw error
+            }
+        },
+        {
+            revalidateOnFocus: false,
+            revalidateIfStale: false,
+            shouldRetryOnError: false,
         }
+    )
 
-        const response = await fetch(`${API_URL}/users`, {
-            headers: {
-                'Authorization': `Bearer ${session.user.accessToken}`,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            cache: 'no-store'
-        })
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ message: 'Unknown error' }))
-            throw new Error(errorData.message || `API error: ${response.status}`)
-        }
-
-        const data = await response.json()
-
-        // Parse the response data with the extended schema
-        const users = extendedUserSchema.array().parse(
-            data.map((user: User & { agency_name?: string | null }) => ({
-                ...user,
-                agency_name: user.agency_name ?? null,
-                created_at: new Date(user.created_at).toISOString(),
-                updated_at: user.updated_at ? new Date(user.updated_at).toISOString() : null,
-            }))
-        )
-
-        return users.sort((a, b) => compareDesc(
-            new Date(a.created_at),
-            new Date(b.created_at)
-        ))
-    } catch (error) {
-        if (error instanceof z.ZodError) {
-            console.error('Validation error:', JSON.stringify(error.errors, null, 2))
-        }
-        console.error('Failed to fetch users:', error)
-        throw error
+    return {
+        users: data,
+        error,
+        mutate,
+        isLoading: !data && !error,
     }
 }
-
-export const getCachedUsers = unstable_cache(
-    getUsers,
-    [CACHE_TAG],
-    {
-        revalidate: REVALIDATE_TIME,
-        tags: [CACHE_TAG]
-    }
-)
-
-// Export the type for use in components
-export type { ExtendedUser }

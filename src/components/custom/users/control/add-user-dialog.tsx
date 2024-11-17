@@ -2,22 +2,19 @@
 
 import Image from 'next/image'
 
-import { z } from 'zod'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
+import { ImageIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { userRoleEnum } from '@/lib/dms/schema'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createUserSchema } from '@/lib/validations/user/create'
+import { CreateUserData, createUserSchema } from '@/lib/validations/user/create'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog'
-import { userRoleEnum } from '@/lib/dms/schema'
-import { Label } from '@/components/ui/label'
-import { ImageIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
-
-type CreateUserData = z.infer<typeof createUserSchema>
 
 interface AddUserDialogProps {
     onCloseAction: () => void
@@ -29,18 +26,16 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onCloseAction }) =
     const form = useForm<CreateUserData>({
         resolver: zodResolver(createUserSchema),
         defaultValues: {
-            role: 'user' // Default role from userRoleEnum
+            role: 'user'
         }
     })
 
-
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+    const [avatarDimensions, setAvatarDimensions] = useState({ width: 64, height: 64 })
 
     const handleSubmit = async (data: CreateUserData) => {
         try {
-            // Replace with your actual API call
-            console.log('Form Data:', data) // For development
-            // await createUser(data)
+            console.log('Form Data:', data)
             toast.success('User Created', {
                 description: 'New user has been successfully added.',
             })
@@ -58,8 +53,21 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onCloseAction }) =
             // Set the file in form
             form.setValue('avatar', file)
 
-            // Create preview URL
+            // Create preview URL and get image dimensions
             const url = URL.createObjectURL(file)
+            const img = document.createElement('img')
+
+            img.onload = () => {
+                // Calculate dimensions while maintaining aspect ratio
+                const maxSize = 64
+                const ratio = Math.min(maxSize / img.width, maxSize / img.height)
+                setAvatarDimensions({
+                    width: Math.round(img.width * ratio),
+                    height: Math.round(img.height * ratio)
+                })
+            }
+
+            img.src = url
             setAvatarPreview(url)
 
             // Clean up old preview URL
@@ -79,7 +87,7 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onCloseAction }) =
 
     return (
         <Dialog open onOpenChange={(isOpen) => !isOpen && onCloseAction()}>
-            <DialogContent className='w-full max-w-3xl bg-white rounded-lg shadow-lg'>
+            <DialogContent className='w-full max-w-3xl rounded-lg shadow-lg'>
                 <DialogHeader>
                     <DialogTitle>Create New User</DialogTitle>
                 </DialogHeader>
@@ -153,7 +161,7 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onCloseAction }) =
                             render={({ field }) => (
                                 <Select onValueChange={field.onChange} value={field.value}>
                                     <SelectTrigger className='w-full'>
-                                        <SelectValue placeholder='Select an Bureau/Office/Unit' />
+                                        <SelectValue placeholder='Select' />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {/* Replace with your agency data */}
@@ -232,7 +240,11 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ onCloseAction }) =
                                     <Image
                                         src={avatarPreview}
                                         alt="Avatar preview"
-                                        className="w-full h-full object-cover"
+                                        width={avatarDimensions.width}
+                                        height={avatarDimensions.height}
+                                        className="object-cover w-full h-full"
+                                        priority={true}
+                                        unoptimized={true}
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center bg-gray-50">

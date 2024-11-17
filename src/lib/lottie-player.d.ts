@@ -1,6 +1,6 @@
 // src\lib\lottie-player.d.ts
 declare global {
-    namespace TSX {
+    namespace JSX {
         interface IntrinsicElements {
             'lottie-player': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
                 src: string;

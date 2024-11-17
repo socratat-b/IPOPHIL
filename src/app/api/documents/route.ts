@@ -1,7 +1,7 @@
 // src/app/api/documents/route.ts
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth/config'
 
 export async function GET() {
     try {
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
         // Structure the payload according to API requirements
         const documentPayload = {
             documents: [{
-                tracking_code: `DOC${Math.floor(Math.random() * 1000000)}`, // Generate random tracking code
+                tracking_code: `DOC${Math.floor(Math.random() * 1000000)}`,
                 status: 'dispatch',
                 document_code: `DOC${Math.floor(Math.random() * 1000)}`,
                 document_name: body.title,
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
                 originating_agency: session.user.agency_id || 'IPOPHL',
                 current_agency: session.user.agency_id || 'IPOPHL',
                 remarks: '',
-                created_by: session.user.name || 'System User'
+                created_by: session.user.first_name + session.user.last_name || 'System User'
             }]
         }
 
